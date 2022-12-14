@@ -2,4 +2,4 @@
 💫 My portfolio 💫
 
 Live view: 
-https://andrew-velox.github.io/V3L0X/
+https://andrew-velox.github.io/
