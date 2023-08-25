@@ -231,7 +231,7 @@ body {
 
 .scroll-btn{
 
-  bottom: 60px;
+  bottom: 80px;
 
   position: absolute;
 
@@ -305,9 +305,9 @@ body {
 
   list-style-type: none;
 
-  padding-left: 13px;
+  padding-left: 12px;
 
-  padding-top: 6px;
+  padding-top: 8px;
 
   margin-top: 5px;
 
