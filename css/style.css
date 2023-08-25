@@ -23,7 +23,7 @@ body {
   margin-top: 20px;
   margin-left: 27%;
   text-align: center;
-  font-family: Cursive;
+  font-family: sans-serif;
   color:#fff;
   padding: 0 10%;
 }
@@ -36,7 +36,7 @@ body {
   white-space: nowrap; /* Prevents line breaks */
   margin: 0 auto;  /*Centers the container */
   margin-top: 20px;
-  font-family: Cursive;
+  font-family: sans-serif;
   color: #D0D3D4;
   font-size:18px;
   animation: typing 10s steps(20, end) infinite forwards; /* Adjust the duration as needed */
