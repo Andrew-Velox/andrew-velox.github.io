@@ -3,118 +3,117 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: 'Raleway', sans-serif;
 }
 
-
-/* ---------Header css-------- */
+/* --------- Header CSS -------- */
 
 #header {
   height: 100vh;
   background-position: center;
   background-size: cover;
   background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
 }
 
-
-
 #header h1 {
-  width:500px;
   margin-top: 20px;
-  margin-left: 27%;
-  text-align: center;
-  font-family: Cursive;
-  color:#fff;
+  font-family: Cursive, sans-serif;
+  color: #fff;
   padding: 0 10%;
+  font-size: 2.5em;
 }
 
 .typing-text {
   width: 0;
   padding-top: 0px;
   overflow: hidden; /* Ensures the text doesn't overflow the container */
-  border-right: 3px solid white;  /*Creates the typing cursor effect */
+  border-right: 3px solid white; /* Creates the typing cursor effect */
   white-space: nowrap; /* Prevents line breaks */
-  margin: 0 auto;  /*Centers the container */
-  margin-top: 20px;
+  margin: 20px auto; /* Centers the container */
   font-family: Cursive;
   color: #D0D3D4;
-  font-size:18px;
+  font-size: 1.125em; /* 18px */
   animation: typing 10s steps(20, end) infinite forwards; /* Adjust the duration as needed */
 }
 
-@keyframes typing{
-  0%{
+@keyframes typing {
+  0% {
     width: 0%;
   }
-  50%{
+  50% {
     width: 23%;
   }
 }
 
 .user-box{
-  top: 50%;
-  left: 50%;
-  transform: translate(-0%,15%);
-  padding-top: 10px;
+  padding-bottom: 5%;
 }
 
+.user-box {
+  text-align: center;
+}
 
-.user-box img{
+.user-box img {
   border-radius: 50%;
-  width: 270px;
-  height: 270px;
+  width: 16.5em; /* 240px */
+  height: 16.5em; /* 240px */
   border: 3px solid #272327;
 }
-.user-box h1{
+
+.user-box h1 {
   color: #fff;
-  margin-left: 0px;
-  font-weight: bold;
   margin: 10px;
-  text-align: center;
+  font-family: 'cursive';
 }
 
-.user-box h5{
+.user-box h5 {
   color: royalblue;
-  text-align: center;
 }
 
+/*-------- Social Icons -----------*/
 
-
-
-
-/*-------- Social icons -----------*/
-
-.social-icons{
-  top: -10%;
-  margin-top: -50px;
+.social-icons {
+  position: fixed;
+  top: 50%;
+  left: 0px;
   transform: translateY(-50%);
-  position: sticky;
   z-index: 1;
-  width: 80px;
-}
-.social-icons ul{
-  padding: initial;
+  width: 40px;
 }
 
+.social-icons ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-.social-icons ul li{
+.social-icons ul li {
   height: 40px;
   width: 40px;
   list-style-type: none;
-  padding-left: 12px;
-  padding-top: 6px;
-  margin-top: 5px;
+  margin-bottom: 10px;
   color: #fff;
-  background: #272327;
+  background: #2e2b2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
 }
 
-.social-icons ul li:hover{
-  padding-left: 30px;
-  width: 80px;
-  transition: 1s;
+.social-icons ul li:hover {
+  width: 90px;
 }
 
-.scroll-btn{
+.scroll-btn {
   bottom: 30px;
   width: 30px;
   position: absolute;
@@ -125,280 +124,160 @@ body {
   border-radius: 30px;
 }
 
-
-.scroll-bar span{
+.scroll-bar span {
   border: 2px solid #979A9A;
   font-size: 10px;
   border-radius: 30px;
 }
-.scroll-bar{
+
+.scroll-bar {
   animation: mover 0.8s infinite alternate;
 }
-@keyframes mover{
-  0%{
+
+@keyframes mover {
+  0% {
     transform: translateY(0);
   }
-  100%{
-    transform: translateY(10px)
+  100% {
+    transform: translateY(10px);
   }
 }
 
-
-
-/*-------responsive-----------*/
-
-/*-------responsive-----------*/
-
-@media (max-width: 768px){
-
-  body{
-
-  margin: 0;
-
-  padding: 0;
-
-  font-family: sans-serif;
-
-}
-
-/*--
-
-#header{
-
-  height: 100vh;
-
-  background: linear-gradient(rgba(0, 0, 0, .6),rgba(0, 0, 0, .6)),url('background.jpg');
-
-  background-position: center;
-
-  background-size: cover;
-
-  background-attachment: fixed;
-
-}
-
-*/
-
-
-
-#header h1 {
-
-  width:340px;
-
-  margin-top: 20px;
-
-  margin-left: 2%;
-
-  text-align: center;
-  font-size: 35px;
-
-  font-family: sans-serif;
-
-  color:#fff;
-
-  padding: 0 10%;
-
-}
-
-.user-box img{
-
-  border-radius: 50%;
-
-  border: 4px solid #272327;
-
-}
-
-.user-box h1{
-
-  color: red;
-
-  font-weight: bold;
-
-  margin: 10px;
-
-  text-align: center;
-
-}
-
-.user-box h5{
-
-  color: red;
-
-  margin-top:-5.0px;
-
-  text-align: center;
-
-}
-
-.scroll-btn{
-
-  bottom: 80px;
-
-  position: absolute;
-
-  left: 50%;
-
-  transform: translateX(-50%);
-
-  border: 2px solid #B3B6B7;
-
-  padding: 10px 10px 20px;
-
-  border-radius: 30px;
-
-}
-
-
-
-.scroll-bar span{
-
-  border: 3px solid #B3B6B7;
-
-  font-size: 10px;
-
-  border-radius: 30px;
-
-}
-
-.navbar{
-
-  background-color: red;
-
-}
-
-
-
-/* -----------about section ------*/
-
-
-
-/*-------- Social icons -----------*/
-
-
-
-.social-icons{
-
-  margin-top: -10%;
-
-  transform: translateY(-50%);
-
-  position: sticky;
-
-  z-index: 1;
-
-  width: 50px;
-
-}
-
-.social-icons ul{
-
-  padding: initial;
-
-}
-
-
-
-.social-icons ul li{
-
-  height: 40px;
-
-  width: 36px;
-
-  list-style-type: none;
-
-  padding-left: 12px;
-
-  padding-top: 8px;
-
-  margin-top: 5px;
-
-  color: #fff;
-
-  background: #272327;
-
-}
-
-
-
-.social-icons ul li:hover{
-
-  padding-left: 30px;
-
-  width: 70px;
-
-  transition: 1s;
-
-}
-
-
-
-
-
-
-
-
-
-.typing-text {
-
-
-
-  width: 0;
-
-
-
-  padding-top: 0px;
-
-  overflow: hidden; /* Ensures the text doesn't overflow the container */
-
-  border-right: 3px solid white;  /*Creates the typing cursor effect */
-
-  white-space: nowrap; /* Prevents line breaks */
-
-  margin: 0 auto;  /*Centers the container */
-
-  margin-top: 20px;
-
-  font-family: sans-serif;
-
-  color: #D0D3D4;
-
-  font-size:17px;
-
-  animation: typing 10s steps(20, end) infinite forwards; /* Adjust the duration as needed */
-
-}
-
-
-
-@keyframes typing{
-
-  0%{
-
-    width: 0%;
-
+/*------- Responsive Design --------*/
+
+@media (max-width: 1024px) {
+  #header h1 {
+    font-size: 2.5em;
   }
 
-  50%{
-
-    width: 70%;
-
+  .user-box img {
+    width: 15em; /* 192px */
+    height: 15em; /* 192px */
   }
 
+  .scroll-btn {
+    padding: 5px 5px 20px;
+  }
+
+  .scroll-bar span {
+    font-size: 10px;
+  }
+
+  /* .social-icons ul li:hover {
+    width: 40px;
+  } */
+
+  .typing-text {
+    font-size: 1.3em; /* 16px */
+  }
+
+  @keyframes typing {
+    0% {
+      width: 0%;
+    }
+    50% {
+      width: 30%;
+    }
+  }
 }
 
-/*---------- Resume---------- -*/
+@media (max-width: 768px) {
+  #header h1 {
+    font-size: 2.5em;
+  }
 
+  .user-box img {
+    width: 14em; /* 160px */
+    height: 14em; /* 160px */
+  }
 
+  .scroll-btn {
+    padding: 5px 5px 10px;
+    border: 2px solid #B3B6B7;
+  }
 
+  .scroll-bar span {
+    border: 2px solid #B3B6B7;
+  }
 
+  .social-icons {
+    width: 30px;
+  }
 
-/* ----------Services -----------*/
+  .social-icons ul li {
+    height: 30px;
+    width: 30px;
+    margin-bottom: 8px;
+  }
 
+  .social-icons ul li:hover {
+    width: 65px;
+  }
 
+  .typing-text {
+    font-size: 1em; /* 14px */
+  }
 
+  .scroll-btn {
+    bottom: 50px;
+    padding: 5px 5px 20px;
+    border-radius: 30px;
+  }
+
+  @keyframes typing {
+    0% {
+      width: 0%;
+    }
+    50% {
+      width: 50%;
+    }
+  }
 }
 
-/* -----------about section ------*/
+@media (max-width: 480px) {
+  #header h1 {
+    font-size: 1.5em;
+  }
 
-/*-------- Social icons -----------*/
+  .user-box img {
+    width: 8em; /* 128px */
+    height: 8em; /* 128px */
+  }
 
+  .scroll-btn {
+    padding: 3px 3px 6px;
+    border: 2px solid #B3B6B7;
+  }
+
+  .scroll-bar span {
+    font-size: 6px;
+    border: 2px solid #B3B6B7;
+  }
+
+  .social-icons {
+    width: 20px;
+  }
+
+  .social-icons ul li {
+    height: 20px;
+    width: 20px;
+    margin-bottom: 6px;
+  }
+
+  .social-icons ul li:hover {
+    width: 40px;
+  }
+
+  .typing-text {
+    font-size: 0.75em; /* 12px */
+  }
+
+  @keyframes typing {
+    0% {
+      width: 0%;
+    }
+    50% {
+      width: 70%;
+    }
+  }
+}
