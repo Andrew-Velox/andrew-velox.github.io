@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Mohabbat's Portfolio</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" type="image/x-icon" href="img/icon.png">
+</head>
+<body>
+    <!----------------- header section ------------->
+    
+  <section id="header">
+    <div class="container text-center">
+      <div class="user-box">
+        <img src="img/Kaneki.gif" alt="user">
+        <h1>Andrew-Velox</h1>
+        <div class="typing-text">
+          Welcome to My Portfolio. <3
+        </div>
+      </div>
+    </div>
+
+
+    <div class="scroll-btn">
+      <div class="scroll-bar"><a href="#about"><span> </span></a></div>
+    </div>
+    <!---------------- Social icons ------------------>
+
+    <div class="social-icons">
+      <ul>
+        <a href="https://www.linkedin.com/in/mohabbat69/" target="_blank"><li><i class="fa fa-linkedin"></i></li></a>
+        <a href="https://www.facebook.com/mohabbat404" target="_blank"><li><i class="fa fa-facebook"></i></li></a>
+        <a href="#"><li><i class="fa fa-skype"></i></li></a>
+        <a href="https://github.com/Andrew-Velox" target="_blank"><li><i class="fa fa-github"></i></li></a>
+        <a href="#"><li><i class="fa fa-twitter"></i></li></a>
+        <a href="#"><li><i class="fa fa-instagram"></i></li></a>
+    </ul>
+  </div>
+</section>
+
+
+  
+  <!-----vanta background code ----->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js"></script>
+<script>
+VANTA.WAVES({
+  el: "#header",
+  mouseControls: true,
+  touchControls: true,
+  gyroControls: false,
+  minHeight: 200.00,
+  minWidth: 200.00,
+  scale: 1.00,
+  scaleMobile: 1.00,
+  color: 0x1c191c,
+  zoom: 1.00
+})
+</script>
+
+<!-----smoth scroll------>
+
+  <script src="main.js"></script>
+
+  <script>
+    var scroll = new SmoothScroll('a[href*="#"]');
+  </script>
+</body>
+</html>
