@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+out/
+
+# Development files
+src/
+*.config.*
+package*.json
+tsconfig.json
+next-env.d.ts
+.vscode/
+
+# But include the static files in root
+!index.html
+!404.html
+!CNAME
+!*.ico
+!*.svg
+!*.gif
+!*.jpg
+!*.png
+!_next/
