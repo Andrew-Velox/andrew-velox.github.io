@@ -3,10 +3,8 @@ const nextConfig = {
   output: 'export',
   trailingSlash: true,
   images: {
-    unoptimized: true,
-  },
-  assetPrefix: '',
-  basePath: '',
-};
+    unoptimized: true
+  }
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig
