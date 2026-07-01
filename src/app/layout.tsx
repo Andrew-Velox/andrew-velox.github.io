@@ -5,6 +5,7 @@ import MediaPreloader from "../components/MediaPreloader";
 import DynamicFooter from "../components/DynamicFooter";
 import LoadingScreen from "../components/LoadingScreen";
 import ChatBot from "../components/ChatBot";
+import ClickFireworks from "../components/ClickFireworks";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
       >
         <LoadingScreen />
         <MediaPreloader />
+        <ClickFireworks />
         <div className="min-h-screen">
           <div className="min-h-screen pb-16 flex items-center justify-center">
             {children}
