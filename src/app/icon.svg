@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -5 230 230" width="100%" height="100%">
+  <!-- Outer Face Outline -->
+  <path d="M 128 203
+           L 180 203
+           A 34 34 0 0 0 214 169
+           L 214 85
+           A 29 52 0 0 0 156 85
+           Q 128 85 100 85
+           A 29 52 0 0 0 42 85
+           L 42 169
+           A 34 34 0 0 0 76 203
+           Z"
+        fill="none"
+        stroke="#218aee"
+        stroke-width="24"
+        stroke-linecap="round"
+        stroke-linejoin="round" />
+
+  <!-- Left Eye (>) -->
+  <path d="M 76 118 L 106 132 L 76 146"
+        fill="none"
+        stroke="#218aee"
+        stroke-width="18"
+        stroke-linecap="round"
+        stroke-linejoin="round" />
+
+  <!-- Right Eye (<) -->
+  <path d="M 180 118 L 150 132 L 180 146"
+        fill="none"
+        stroke="#218aee"
+        stroke-width="18"
+        stroke-linecap="round"
+        stroke-linejoin="round" />
+
+  <!-- Mouth (_) -->
+  <line x1="116" y1="165" x2="140" y2="165"
+        stroke="#218aee"
+        stroke-width="18"
+        stroke-linecap="round" />
+</svg>
