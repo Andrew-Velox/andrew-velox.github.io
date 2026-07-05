@@ -18,7 +18,8 @@ import DynamicFooter from "../components/DynamicFooter";
 import LoadingScreen from "../components/LoadingScreen";
 import ChatBot from "../components/ChatBot";
 import ClickFireworks from "../components/ClickFireworks";
-import ParticlesBackground from "../components/ParticlesBackground";
+// import ParticlesBackground from "../components/ParticlesBackground";
+import BgGif from "../components/BgGif";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -141,7 +142,8 @@ export default function RootLayout({
         <LoadingScreen />
         <MediaPreloader />
         <ClickFireworks />
-        <ParticlesBackground />
+        {/* <ParticlesBackground /> */}
+        <BgGif src="/bg_animaton/ani.gif" />
         <div className="relative z-10 min-h-screen">
           <div className="min-h-screen pb-16 flex items-center justify-center">
             {children}
