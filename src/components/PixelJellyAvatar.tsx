@@ -60,15 +60,19 @@ export default function PixelJellyAvatar({
     let dragStartY = 0;
 
     const onMouseDown = (e: MouseEvent) => {
+      // Only start the drag when the press begins inside the avatar container;
+      // mousedown is attached to the container so outside clicks do nothing.
       isDragging = true;
-      dragStartX = e.clientX - targetX;
-      dragStartY = e.clientY - targetY;
+      const rect = container.getBoundingClientRect();
+      dragStartX = e.clientX - targetX - rect.left;
+      dragStartY = e.clientY - targetY - rect.top;
     };
 
     const onMouseMove = (e: MouseEvent) => {
       if (!isDragging) return;
-      targetX = e.clientX - dragStartX;
-      targetY = e.clientY - dragStartY;
+      const rect = container.getBoundingClientRect();
+      targetX = e.clientX - dragStartX - rect.left;
+      targetY = e.clientY - dragStartY - rect.top;
     };
 
     const onMouseUp = () => {
@@ -115,9 +119,12 @@ export default function PixelJellyAvatar({
       }
     };
 
-    window.addEventListener('mousedown', onMouseDown);
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
+    // mousedown is scoped to the container so the avatar only moves when you
+    // actually click on it; mousemove/mouseup stay on window so dragging
+    // continues smoothly if the cursor leaves the avatar bounds.
+    container.addEventListener('mousedown', onMouseDown);
     // Touch events scoped to the container so scrolling the page still works
     container.addEventListener('touchstart', onTouchStart, { passive: true });
     container.addEventListener('touchmove', onTouchMove, { passive: true });
@@ -227,7 +234,7 @@ export default function PixelJellyAvatar({
 
     return () => {
       cancelAnimationFrame(rafId);
-      window.removeEventListener('mousedown', onMouseDown);
+      container.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
       container.removeEventListener('touchstart', onTouchStart);
