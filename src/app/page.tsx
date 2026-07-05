@@ -17,7 +17,16 @@ export default function Home() {
         />
 
       <div className="flex flex-col gap-4 sm:gap-6 items-center text-center touch-none select-none">
-        <h1 className="text-4xl sm:text-6xl font-bold text-white drop-shadow-2xl">Mohabbat</h1>
+        <h1
+          className="text-5xl sm:text-7xl font-normal text-white drop-shadow-[0_4px_20px_rgba(255,255,255,0.4)] tracking-wide select-none"
+          style={{
+            fontFamily: 'var(--font-major-mono)',
+            letterSpacing: '0.02em',
+            transform: 'rotate(-2deg)',
+          }}
+        >
+          Mohabbat
+        </h1>
         <h2 className="text-xl sm:text-2xl font-medium text-white/90 drop-shadow-lg">
           <TypingText 
             text="Welcome To My Portfolio [>_<]" 
