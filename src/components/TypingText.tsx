@@ -36,10 +36,7 @@ export default function TypingText({ text, speed = 100, className = '' }: Typing
   }, [currentIndex, text, speed, isDeleting]);
 
   return (
-    <span className={className} 
-            style={{
-              fontFamily: 'var(--font-major-mono)',
-            }}>
+    <span className={className} >
       {displayText}
       <span className="animate-pulse">|</span>
     </span>
