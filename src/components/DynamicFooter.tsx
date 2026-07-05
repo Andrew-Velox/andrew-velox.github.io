@@ -1,6 +1,5 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { FooterLink } from './FooterLink';
 
 // Social links data
@@ -61,9 +60,6 @@ const socialLinks = [
 ];
 
 export default function DynamicFooter() {
-  const pathname = usePathname();
-  const isNotHomePage = pathname !== '/';
-
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[60]">
       <img
@@ -73,13 +69,13 @@ export default function DynamicFooter() {
         loading="lazy"
         style={{ marginBottom: '-20px' }}
       />
-      <footer className="w-full flex flex-row items-center justify-between gap-4 py-3 sm:py-6 border-t backdrop-blur-md px-4 sm:px-8 text-sm border-gray-300 dark:border-gray-700 dark:bg-black/10">
-        <div className="text-xs sm:text-sm line-clamp-1 text-dark dark:text-white/80">
+      <footer className="w-full flex flex-row items-center justify-between gap-4 py-3 sm:py-6 border-t backdrop-blur-md px-4 sm:px-8 text-sm border-white/20 bg-white/5">
+        <div className="text-xs sm:text-sm line-clamp-1 text-white/80">
           © {new Date().getFullYear()} Mohabbat (vlx).
         </div>
         <div className="flex gap-3 sm:gap-4 items-center">
           {socialLinks.map((link) => (
-            <FooterLink key={link.label} {...link} isAboutPage={isNotHomePage} />
+            <FooterLink key={link.label} {...link} />
           ))}
         </div>
       </footer>

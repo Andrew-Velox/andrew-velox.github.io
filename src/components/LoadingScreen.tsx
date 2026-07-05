@@ -101,13 +101,13 @@ export default function LoadingScreen() {
         >
           Mohabbat
         </h1>
-        <p className="text-xs sm:text-sm uppercase tracking-[0.35em] text-violet-200/80 animate-pulse">
-          Loading the cosmos…
+        <p className="text-xs sm:text-sm uppercase tracking-[0.35em]  animate-pulse">
+          Loading the menu…
         </p>
 
         {/* Tiny progress bar */}
         <div className="mt-3 h-[2px] w-40 overflow-hidden rounded-full bg-white/10">
-          <div className="h-full w-1/3 animate-[barSlide_1.2s_ease-in-out_infinite] bg-violet-400/80" />
+          <div className="h-full w-1/3 animate-[barSlide_1.2s_ease-in-out_infinite] bg-gray-400/80" />
         </div>
       </div>
 

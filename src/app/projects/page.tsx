@@ -77,10 +77,10 @@ export default function ProjectsPage() {
       <div className="container mx-auto px-6 py-20 max-w-6xl">
         {/* Header */}
         <div className="mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 text-gray-900 dark:text-white">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white">
             Projects
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400">
+          <p className="text-lg text-gray-300">
             Some of my recent work
           </p>
         </div>
@@ -94,7 +94,7 @@ export default function ProjectsPage() {
               onMouseEnter={() => setHoveredId(project.id)}
               onMouseLeave={() => setHoveredId(null)}
             >
-              <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden transition-all duration-300 hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-lg">
+              <div className="border border-gray-700 rounded-xl overflow-hidden transition-all duration-300 hover:border-gray-500 hover:shadow-lg">
                 {/* Project Image */}
                 <div className="relative h-48 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 dark:from-blue-950 dark:via-purple-950 dark:to-pink-950 overflow-hidden">
                   {project.image ? (
@@ -123,12 +123,12 @@ export default function ProjectsPage() {
                   </div> */}
 
                   {/* Title */}
-                  <h2 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h2 className="text-2xl font-bold mb-3 text-white group-hover:text-blue-400 transition-colors">
                     {project.title}
                   </h2>
 
                   {/* Description */}
-                  <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+                  <p className="text-gray-300 mb-6 leading-relaxed">
                     {project.description}
                   </p>
 
@@ -137,7 +137,7 @@ export default function ProjectsPage() {
                     {project.tags.map((tag, index) => (
                       <span
                         key={index}
-                        className="text-sm px-3 py-1 border border-gray-300 dark:border-gray-700 rounded-full text-gray-700 dark:text-gray-300"
+                        className="text-sm px-3 py-1 border border-gray-600 rounded-full text-gray-200"
                       >
                         {tag}
                       </span>
@@ -149,7 +149,7 @@ export default function ProjectsPage() {
                     {project.link && (
                       <a
                         href={project.link}
-                        className="text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1"
+                        className="text-white hover:text-blue-400 transition-colors flex items-center gap-1"
                         aria-label="View Live Project"
                       >
                         <svg
@@ -170,7 +170,7 @@ export default function ProjectsPage() {
                     {project.github && (
                       <a
                         href={project.github}
-                        className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-1"
+                        className="text-gray-300 hover:text-white transition-colors flex items-center gap-1"
                         aria-label="GitHub"
                       >
                         <svg

@@ -1,10 +1,10 @@
 export default function About() {
   return (
-    <div className="flex flex-col items-center justify-start gap-8 sm:gap-12 mt-8 sm:mt-12">
+    <div className="flex flex-col items-center justify-start gap-8 sm:gap-12 mt-8 sm:mt-12 text-white">
       {/* About Header */}
       <div className="text-center">
-        <h1 className="text-4xl sm:text-6xl font-bold mb-4">About Me</h1>
-        <div className="w-20 h-1 bg-gradient-to-r from-gray-400 to-gray-300 dark:from-gray-500 dark:to-gray-600 mx-auto rounded-full"></div>
+        <h1 className="text-4xl sm:text-6xl font-bold mb-4 text-white">About Me</h1>
+        <div className="w-20 h-1 bg-gradient-to-r from-gray-400 to-gray-300 mx-auto rounded-full"></div>
       </div>
 
       {/* About Content */}
@@ -17,7 +17,7 @@ export default function About() {
             href="https://www.green.edu.bd/"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-semibold text-green-500 hover:text-green-700 transition-colors duration-200"
+            className="font-semibold text-green-400 hover:text-green-300 transition-colors duration-200"
           >
             Green University of Bangladesh
           </a>.

@@ -1,14 +1,11 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
-  const isAboutPage = pathname === '/about';
 
   useEffect(() => {
     const updateDarkMode = () => {
@@ -46,25 +43,17 @@ export default function Navbar() {
     { href: '/achievements', label: 'Achievements' },
   ];
 
-  const linkClass = (isDarkMode: boolean, isAboutPage: boolean) =>
+  const linkClass = (isDarkMode: boolean) =>
     isDarkMode
       ? 'bg-black/40 border-white/20 text-white hover:bg-black/60 hover:text-white/95 hover:shadow-lg hover:shadow-black/20'
-      : isAboutPage
-      ? 'bg-gray-800/90 border-gray-700/50 text-white hover:bg-gray-700/90 hover:text-white/95 hover:shadow-lg hover:shadow-gray-800/30'
-      : 'bg-white/40 border-gray-400/20 text-gray-800 hover:bg-white/60 hover:text-gray-700 hover:shadow-lg hover:shadow-gray-500/20';
+      : 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white/95 hover:shadow-lg hover:shadow-black/20';
 
   return (
     <div ref={navRef}>
       {/* Hamburger Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed top-6 right-6 z-50 p-2 transition-colors drop-shadow-lg ${
-          isDarkMode
-            ? 'text-white hover:text-white/70'
-            : isAboutPage
-            ? 'text-gray-800 hover:text-gray-600'
-            : 'text-white hover:text-gray-600'
-        }`}
+        className={`fixed top-6 right-6 z-50 p-2 transition-colors drop-shadow-lg text-white hover:text-white/70`}
         aria-label={isOpen ? 'Close menu' : 'Open menu'}
       >
         <div className="w-6 h-6 flex flex-col justify-center space-y-1">
@@ -85,7 +74,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`block px-4 py-3 rounded-lg border custom-blur transition-all duration-200 ease-out transform hover:scale-[1.02] hover:-translate-y-1 ${linkClass(isDarkMode, isAboutPage)}`}
+              className={`block px-4 py-3 rounded-lg border custom-blur transition-all duration-200 ease-out transform hover:scale-[1.02] hover:-translate-y-1 ${linkClass(isDarkMode)}`}
               onClick={() => setIsOpen(false)}
             >
               <span className="font-medium">{link.label}</span>
