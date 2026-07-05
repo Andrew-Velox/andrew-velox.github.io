@@ -4,50 +4,132 @@ import { useState, useEffect } from 'react';
 
 export default function LoadingScreen() {
   const [isLoading, setIsLoading] = useState(true);
+  const [hide, setHide] = useState(false);
 
   useEffect(() => {
-    // Hide loading screen after a short delay to ensure smooth transition
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 100); // 1.5 seconds loading time
+    let mounted = true;
 
-    return () => clearTimeout(timer);
+    // Wait for the cat gif to fully decode before fading out,
+    // so the user actually sees it instead of a flash.
+    const img = new Image();
+    img.src = '/projects_img/cat_laoding.gif';
+    const minTime = new Promise((r) => setTimeout(r, 1600));
+    const imgReady = new Promise<void>((resolve) => {
+      if (img.complete) resolve();
+      else img.onload = () => resolve();
+      img.onerror = () => resolve();
+    });
+
+    Promise.all([minTime, imgReady]).then(() => {
+      if (!mounted) return;
+      setHide(true);
+      setTimeout(() => mounted && setIsLoading(false), 600);
+    });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   if (!isLoading) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-900 transition-opacity duration-500">
-      {/* Loading animation container */}
-      <div className="flex flex-col items-center gap-6">
-        {/* Animated logo/name */}
-        <div className="text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-2 animate-pulse">
-            Mohabbat
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 animate-pulse">
-            Andrew-Velox
-          </p>
-        </div>
+    <div
+      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden transition-opacity duration-700 ${
+        hide ? 'opacity-0' : 'opacity-100'
+      }`}
+      style={{
+        background: '#000000',
+      }}
+    >
+      {/* Faint stars (CSS only, decorative) */}
+      <div className="pointer-events-none absolute inset-0 opacity-70">
+        {Array.from({ length: 40 }).map((_, i) => {
+          const top = `${(i * 37) % 100}%`;
+          const left = `${(i * 53) % 100}%`;
+          const size = (i % 3) + 1;
+          const delay = (i % 7) * 0.2;
+          return (
+            <span
+              key={i}
+              className="absolute rounded-full bg-white animate-pulse"
+              style={{
+                top,
+                left,
+                width: `${size}px`,
+                height: `${size}px`,
+                animationDelay: `${delay}s`,
+                animationDuration: `${1.4 + (i % 5) * 0.3}s`,
+                opacity: 0.5 + (i % 5) * 0.1,
+              }}
+            />
+          );
+        })}
+      </div>
 
-        {/* Loading spinner */}
-        <div className="relative">
-          <div className="w-12 h-12 border-4 border-gray-200 dark:border-gray-700 rounded-full animate-spin">
-            <div className="absolute top-0 left-0 w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        </div>
+      {/* Soft violet halo behind the cat */}
+      <div
+        className="pointer-events-none absolute rounded-full blur-3xl"
+        style={{
+          width: 380,
+          height: 380,
+          background:
+            'radial-gradient(circle, rgba(0, 0, 0, 0.45) 0%, rgba(139,92,246,0) 70%)',
+        }}
+      />
 
-        {/* Loading text */}
-        <p className="text-sm text-gray-500 dark:text-gray-400 animate-pulse">
-          Loading portfolio...
+      {/* Cat */}
+      <div className="relative z-10 animate-[catBounce_1.4s_ease-in-out_infinite]">
+        <img
+          src="/projects_img/cat_laoding.gif"
+          alt="Loading cat"
+          width={220}
+          height={220}
+          className="select-none"
+          draggable={false}
+        />
+      </div>
+
+      {/* Brand + caption */}
+      <div className="relative z-10 mt-6 flex flex-col items-center gap-2 text-center">
+        <h1
+          className="text-3xl sm:text-4xl font-bold text-white tracking-wide"
+          style={{
+            fontFamily: 'var(--font-permanent-marker)',
+            transform: 'rotate(-2deg)',
+          }}
+        >
+          Mohabbat
+        </h1>
+        <p className="text-xs sm:text-sm uppercase tracking-[0.35em] text-violet-200/80 animate-pulse">
+          Loading the cosmos…
         </p>
+
+        {/* Tiny progress bar */}
+        <div className="mt-3 h-[2px] w-40 overflow-hidden rounded-full bg-white/10">
+          <div className="h-full w-1/3 animate-[barSlide_1.2s_ease-in-out_infinite] bg-violet-400/80" />
+        </div>
       </div>
 
-      {/* Background pattern (optional) */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-500 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-purple-500 rounded-full blur-3xl animate-pulse delay-300"></div>
-      </div>
+      <style jsx>{`
+        @keyframes catBounce {
+          0%,
+          100% {
+            transform: translateY(0) rotate(-1deg);
+          }
+          50% {
+            transform: translateY(-10px) rotate(1deg);
+          }
+        }
+        @keyframes barSlide {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(300%);
+          }
+        }
+      `}</style>
     </div>
   );
 }
