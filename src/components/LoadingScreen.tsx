@@ -8,26 +8,42 @@ export default function LoadingScreen() {
 
   useEffect(() => {
     let mounted = true;
+    let safetyTimer: ReturnType<typeof setTimeout> | null = null;
 
-    // Wait for the cat gif to fully decode before fading out,
-    // so the user actually sees it instead of a flash.
-    const img = new Image();
-    img.src = '/projects_img/cat_laoding.gif';
-    const minTime = new Promise((r) => setTimeout(r, 1600));
-    const imgReady = new Promise<void>((resolve) => {
-      if (img.complete) resolve();
-      else img.onload = () => resolve();
-      img.onerror = () => resolve();
-    });
+    // Hide the loader as soon as the page reports it's fully loaded,
+    // with a small floor so the cat gif is visible long enough to register.
+    const FADE_MS = 350;
+    const MIN_VISIBLE_MS = 700;
+    const SAFETY_MS = 4000; // hard cap so it can never get stuck
 
-    Promise.all([minTime, imgReady]).then(() => {
+    const finish = () => {
       if (!mounted) return;
       setHide(true);
-      setTimeout(() => mounted && setIsLoading(false), 600);
-    });
+      // Remove from DOM after the CSS fade completes.
+      window.setTimeout(() => mounted && setIsLoading(false), FADE_MS);
+    };
+
+    const start = performance.now();
+
+    const onLoad = () => {
+      const elapsed = performance.now() - start;
+      const remaining = Math.max(0, MIN_VISIBLE_MS - elapsed);
+      window.setTimeout(finish, remaining);
+    };
+
+    if (document.readyState === 'complete') {
+      onLoad();
+    } else {
+      window.addEventListener('load', onLoad, { once: true });
+    }
+
+    // Safety cap in case 'load' never fires (rare network/CORS edge cases).
+    safetyTimer = setTimeout(finish, SAFETY_MS);
 
     return () => {
       mounted = false;
+      if (safetyTimer) clearTimeout(safetyTimer);
+      window.removeEventListener('load', onLoad);
     };
   }, []);
 
@@ -35,8 +51,8 @@ export default function LoadingScreen() {
 
   return (
     <div
-      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden transition-opacity duration-700 ${
-        hide ? 'opacity-0' : 'opacity-100'
+      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden transition-opacity duration-300 ${
+        hide ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
       style={{
         background: '#000000',

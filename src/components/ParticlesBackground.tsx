@@ -2,22 +2,14 @@
 
 import { useEffect, useRef } from 'react';
 
-interface GalaxyStar {
-  u: number;           // normalized distance from black hole, 1 = spawn edge, 0 = event horizon
-  angle: number;       // current angle around center
-  z: number;           // depth 0..1, used for size/brightness
-  r: number;
-  twinkleSpeed: number;
-  twinklePhase: number;
-  hue: number;          // 0 = white, else tinted
-}
-
-interface FarStar {
+interface Star {
   x: number;
   y: number;
+  z: number; // depth (0..1), used for size and parallax
   r: number;
   twinkleSpeed: number;
   twinklePhase: number;
+  hue: number; // 0..360 (subtle color tint)
 }
 
 interface Shooting {
@@ -29,16 +21,6 @@ interface Shooting {
   maxLife: number;
   len: number;
 }
-
-// Accretion disk / black hole controls
-const NUM_ARMS = 3;
-const ARM_SPREAD = 0.5;
-const ELLIPSE_TILT = 0.55;     // flattens the disk into a tilted ellipse
-const EVENT_HORIZON_U = 0.035; // fraction of maxRadius where a particle is consumed
-const FALL_RATE = 0.16;        // how fast particles spiral inward (per second, scales with proximity)
-const SPIN_RATE = 0.55;        // angular speed scale (radians/sec, scales with proximity)
-const STREAK_U = 0.28;         // below this, particles render as motion-blur wisps instead of dots
-const DIM_ZONE = EVENT_HORIZON_U * 9; // wider fade-out band so nothing brightens right at the void
 
 export default function ParticlesBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -52,38 +34,13 @@ export default function ParticlesBackground() {
     if (!ctx) return;
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    let galaxyStars: GalaxyStar[] = [];
-    let farStars: FarStar[] = [];
+    let stars: Star[] = [];
     let shooting: Shooting | null = null;
     let nextShoot = 1.5 + Math.random() * 3;
-    let maxRadius = 0;
-    const TILT = 0.15; // mouse parallax strength for far stars
-
-    // Spawns a particle either scattered across the whole disk (initial fill,
-    // biased denser toward the outer edge to mimic a real accretion disk's
-    // density profile) or fresh at the outer edge (after being consumed).
-    const spawnGalaxyStar = (initial: boolean): GalaxyStar => {
-      const u = initial ? Math.sqrt(Math.random()) : 0.92 + Math.random() * 0.08;
-      const radius = u * maxRadius;
-      const arm = Math.floor(Math.random() * NUM_ARMS);
-      const armOffset = (arm / NUM_ARMS) * Math.PI * 2;
-      const spiralAngle = radius * 0.012;
-      const scatter = (Math.random() - 0.5) * ARM_SPREAD * (1 + (1 - u) * 2);
-      const angle = armOffset + spiralAngle + scatter;
-      const z = Math.random();
-
-      return {
-        u,
-        angle,
-        z,
-        r: (1 - z) * 1.5 + z * 0.4 + Math.random() * 0.4,
-        twinkleSpeed: 0.4 + Math.random() * 1.6,
-        twinklePhase: Math.random() * Math.PI * 2,
-        hue: Math.random() < 0.85 ? 0 : [210, 270, 45][Math.floor(Math.random() * 3)],
-      };
-    };
+    const TILT = 0.15; // how much far stars drift with mouse (subtle parallax)
 
     const spawnShooting = (w: number) => {
+      // Start near top, shoot down-right (or down-left)
       const fromLeft = Math.random() > 0.5;
       const angle = fromLeft ? Math.PI * 0.22 : Math.PI - Math.PI * 0.22;
       const speed = 13 + Math.random() * 10;
@@ -98,11 +55,6 @@ export default function ParticlesBackground() {
       };
     };
 
-    const getCenter = (w: number, h: number) => ({
-      cx: w * 0.5 + offsetRef.current.x * 30,
-      cy: h * 0.34 + offsetRef.current.y * 30,
-    });
-
     const resize = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
@@ -114,75 +66,63 @@ export default function ParticlesBackground() {
       shooting = null;
       nextShoot = 1.5 + Math.random() * 3;
 
+      // Scale star count with area, but cap for perf
       const area = w * h;
-      maxRadius = Math.max(w, h) * 0.72;
-
-      // Particles feeding into the black hole: initial fill is scattered
-      // across the whole disk; from then on they spiral inward, get
-      // consumed at the event horizon, and respawn back at the outer edge.
-      const galaxyCount = Math.min(1900, Math.max(700, Math.floor(area / 800)));
-      galaxyStars = Array.from({ length: galaxyCount }, () => spawnGalaxyStar(true));
-
-      // Distant uniform background stars, unaffected by galaxy rotation
-      const farCount = Math.min(900, Math.max(300, Math.floor(area / 2200)));
-      farStars = Array.from({ length: farCount }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        r: Math.random() * 1.1 + 0.3,
-        twinkleSpeed: 0.3 + Math.random() * 1.2,
-        twinklePhase: Math.random() * Math.PI * 2,
-      }));
+      const target = Math.min(900, Math.max(300, Math.floor(area / 1800)));
+      stars = Array.from({ length: target }, () => {
+        const z = Math.random(); // 0 = close/big, 1 = far/small
+        return {
+          x: Math.random() * w,
+          y: Math.random() * h,
+          z,
+          r: (1 - z) * 1.6 + z * 0.4 + Math.random() * 0.4,
+          twinkleSpeed: 0.4 + Math.random() * 1.6,
+          twinklePhase: Math.random() * Math.PI * 2,
+          // Most stars white, occasional blue/purple/gold tints
+          hue: Math.random() < 0.85 ? 0 : [210, 270, 45][Math.floor(Math.random() * 3)],
+        };
+      });
     };
 
     const drawBackground = (w: number, h: number) => {
-      // Base: solid black
-      ctx.fillStyle = '#000000';
+      // Galaxy gradient: deep indigo core fading to near-black edges
+      const cx = w * 0.5 + offsetRef.current.x * 30;
+      const cy = h * 0.55 + offsetRef.current.y * 30;
+      const radius = Math.max(w, h) * 0.9;
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+      grad.addColorStop(0, '#000000');
+      grad.addColorStop(0.35, '#000000');
+      grad.addColorStop(0.7, '#000000');
+      grad.addColorStop(1, '#000000');
+      ctx.fillStyle = grad;
       ctx.fillRect(0, 0, w, h);
 
-      // Faint violet nebula haze off to one side
+      // Faint nebula glow
       const nebula = ctx.createRadialGradient(
-        w * 0.72 + offsetRef.current.x * 20,
-        h * 0.28 + offsetRef.current.y * 20,
+        w * 0.7 + offsetRef.current.x * 20,
+        h * 0.3 + offsetRef.current.y * 20,
         0,
-        w * 0.72,
-        h * 0.28,
+        w * 0.7,
+        h * 0.3,
         Math.min(w, h) * 0.6
       );
-      nebula.addColorStop(0, 'rgba(0, 0, 0, 0.1)');
-      nebula.addColorStop(1, 'rgba(120, 90, 200, 0)');
+      nebula.addColorStop(0, 'rgba(0, 0, 0, 0.18)');
+      nebula.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = nebula;
       ctx.fillRect(0, 0, w, h);
 
-      // Faint rose/gold nebula haze on the other side
       const nebula2 = ctx.createRadialGradient(
-        w * 0.22 + offsetRef.current.x * 15,
-        h * 0.78 + offsetRef.current.y * 15,
+        w * 0.25 + offsetRef.current.x * 15,
+        h * 0.75 + offsetRef.current.y * 15,
         0,
-        w * 0.22,
-        h * 0.78,
+        w * 0.25,
+        h * 0.75,
         Math.min(w, h) * 0.55
       );
-      nebula2.addColorStop(0, 'rgba(0, 0, 0, 0.08)');
-      nebula2.addColorStop(1, 'rgba(220, 130, 170, 0)');
+      nebula2.addColorStop(0, 'rgba(0, 0, 0, 0.1)');
+      nebula2.addColorStop(1, 'rgba(220, 120, 180, 0)');
       ctx.fillStyle = nebula2;
       ctx.fillRect(0, 0, w, h);
-    };
-
-    // A perfectly empty void — flat black, no rim, no glow. It should read
-    // as pure absence, blending seamlessly with the background, the way it
-    // does in a real photo of a vortex/accretion disk.
-    const drawBlackHole = (w: number, h: number) => {
-      const { cx, cy } = getCenter(w, h);
-      const rx = Math.min(w, h) * 0.022;
-      const ry = rx * ELLIPSE_TILT;
-
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.fillStyle = '#000000';
-      ctx.beginPath();
-      ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
     };
 
     let t = 0;
@@ -204,13 +144,13 @@ export default function ParticlesBackground() {
         shooting.x += shooting.vx;
         shooting.y += shooting.vy;
         shooting.life += dt;
+        // Fade with life: bright then fade out
         const lifeFrac = shooting.life / shooting.maxLife;
         let alpha = 1;
         if (lifeFrac > 0.65) alpha = Math.max(0, 1 - (lifeFrac - 0.65) / 0.35);
 
-        const mag = Math.hypot(shooting.vx, shooting.vy);
-        const tailX = shooting.x - (shooting.vx / mag) * shooting.len;
-        const tailY = shooting.y - (shooting.vy / mag) * shooting.len;
+        const tailX = shooting.x - shooting.vx / Math.hypot(shooting.vx, shooting.vy) * shooting.len;
+        const tailY = shooting.y - shooting.vy / Math.hypot(shooting.vx, shooting.vy) * shooting.len;
         const grad = ctx.createLinearGradient(shooting.x, shooting.y, tailX, tailY);
         grad.addColorStop(0, `rgba(255,255,255,${alpha})`);
         grad.addColorStop(0.3, `rgba(180,200,255,${0.6 * alpha})`);
@@ -223,6 +163,7 @@ export default function ParticlesBackground() {
         ctx.lineTo(tailX, tailY);
         ctx.stroke();
 
+        // Glowing head
         const headGrad = ctx.createRadialGradient(shooting.x, shooting.y, 0, shooting.x, shooting.y, 5);
         headGrad.addColorStop(0, `rgba(255,255,255,${alpha})`);
         headGrad.addColorStop(1, 'rgba(255,255,255,0)');
@@ -236,100 +177,46 @@ export default function ParticlesBackground() {
         }
       }
 
-      const { cx, cy } = getCenter(w, h);
+      // Parallax-shifted offset per star (closer stars move more)
       const ox = offsetRef.current.x;
       const oy = offsetRef.current.y;
 
-      // Distant background field (very subtle parallax, no rotation)
-      for (const s of farStars) {
-        s.twinklePhase += s.twinkleSpeed * dt;
-        const twinkle = 0.6 + 0.4 * Math.sin(t * s.twinkleSpeed + s.twinklePhase);
-        const sx = s.x + ox * 20 * TILT;
-        const sy = s.y + oy * 20 * TILT;
-        ctx.fillStyle = `rgba(255,255,255,${twinkle * 0.55})`;
-        ctx.beginPath();
-        ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // Particles spiraling into the black hole: fall inward and spin
-      // faster the closer they get, then get consumed and respawn at
-      // the outer edge to feed the disk again.
-      for (let i = 0; i < galaxyStars.length; i++) {
-        const s = galaxyStars[i];
-
-        s.u -= FALL_RATE * (1.3 - s.u) * dt;
-        const angSpeed = SPIN_RATE / (s.u + 0.05);
-        s.angle += angSpeed * dt;
-        s.twinklePhase += s.twinkleSpeed * dt;
-
-        if (s.u <= EVENT_HORIZON_U) {
-          galaxyStars[i] = spawnGalaxyStar(false);
-          continue;
-        }
-
-        const radius = s.u * maxRadius;
-        const sx = cx + Math.cos(s.angle) * radius;
-        const sy = cy + Math.sin(s.angle) * radius * ELLIPSE_TILT;
+      for (const s of stars) {
+        // Slow automatic drift (closer stars drift faster for parallax depth)
+        s.x += (0.05 + (1 - s.z) * 0.12) * Math.cos(s.twinklePhase);
+        s.y += (0.03 + (1 - s.z) * 0.06);
+        // Wrap around so the field looks infinite
+        let sx = ((s.x % w) + w) % w + ox * (1 - s.z) * 60 * TILT * 4;
+        let sy = ((s.y % h) + h) % h + oy * (1 - s.z) * 60 * TILT * 4;
+        sx = ((sx % w) + w) % w;
+        sy = ((sy % h) + h) % h;
 
         const twinkle = 0.6 + 0.4 * Math.sin(t * s.twinkleSpeed + s.twinklePhase);
-        // Dim smoothly over a wide band as a particle nears the horizon —
-        // no brightening right around the void, just a fade to black.
-        const fade = Math.min(1, s.u / DIM_ZONE);
 
-        if (s.u < STREAK_U) {
-          // Close to the void: render as a short tangential motion-blur
-          // wisp instead of a dot, so the spiral reads as flowing streaks
-          // rather than scattered points near the center.
-          const dirX = -Math.sin(s.angle);
-          const dirY = Math.cos(s.angle) * ELLIPSE_TILT;
-          const mag = Math.hypot(dirX, dirY) || 1;
-          const ux = dirX / mag;
-          const uy = dirY / mag;
-
-          const closeness = 1 - s.u / STREAK_U; // 0 at threshold, 1 at horizon
-          const streakLen = 4 + closeness * 22;
-          const tailX = sx - ux * streakLen;
-          const tailY = sy - uy * streakLen;
-
-          // No brightening as it approaches the void — fade is the only
-          // thing controlling alpha here, so it just quietly dims out.
-          const alpha = twinkle * fade;
-          const grad = ctx.createLinearGradient(tailX, tailY, sx, sy);
-          grad.addColorStop(0, 'rgba(255,255,255,0)');
-          grad.addColorStop(1, `rgba(230,230,235,${alpha})`);
-          ctx.strokeStyle = grad;
-          ctx.lineWidth = Math.max(0.6, s.r * 0.9);
-          ctx.lineCap = 'round';
-          ctx.beginPath();
-          ctx.moveTo(tailX, tailY);
-          ctx.lineTo(sx, sy);
-          ctx.stroke();
-        } else if (s.r > 1.4 && s.hue !== 0) {
+        if (s.r > 1.4 && s.hue !== 0) {
+          // Bright colored stars: halo + bright core
           const halo = ctx.createRadialGradient(sx, sy, 0, sx, sy, s.r * 6);
-          const color = `hsla(${s.hue}, 80%, 70%, ${0.35 * twinkle * fade})`;
-          halo.addColorStop(0, color);
+          const color = `hsl(${s.hue}, 80%, 70%)`;
+          halo.addColorStop(0, color.replace('hsl', 'hsla').replace(')', `, ${0.35 * twinkle})`));
           halo.addColorStop(1, 'rgba(0,0,0,0)');
           ctx.fillStyle = halo;
           ctx.beginPath();
           ctx.arc(sx, sy, s.r * 6, 0, Math.PI * 2);
           ctx.fill();
 
-          ctx.fillStyle = `rgba(255,255,255,${twinkle * fade})`;
+          ctx.fillStyle = `rgba(255,255,255,${twinkle})`;
           ctx.beginPath();
           ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
           ctx.fill();
         } else {
-          const a = twinkle * (0.5 + (1 - s.z) * 0.4) * fade;
+          // Faint background stars
+          const a = twinkle * (0.5 + (1 - s.z) * 0.4);
           ctx.fillStyle = `rgba(255,255,255,${a})`;
           ctx.beginPath();
           ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
           ctx.fill();
         }
       }
-
-      // Draw the black hole on top so infalling particles vanish behind it
-      drawBlackHole(w, h);
 
       rafRef.current = requestAnimationFrame(step);
     };

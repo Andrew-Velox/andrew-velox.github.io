@@ -16,7 +16,7 @@ export default function Home() {
 
       <div className="flex flex-col gap-4 sm:gap-6 items-center text-center touch-none select-none">
         <h1
-          className="text-5xl sm:text-7xl font-normal text-white drop-shadow-[0_4px_20px_rgba(255,255,255,0.4)] tracking-wide select-none"
+          className="text-5xl sm:text-5xl font-normal text-white drop-shadow-[0_4px_20px_rgba(255,255,255,0.4)] tracking-wide select-none"
           style={{
             fontFamily: 'var(--font-major-mono)',
             letterSpacing: '0.02em',
@@ -30,6 +30,7 @@ export default function Home() {
             text="Welcome To My Portfolio [>_<]" 
             speed={100}
             className="font-semibold text-white/80 drop-shadow-lg"
+            
           />
         </h2>
         

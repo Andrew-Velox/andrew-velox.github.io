@@ -19,7 +19,8 @@ import LoadingScreen from "../components/LoadingScreen";
 import ChatBot from "../components/ChatBot";
 import ClickFireworks from "../components/ClickFireworks";
 // import ParticlesBackground from "../components/ParticlesBackground";
-import BgGif from "../components/BgGif";
+// import BgGif from "../components/BgGif";
+import ParticlesBackground from "../components/ParticlesBackground";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -142,8 +143,8 @@ export default function RootLayout({
         <LoadingScreen />
         <MediaPreloader />
         <ClickFireworks />
-        {/* <ParticlesBackground /> */}
-        <BgGif src="/bg_animaton/ani.gif" />
+        {/* <BgGif src="/bg_animaton/ani.gif" /> */}
+        <ParticlesBackground />
         <div className="relative z-10 min-h-screen">
           <div className="min-h-screen pb-16 flex items-center justify-center">
             {children}
