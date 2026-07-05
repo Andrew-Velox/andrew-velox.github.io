@@ -65,23 +65,32 @@ export default function DynamicFooter() {
   const isNotHomePage = pathname !== '/';
 
   return (
-    <footer className={`fixed bottom-0 left-0 right-0 w-full flex flex-row items-center justify-between gap-4 py-3 sm:py-6 border-t backdrop-blur-md px-4 sm:px-8 text-sm ${
-      isNotHomePage 
-        ? 'border-gray-300 dark:border-gray-700  dark:bg-black/10' 
-        : 'border-gray-200/20 dark:border-gray-800/20 bg-white/10 dark:bg-black/10'
-    }`}>
-      <div className={`text-xs sm:text-sm line-clamp-1 ${
+    <div className="fixed bottom-0 left-0 right-0 z-40">
+      <img
+        src="/projects_img/cat_flip.gif"
+        alt="Sitting cat"
+        className="absolute left-4 sm:left-8 bottom-full h-30 sm:h-32 w-auto select-none pointer-events-none drop-shadow-sm"
+        loading="lazy"
+        style={{ marginBottom: '0px' }}
+      />
+      <footer className={`w-full flex flex-row items-center justify-between gap-4 py-3 sm:py-6 border-t backdrop-blur-md px-4 sm:px-8 text-sm ${
         isNotHomePage
-          ? 'text-dark dark:text-white/80' 
-          : 'text-white/80'
+          ? 'border-gray-300 dark:border-gray-700  dark:bg-black/10'
+          : 'border-gray-200/20 dark:border-gray-800/20 bg-white/10 dark:bg-black/10'
       }`}>
-        © {new Date().getFullYear()} Mohabbat (vlx).
-      </div>
-      <div className="flex gap-3 sm:gap-4 items-center">
-        {socialLinks.map((link) => (
-          <FooterLink key={link.label} {...link} isAboutPage={isNotHomePage} />
-        ))}
-      </div>
-    </footer>
+        <div className={`text-xs sm:text-sm line-clamp-1 ${
+          isNotHomePage
+            ? 'text-dark dark:text-white/80'
+            : 'text-white/80'
+        }`}>
+          © {new Date().getFullYear()} Mohabbat (vlx).
+        </div>
+        <div className="flex gap-3 sm:gap-4 items-center">
+          {socialLinks.map((link) => (
+            <FooterLink key={link.label} {...link} isAboutPage={isNotHomePage} />
+          ))}
+        </div>
+      </footer>
+    </div>
   );
 }
