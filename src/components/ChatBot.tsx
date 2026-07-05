@@ -352,7 +352,7 @@ export default function ChatBot() {
       {/* Floating Chat Icon */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-20 md:bottom-20 right-4 md:right-6 z-50 w-12 h-12 md:w-14 md:h-14 bg-indigo-600 rounded-full shadow-lg shadow-indigo-500/40 hover:shadow-xl hover:shadow-indigo-400/60 hover:bg-indigo-500 transition-all duration-300 flex items-center justify-center group ${
+        className={`fixed bottom-20 md:bottom-20 right-4 md:right-6 z-50 w-12 h-12 md:w-14 md:h-14 bg-dark-600 rounded-full shadow-lg shadow-dark-500/40 hover:shadow-xl hover:shadow-indigo-400/60 hover:bg-indigo-500 transition-all duration-300 flex items-center justify-center group ${
           isOpen ? 'scale-0' : 'scale-100'
         }`}
         aria-label="Open chat"
