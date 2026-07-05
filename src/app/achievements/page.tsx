@@ -76,7 +76,7 @@ function AchievementCard({ item }) {
 			<span className="absolute left-3 w-6 h-6 bg-green-500 border-4 border-white rounded-full shadow" />
 			<div className="ml-16 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-6 flex-1 transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl bg-white/10 dark:bg-white/5 backdrop-blur-md">
 				<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
-					<span className="font-semibold text-lg text-white-700 dark:text-white-400">
+					<span className="font-semibold text-lg text-white">
 						{item.link ? (
 							<a
 								href={item.link}
@@ -112,12 +112,12 @@ export default function Achievements() {
 		<div className="min-h-screen w-full bg-gradient-to-r text-white">
 			<div className="flex flex-col items-center justify-center min-h-screen w-full">
 				<div className="max-w-3xl w-full mx-auto px-4 py-10">
-					<h1 className="text-4xl font-bold mb-2 text-center">Achievements</h1>
+					<h1 className="text-4xl font-bold mb-2 text-center text-white">Achievements</h1>
 					<div className="w-24 h-1 bg-white mx-auto mb-10 rounded-full" />
 					<div className="space-y-16">
 						{achievementsData.map((section) => (
 							<div key={section.section}>
-								<h2 className="text-2xl font-bold mb-6 text-white-700 dark:text-white-400">
+								<h2 className="text-2xl font-bold mb-6 text-white">
 									{section.section}
 								</h2>
 								<div className="relative">

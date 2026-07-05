@@ -1,12 +1,10 @@
 import Navbar from '../components/Navbar';
 import TypingText from '../components/TypingText';
 import ProfileImage from '../components/ProfileImage';
-import VantaBackground from '../components/VantaBackground';
 
 export default function Home() {
   return (
     <>
-      <VantaBackground />
       <main className="w-full max-w-4xl mx-auto px-4 py-8 flex flex-col items-center justify-center gap-6 sm:gap-8 relative z-20 touch-none -mt-20 sm:mt-0">
         <Navbar />
 

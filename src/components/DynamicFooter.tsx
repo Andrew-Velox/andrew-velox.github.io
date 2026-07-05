@@ -73,16 +73,8 @@ export default function DynamicFooter() {
         loading="lazy"
         style={{ marginBottom: '-20px' }}
       />
-      <footer className={`w-full flex flex-row items-center justify-between gap-4 py-3 sm:py-6 border-t backdrop-blur-md px-4 sm:px-8 text-sm ${
-        isNotHomePage
-          ? 'border-gray-300 dark:border-gray-700  dark:bg-black/10'
-          : 'border-gray-200/20 dark:border-gray-800/20 bg-white/10 dark:bg-black/10'
-      }`}>
-        <div className={`text-xs sm:text-sm line-clamp-1 ${
-          isNotHomePage
-            ? 'text-dark dark:text-white/80'
-            : 'text-white/80'
-        }`}>
+      <footer className="w-full flex flex-row items-center justify-between gap-4 py-3 sm:py-6 border-t backdrop-blur-md px-4 sm:px-8 text-sm border-gray-300 dark:border-gray-700 dark:bg-black/10">
+        <div className="text-xs sm:text-sm line-clamp-1 text-dark dark:text-white/80">
           © {new Date().getFullYear()} Mohabbat (vlx).
         </div>
         <div className="flex gap-3 sm:gap-4 items-center">
