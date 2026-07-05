@@ -202,9 +202,9 @@ export default function ChatBot() {
             : 'opacity-0 invisible translate-y-4'
         }`}
       >
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 w-80 md:w-96 h-[450px] md:h-[500px] flex flex-col overflow-hidden">
+        <div className="bg-white/[0.03] backdrop-blur-3xl saturate-150 rounded-2xl shadow-2xl shadow-black/60 border border-white/15 ring-1 ring-inset ring-white/10 w-80 md:w-96 h-[450px] md:h-[500px] flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-yellow-500 to-orange-500 p-3 md:p-4 flex items-center justify-between">
+          <div className="bg-white/[0.04] backdrop-blur-2xl border-b border-white/10 p-3 md:p-4 flex items-center justify-between">
             <div className="flex items-center gap-2 md:gap-3">
               <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/20 flex items-center justify-center">
                 <svg
@@ -269,7 +269,7 @@ export default function ChatBot() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-gray-50 dark:bg-gray-950">
+          <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-white/[0.02] backdrop-blur-2xl">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -280,8 +280,8 @@ export default function ChatBot() {
                 <div
                   className={`max-w-[80%] rounded-2xl px-3 py-2 md:px-4 ${
                     message.sender === 'user'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700'
+                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30'
+                      : 'bg-slate-800/80 text-slate-100 border border-indigo-500/30'
                   }`}
                 >
                   <p className="text-xs md:text-sm whitespace-pre-wrap">{message.text}</p>
@@ -290,15 +290,15 @@ export default function ChatBot() {
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl px-4 py-3 border border-gray-200 dark:border-gray-700">
+                <div className="bg-slate-800/80 rounded-2xl px-4 py-3 border border-indigo-400/20">
                   <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" />
                     <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
                       style={{ animationDelay: '0.1s' }}
                     />
                     <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
                       style={{ animationDelay: '0.2s' }}
                     />
                   </div>
@@ -309,7 +309,7 @@ export default function ChatBot() {
           </div>
 
           {/* Input */}
-          <div className="p-3 md:p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+          <div className="p-3 md:p-4 bg-white/[0.04] backdrop-blur-2xl border-t border-white/10">
             <div className="flex gap-2">
               <input
                 ref={inputRef}
@@ -318,7 +318,7 @@ export default function ChatBot() {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ask me anything..."
-                className="flex-1 px-3 py-2 md:px-4 text-xs md:text-sm rounded-full border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400"
+                className="flex-1 px-3 py-2 md:px-4 text-xs md:text-sm rounded-full border border-indigo-500/40 bg-slate-900/80 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 // readOnly={isLoading}
               />
               <button
@@ -326,8 +326,8 @@ export default function ChatBot() {
                 disabled={isLoading || !inputValue.trim()}
                 className={`rounded-full p-2 transition-colors disabled:cursor-not-allowed ${
                   isLoading || !inputValue.trim()
-                    ? 'bg-gray-400'
-                    : 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600'
+                    ? 'bg-slate-700 text-slate-400'
+                    : 'bg-indigo-600 hover:bg-indigo-500 shadow-md shadow-indigo-500/30'
                 } text-white`}
               >
                 <svg
@@ -352,7 +352,7 @@ export default function ChatBot() {
       {/* Floating Chat Icon */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-20 md:bottom-20 right-4 md:right-6 z-50 w-12 h-12 md:w-14 md:h-14 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group ${
+        className={`fixed bottom-20 md:bottom-20 right-4 md:right-6 z-50 w-12 h-12 md:w-14 md:h-14 bg-indigo-600 rounded-full shadow-lg shadow-indigo-500/40 hover:shadow-xl hover:shadow-indigo-400/60 hover:bg-indigo-500 transition-all duration-300 flex items-center justify-center group ${
           isOpen ? 'scale-0' : 'scale-100'
         }`}
         aria-label="Open chat"
@@ -371,7 +371,7 @@ export default function ChatBot() {
           />
         </svg>
         {/* Pulse animation */}
-        <span className="absolute inset-0 rounded-full bg-yellow-500 animate-ping opacity-20" />
+        <span className="absolute inset-0 rounded-full bg-indigo-500 animate-ping opacity-25" />
       </button>
     </>
   );
