@@ -65,13 +65,13 @@ export default function DynamicFooter() {
   const isNotHomePage = pathname !== '/';
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40">
+    <div className="fixed bottom-0 left-0 right-0 z-[60]">
       <img
-        src="/projects_img/cat_flip.gif"
+        src="/projects_img/pixel-cat.gif"
         alt="Sitting cat"
-        className="absolute left-4 sm:left-8 bottom-full h-30 sm:h-32 w-auto select-none pointer-events-none drop-shadow-sm"
+        className="absolute left-4 sm:left-8 bottom-full z-10 h-30 sm:h-32 w-auto select-none pointer-events-none drop-shadow-sm"
         loading="lazy"
-        style={{ marginBottom: '0px' }}
+        style={{ marginBottom: '-20px' }}
       />
       <footer className={`w-full flex flex-row items-center justify-between gap-4 py-3 sm:py-6 border-t backdrop-blur-md px-4 sm:px-8 text-sm ${
         isNotHomePage
