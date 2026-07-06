@@ -16,6 +16,9 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
   const [hasError, setHasError] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [dot, setDot] = useState({ size: 40, offset: 20, emojiSize: 10 });
+  const [isHovered, setIsHovered] = useState(false);
 
   // Check if it's a video file
   const isVideo = src.endsWith('.webm') || src.endsWith('.mp4') || src.endsWith('.mov');
@@ -24,6 +27,25 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
     // Detect iOS
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     setIsIOS(iOS);
+  }, []);
+
+  // Scale the presence dot proportionally to the circle's actual size
+  // (250px on mobile, 300px on sm+) so it looks correct on all devices.
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const update = () => {
+      const w = el.offsetWidth;
+      // Halo: ~13% of circle width. Offset: ~6.5% of width. Emoji: ~6.7% of width.
+      const size = Math.max(28, Math.round(w * 0.13));
+      const offset = Math.max(10, Math.round(w * 0.065));
+      const emojiSize = Math.max(14, Math.round(w * 0.058));
+      setDot({ size, offset, emojiSize });
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
   useEffect(() => {
@@ -130,9 +152,14 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
   };
 
   return (
-    <div className="flex-shrink-0 touch-none select-none relative">
+    <div
+      ref={wrapperRef}
+      className={`${className} flex-shrink-0 touch-none select-none relative`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* Container that maintains size to prevent layout shift */}
-      <div className={`${className} relative overflow-hidden`}>
+      <div className="w-full h-full relative overflow-hidden rounded-full">
         {/* Skeleton Loading Effect - Positioned absolutely to avoid layout shift */}
         {!mediaLoaded && !hasError && (
           <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/20 to-white/10 animate-pulse">
@@ -200,6 +227,52 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
             )}
           </>
         )}
+      </div>
+
+      {/* GitHub-style online presence dot, expands into a pill on hover */}
+      <div
+        className="absolute z-10 pointer-events-auto"
+        style={{
+          bottom: dot.offset,
+          left: `calc(100% - ${dot.offset + dot.size}px)`, // anchor left edge, not right
+        }}
+      >
+        <div
+          className="inline-flex items-center rounded-full bg-zinc-900/95 border border-white/40 overflow-hidden transition-all duration-300 ease-out cursor-default"
+          style={{
+            height: dot.size,
+            width: isHovered ? 'auto' : dot.size,
+            maxWidth: isHovered ? 240 : dot.size,
+            boxShadow: isHovered
+              ? '0 2px 8px rgba(0,0,0,0.6)'
+              : '0 1px 2px rgba(0,0,0,0.4)',
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          aria-label="Focusing On Myself"
+        >
+          {/* Fixed-size circular box — emoji always centered here, never moves */}
+          <span
+            className="flex items-center justify-center shrink-0 leading-none"
+            style={{ width: dot.size, height: dot.size, fontSize: dot.emojiSize }}
+            role="img"
+            aria-hidden="true"
+          >
+            ☁️
+          </span>
+
+          {/* Text tail — clipped to zero width when collapsed */}
+          <span
+            className="whitespace-nowrap font-medium text-white text-sm transition-all duration-300 ease-out"
+            style={{
+              maxWidth: isHovered ? 200 : 0,
+              opacity: isHovered ? 1 : 0,
+              marginRight: isHovered ? 10 : 0,
+            }}
+          >
+            Focusing On Myself
+          </span>
+        </div>
       </div>
     </div>
   );
