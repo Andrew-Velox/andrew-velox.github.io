@@ -195,28 +195,34 @@ export default function JellyAvatar({
       />
 
       <div
-        ref={containerRef}
         style={{
           width: `${size}px`,
-          height: `${size}px`,
           maxWidth: '100%',
-          // borderRadius: rounded ? '9999px' : '0',
-          overflow: 'hidden',
           boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
-          WebkitBoxReflect:
-            'below 2px linear-gradient(transparent 40%, rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.3) 100%)',
-          touchAction: 'none',
-          cursor: 'grab',
         }}
       >
-        <canvas
-          ref={canvasRef}
+        <div
+          ref={containerRef}
           style={{
-            display: 'block',
-            width: '100%',
-            height: '100%',
+            width: `${size}px`,
+            height: `${size}px`,
+            maxWidth: '100%',
+            overflow: 'hidden',
+            WebkitBoxReflect:
+              'below 2px linear-gradient(transparent 40%, rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.3) 100%)',
+            touchAction: 'none',
+            cursor: 'grab',
           }}
-        />
+        >
+          <canvas
+            ref={canvasRef}
+            style={{
+              display: 'block',
+              width: '100%',
+              height: '100%',
+            }}
+          />
+        </div>
       </div>
     </div>
   );
