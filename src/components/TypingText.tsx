@@ -1,14 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, CSSProperties } from 'react';
 
 interface TypingTextProps {
   text: string;
   speed?: number;
   className?: string;
+  style?: CSSProperties;
 }
 
-export default function TypingText({ text, speed = 100, className = '' }: TypingTextProps) {
+export default function TypingText({ text, speed = 100, className = '', style }: TypingTextProps) {
   const [displayText, setDisplayText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -39,6 +40,7 @@ export default function TypingText({ text, speed = 100, className = '' }: Typing
     <span className={className}
     style={{
       fontFamily: 'var(--font-audiowide)',
+      ...style,
     }}
     >
       {displayText}
