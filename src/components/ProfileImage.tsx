@@ -316,7 +316,7 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
             role="img"
             aria-hidden="true"
           >
-            😊
+            ☁️
           </span>
 
           {/* Text tail — clipped to zero width when collapsed */}

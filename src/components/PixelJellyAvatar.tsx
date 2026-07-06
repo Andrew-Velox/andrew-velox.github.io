@@ -2,26 +2,17 @@
 
 import { useEffect, useRef } from 'react';
 
-interface PixelJellyAvatarProps {
+interface JellyAvatarProps {
   src: string;
   size?: number;
-  gridSize?: number;
-  bgColor?: string;
+  rounded?: boolean; // render as a circle instead of a square
 }
 
-interface Pixel {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-}
-
-export default function PixelJellyAvatar({
+export default function JellyAvatar({
   src,
   size = 450,
-  gridSize = 80,
-  bgColor = '#111e16',
-}: PixelJellyAvatarProps) {
+  rounded = true,
+}: JellyAvatarProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -35,16 +26,19 @@ export default function PixelJellyAvatar({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Configure canvas internal resolution
-    canvas.width = size;
-    canvas.height = size;
-    const pixelSize = canvas.width / gridSize;
+    // Use devicePixelRatio so the image stays sharp on retina screens
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    ctx.scale(dpr, dpr);
 
-    let time = 0;
-    let imagePixels: Pixel[] = [];
-    let isLoaded = false;
+    let isLoaded = img.complete && img.naturalWidth > 0;
+    const onImgLoad = () => {
+      isLoaded = true;
+    };
+    if (!isLoaded) img.addEventListener('load', onImgLoad);
 
-    // Physics state
+    // ---- Physics state (unchanged jelly-drag feel) ----
     let imgX = 0;
     let imgY = 0;
     let targetX = 0;
@@ -60,8 +54,6 @@ export default function PixelJellyAvatar({
     let dragStartY = 0;
 
     const onMouseDown = (e: MouseEvent) => {
-      // Only start the drag when the press begins inside the avatar container;
-      // mousedown is attached to the container so outside clicks do nothing.
       isDragging = true;
       const rect = container.getBoundingClientRect();
       dragStartX = e.clientX - targetX - rect.left;
@@ -77,12 +69,10 @@ export default function PixelJellyAvatar({
 
     const onMouseUp = () => {
       isDragging = false;
-      // Snap target back to the center when released
       targetX = 0;
       targetY = 0;
     };
 
-    // Touch support: track a single active touch
     const activeTouchIdRef: { id: number | null } = { id: null };
 
     const onTouchStart = (e: TouchEvent) => {
@@ -121,65 +111,16 @@ export default function PixelJellyAvatar({
 
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
-    // mousedown is scoped to the container so the avatar only moves when you
-    // actually click on it; mousemove/mouseup stay on window so dragging
-    // continues smoothly if the cursor leaves the avatar bounds.
     container.addEventListener('mousedown', onMouseDown);
-    // Touch events scoped to the container so scrolling the page still works
     container.addEventListener('touchstart', onTouchStart, { passive: true });
     container.addEventListener('touchmove', onTouchMove, { passive: true });
     container.addEventListener('touchend', onTouchEnd);
     container.addEventListener('touchcancel', onTouchEnd);
 
-    const initializeMatrix = () => {
-      try {
-        const imgBuffer = document.createElement('canvas');
-        imgBuffer.width = gridSize;
-        imgBuffer.height = gridSize;
-        const bCtx = imgBuffer.getContext('2d');
-        if (!bCtx) return;
-
-        bCtx.imageSmoothingEnabled = false;
-        // @ts-expect-error - vendor-prefixed properties for older browsers
-        bCtx.webkitImageSmoothingEnabled = false;
-        // @ts-expect-error - vendor-prefixed properties for older browsers
-        bCtx.mozImageSmoothingEnabled = false;
-
-        bCtx.drawImage(img, 0, 0, gridSize, gridSize);
-        const imgData = bCtx.getImageData(0, 0, gridSize, gridSize).data;
-
-        imagePixels = [];
-        for (let y = 0; y < gridSize; y++) {
-          for (let x = 0; x < gridSize; x++) {
-            const idx = (y * gridSize + x) * 4;
-            imagePixels.push({
-              r: imgData[idx],
-              g: imgData[idx + 1],
-              b: imgData[idx + 2],
-              a: imgData[idx + 3],
-            });
-          }
-        }
-        isLoaded = true;
-      } catch (e) {
-        // Surface the failure for debugging without breaking the animation loop
-        // eslint-disable-next-line no-console
-        console.error('Matrix generation error:', e);
-      }
-    };
-
-    if (img.complete && img.naturalWidth > 0) {
-      initializeMatrix();
-    } else {
-      img.addEventListener('load', initializeMatrix);
-    }
-
     let rafId = 0;
 
     const drawLoop = () => {
-      time += 0.05;
-
-      // Spring physics for inertial global drag
+      // Spring physics for inertial drag
       const springStrength = 0.15;
       const friction = 0.78;
 
@@ -192,37 +133,25 @@ export default function PixelJellyAvatar({
       imgX += vx;
       imgY += vy;
 
-      // Map velocity to dynamic scale/skew for a jelly squash
+      // Velocity-driven squash/stretch — the "jelly" feel, minus pixelation
       scaleX = 1 + Math.abs(vx) * 0.003 - Math.abs(vy) * 0.002;
       scaleY = 1 + Math.abs(vy) * 0.003 - Math.abs(vx) * 0.002;
       skewX = vx * 0.004;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, size, size);
 
       ctx.save();
-      ctx.translate(canvas.width / 2 + imgX, canvas.height / 2 + imgY);
+      ctx.translate(size / 2 + imgX, size / 2 + imgY);
       ctx.transform(scaleX, 0, skewX, scaleY, 0, 0);
-      ctx.translate(-canvas.width / 2, -canvas.height / 2);
+      ctx.translate(-size / 2, -size / 2);
 
-      if (isLoaded && imagePixels.length > 0) {
-        for (let y = 0; y < gridSize; y++) {
-          for (let x = 0; x < gridSize; x++) {
-            const pixel = imagePixels[y * gridSize + x];
-            if (pixel.a < 10) continue;
-
-            const idleWarp = Math.sin(y * 0.15 + time * 2.0) * 1.5;
-            const finalX = x * pixelSize + idleWarp;
-            const finalY = y * pixelSize;
-
-            ctx.fillStyle = `rgba(${pixel.r}, ${pixel.g}, ${pixel.b}, ${pixel.a / 255})`;
-            ctx.fillRect(finalX, finalY, pixelSize + 0.3, pixelSize + 0.3);
-          }
-        }
+      if (isLoaded) {
+        ctx.drawImage(img, 0, 0, size, size);
       } else {
         ctx.fillStyle = '#ffffff';
         ctx.font = '14px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('Loading Pixel Avatar Matrix...', canvas.width / 2, canvas.height / 2);
+        ctx.fillText('Loading avatar...', size / 2, size / 2);
       }
 
       ctx.restore();
@@ -241,13 +170,13 @@ export default function PixelJellyAvatar({
       container.removeEventListener('touchmove', onTouchMove);
       container.removeEventListener('touchend', onTouchEnd);
       container.removeEventListener('touchcancel', onTouchEnd);
-      img.removeEventListener('load', initializeMatrix);
+      img.removeEventListener('load', onImgLoad);
     };
-  }, [src, size, gridSize, bgColor]);
+  }, [src, size]);
 
   return (
     <div className="flex flex-col items-center select-none">
-      {/* Hidden source image used to extract the pixel matrix */}
+      {/* Hidden source image, drawn to canvas each frame */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={imgRef}
@@ -263,10 +192,9 @@ export default function PixelJellyAvatar({
           width: `${size}px`,
           height: `${size}px`,
           maxWidth: '100%',
-          backgroundColor: 'transparent',
-          borderRadius: '0',
+          borderRadius: rounded ? '9999px' : '0',
+          overflow: 'hidden',
           boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
-          overflow: 'visible',
           WebkitBoxReflect:
             'below 2px linear-gradient(transparent 40%, rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.3) 100%)',
           touchAction: 'none',
@@ -279,7 +207,6 @@ export default function PixelJellyAvatar({
             display: 'block',
             width: '100%',
             height: '100%',
-            borderRadius: '0',
           }}
         />
       </div>
