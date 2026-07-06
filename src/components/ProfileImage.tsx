@@ -295,8 +295,8 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
             maxWidth: isHovered ? 200 : dot.size,
             flexDirection: expandLeft ? 'row-reverse' : 'row',
             boxShadow: isHovered
-              ? '0 0 0 2px rgba(255,255,255,0.4), 0 2px 8px rgba(0,0,0,0.6)'
-              : '0 0 0 2px rgba(101, 101, 101, 0.4), 0 1px 2px rgba(0,0,0,0.4)',
+              ? '0 0 0 2px rgba(255, 255, 255, 0.4), 0 2px 8px rgba(0,0,0,0.6)'
+              : '0 0 0 2px rgb(38, 33, 33), 0 1px 2px rgba(0,0,0,0.4)',
           }}
           onMouseEnter={handleDotEnter}
           onMouseLeave={() => setIsHovered(false)}
@@ -316,7 +316,7 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
             role="img"
             aria-hidden="true"
           >
-            ☁️
+            😊
           </span>
 
           {/* Text tail — clipped to zero width when collapsed */}
