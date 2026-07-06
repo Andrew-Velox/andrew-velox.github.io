@@ -1,12 +1,14 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const updateDarkMode = () => {
@@ -76,7 +78,14 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setIsOpen(false);
+                if (pathname === link.href) {
+                  window.dispatchEvent(
+                    new CustomEvent('replay-animations', { detail: { path: link.href } })
+                  );
+                }
+              }}
               onMouseEnter={() => setHovered(link.href)}
               onMouseLeave={() => setHovered(null)}
               className="relative flex items-stretch overflow-hidden shadow-lg"

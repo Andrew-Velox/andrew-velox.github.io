@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import PixelJellyAvatar from "../../components/PixelJellyAvatar";
 import FadeIn from "../../components/FadeIn";
 
@@ -14,8 +17,21 @@ const likesSkills: Array<[string, string]> = [
 ];
 
 export default function About() {
+  const [replayKey, setReplayKey] = useState(0);
+
+  useEffect(() => {
+    const onReplay = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (!detail || detail.path === '/about') {
+        setReplayKey((k) => k + 1);
+      }
+    };
+    window.addEventListener('replay-animations', onReplay);
+    return () => window.removeEventListener('replay-animations', onReplay);
+  }, []);
+
   return (
-    <div className="flex flex-col items-start justify-start gap-10 sm:gap-14 mt-8 sm:mt-12 text-white w-full max-w-3xl">
+    <div key={replayKey} className="flex flex-col items-start justify-start gap-10 sm:gap-14 mt-8 sm:mt-12 text-white w-full max-w-3xl">
       {/* Profile row: image (left) + bio (right) */}
       <section className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-10 w-full">
         {/* Interactive Pixel Avatar (drops in with jelly bounce) */}
