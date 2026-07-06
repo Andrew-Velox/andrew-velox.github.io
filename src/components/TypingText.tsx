@@ -36,7 +36,11 @@ export default function TypingText({ text, speed = 100, className = '' }: Typing
   }, [currentIndex, text, speed, isDeleting]);
 
   return (
-    <span className={className} >
+    <span className={className}
+    style={{
+      fontFamily: 'var(--font-audiowide)',
+    }}
+    >
       {displayText}
       <span className="animate-pulse">|</span>
     </span>
