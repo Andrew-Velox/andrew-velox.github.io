@@ -303,20 +303,24 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
           onClick={handleDotClick}
           aria-label="Focusing On Myself"
         >
-          {/* Fixed-size circular box — emoji always centered here, never moves */}
+          {/* Fixed-size circular box — loader cat always centered here, never moves */}
           <span
-            className="flex items-center justify-center shrink-0"
+            className="flex items-center justify-center shrink-0 overflow-hidden"
             style={{
               width: dot.size,
               height: dot.size,
-              fontSize: dot.emojiSize,
-              lineHeight: 1,
               boxSizing: 'border-box',
             }}
             role="img"
             aria-hidden="true"
           >
-            ☁️
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/projects_img/Octocat.svg"
+              alt=""
+              className="w-full h-full object-cover"
+              draggable={false}
+            />
           </span>
 
           {/* Text tail — clipped to zero width when collapsed */}
