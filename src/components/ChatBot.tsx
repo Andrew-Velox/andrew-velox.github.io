@@ -1,5 +1,6 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface Message {
   id: string;
@@ -9,6 +10,10 @@ interface Message {
 }
 
 export default function ChatBot() {
+  const pathname = usePathname();
+  // Routes on which the floating chat icon should be hidden.
+  const KNOWN_ROUTES = new Set(['/', '/about', '/achievements', '/projects']);
+  const hideOnRoute = pathname ? !KNOWN_ROUTES.has(pathname) : false;
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -193,6 +198,9 @@ export default function ChatBot() {
 
   return (
     <>
+      {/* Hide the chat icon entirely on unknown routes (e.g. 404 / not-found) */}
+      {hideOnRoute ? null : (
+      <>
       {/* Chat Container */}
       <div
         ref={chatContainerRef}
@@ -373,6 +381,8 @@ export default function ChatBot() {
         {/* Pulse animation */}
         <span className="absolute inset-0 rounded-full bg-indigo-500 animate-ping opacity-25" />
       </button>
+      </>
+      )}
     </>
   );
 }
