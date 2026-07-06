@@ -209,7 +209,7 @@ export default function JellyAvatar({
             maxWidth: '100%',
             overflow: 'hidden',
             WebkitBoxReflect:
-              'below 2px linear-gradient(transparent 40%, rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.3) 100%)',
+              'below 0px linear-gradient(transparent 40%, rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.3) 100%)',
             touchAction: 'none',
             cursor: 'grab',
           }}
