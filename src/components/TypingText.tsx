@@ -1,6 +1,5 @@
-'use client';
-
-import { useState, useEffect, CSSProperties } from 'react';
+import { useState, useEffect } from 'react';
+import type { CSSProperties } from 'react';
 
 interface TypingTextProps {
   text: string;
@@ -17,18 +16,14 @@ export default function TypingText({ text, speed = 100, className = '', style }:
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (!isDeleting && currentIndex < text.length) {
-        // Typing forward
-        setDisplayText(prev => prev + text[currentIndex]);
-        setCurrentIndex(prev => prev + 1);
+        setDisplayText((prev) => prev + text[currentIndex]);
+        setCurrentIndex((prev) => prev + 1);
       } else if (!isDeleting && currentIndex === text.length) {
-        // Pause at the end before deleting
         setTimeout(() => setIsDeleting(true), 2000);
       } else if (isDeleting && currentIndex > 0) {
-        // Deleting backward
-        setDisplayText(prev => prev.slice(0, -1));
-        setCurrentIndex(prev => prev - 1);
+        setDisplayText((prev) => prev.slice(0, -1));
+        setCurrentIndex((prev) => prev - 1);
       } else if (isDeleting && currentIndex === 0) {
-        // Start typing again
         setIsDeleting(false);
       }
     }, isDeleting ? speed / 2 : speed);
@@ -37,11 +32,12 @@ export default function TypingText({ text, speed = 100, className = '', style }:
   }, [currentIndex, text, speed, isDeleting]);
 
   return (
-    <span className={className}
-    style={{
-      fontFamily: 'var(--font-audiowide)',
-      ...style,
-    }}
+    <span
+      className={className}
+      style={{
+        fontFamily: 'var(--font-audiowide)',
+        ...style,
+      }}
     >
       {displayText}
       <span className="animate-pulse">|</span>

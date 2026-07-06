@@ -1,0 +1,60 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+
+// Fontsource imports — self-hosted woff2, no external requests.
+import '@fontsource/geist/400.css';
+import '@fontsource/geist-mono/400.css';
+import '@fontsource/press-start-2p/400.css';
+import '@fontsource/audiowide/400.css';
+import '@fontsource/major-mono-display/400.css';
+import '@fontsource/dancing-script/400.css';
+import '@fontsource/permanent-marker/400.css';
+import '@fontsource/rubik-spray-paint/400.css';
+import '@fontsource/caveat-brush/400.css';
+import '@fontsource/bungee-inline/400.css';
+import '@fontsource/kalam/400.css';
+
+import LoadingScreen from '../components/LoadingScreen.tsx';
+import MediaPreloader from '../components/MediaPreloader.tsx';
+import ClickFireworks from '../components/ClickFireworks.tsx';
+import ParticlesBackground from '../components/ParticlesBackground.tsx';
+import ChatBot from '../components/ChatBot.tsx';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Mohabbat',
+  description = 'I love Rust',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="[color-scheme:light_dark]">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <ClientRouter />
+  </head>
+  <body class="antialiased">
+    <LoadingScreen client:load />
+    <MediaPreloader client:load />
+    <ClickFireworks client:load transition:persist />
+    <ParticlesBackground client:load transition:persist />
+    <div class="relative z-10 min-h-screen">
+      <div class="min-h-screen pb-16 flex items-center justify-center">
+        <slot />
+      </div>
+      <Footer />
+    </div>
+    <ChatBot client:load transition:persist />
+  </body>
+</html>

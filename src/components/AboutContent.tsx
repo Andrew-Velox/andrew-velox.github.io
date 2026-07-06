@@ -1,8 +1,6 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import PixelJellyAvatar from "../../components/PixelJellyAvatar";
-import FadeIn from "../../components/FadeIn";
+import PixelJellyAvatar from './PixelJellyAvatar';
+import FadeIn from './FadeIn';
 
 const likesSkills: Array<[string, string]> = [
   ['Clouds', 'くも'],
@@ -16,7 +14,7 @@ const likesSkills: Array<[string, string]> = [
   ['Competitive Programming', '競技プログラミング'],
 ];
 
-export default function About() {
+export default function AboutContent() {
   const [replayKey, setReplayKey] = useState(0);
 
   useEffect(() => {
@@ -26,20 +24,26 @@ export default function About() {
         setReplayKey((k) => k + 1);
       }
     };
+    const onSwap = () => setReplayKey((k) => k + 1);
+
     window.addEventListener('replay-animations', onReplay);
-    return () => window.removeEventListener('replay-animations', onReplay);
+    document.addEventListener('astro:after-swap', onSwap);
+    return () => {
+      window.removeEventListener('replay-animations', onReplay);
+      document.removeEventListener('astro:after-swap', onSwap);
+    };
   }, []);
 
   return (
-    <div key={replayKey} className="flex flex-col items-start justify-start gap-10 sm:gap-14 mt-8 sm:mt-12 text-white w-full max-w-3xl">
-      {/* Profile row: image (left) + bio (right) */}
+    <div
+      key={replayKey}
+      className="flex flex-col items-start justify-start gap-10 sm:gap-14 mt-8 sm:mt-12 text-white w-full max-w-3xl"
+    >
       <section className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-10 w-full">
-        {/* Interactive Pixel Avatar (drops in with jelly bounce) */}
         <div className="flex-shrink-0">
           <PixelJellyAvatar src="/prof.png" size={180} />
         </div>
 
-        {/* Profile text */}
         <div className="space-y-3 text-center sm:text-left">
           <FadeIn direction="left" delay={150} duration={700}>
             <h2 className="text-2xl sm:text-3xl font-bold text-white">Profile</h2>
@@ -52,8 +56,7 @@ export default function About() {
           </FadeIn>
           <FadeIn direction="left" delay={350} duration={700}>
             <p className="text-base sm:text-lg text-white/90 leading-relaxed">
-              I code something. /{' '}
-              <span className="text-white/60">たまにコード書くよ。</span>
+              I code something. / <span className="text-white/60">たまにコード書くよ。</span>
             </p>
           </FadeIn>
           <FadeIn direction="left" delay={450} duration={700}>
@@ -75,7 +78,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Likes & Skills — full-width section under the profile row */}
       <section className="w-full">
         <FadeIn direction="left" delay={600} duration={700}>
           <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-white">Likes &amp; Skills</h3>

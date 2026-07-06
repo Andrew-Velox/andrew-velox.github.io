@@ -1,18 +1,25 @@
-'use client';
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
+  const [pathname, setPathname] = useState('/');
   const navRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
+
+  useEffect(() => {
+    setPathname(window.location.pathname);
+    const onSwap = () => setPathname(window.location.pathname);
+    document.addEventListener('astro:after-swap', onSwap);
+    return () => document.removeEventListener('astro:after-swap', onSwap);
+  }, []);
 
   useEffect(() => {
     const updateDarkMode = () => {
-      setIsDarkMode(document.documentElement.classList.contains('dark') || window.matchMedia('(prefers-color-scheme: dark)').matches);
+      setIsDarkMode(
+        document.documentElement.classList.contains('dark') ||
+          window.matchMedia('(prefers-color-scheme: dark)').matches
+      );
     };
     updateDarkMode();
     const observer = new MutationObserver(updateDarkMode);
@@ -46,8 +53,6 @@ export default function Navbar() {
     { href: '/achievements', label: 'ACHIEVEMENTS' },
   ];
 
-  // Punchy anime-HUD palette: bold accent, near-black/white bases —
-  // deliberately higher contrast than a soft glass panel.
   const accent = '#ff2d55';
   const palette = isDarkMode
     ? { base: 'rgba(17, 17, 20, 0.9)', text: '#f2f2f2', subtext: '#8a8a8f', border: 'rgba(255,255,255,0.12)' }
@@ -55,10 +60,9 @@ export default function Navbar() {
 
   return (
     <div ref={navRef}>
-      {/* Hamburger Menu Button — unchanged */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed top-6 right-6 z-50 p-2 transition-colors drop-shadow-lg text-white hover:text-white/70`}
+        className="fixed top-6 right-6 z-50 p-2 transition-colors drop-shadow-lg text-white hover:text-white/70"
         aria-label={isOpen ? 'Close menu' : 'Open menu'}
       >
         <div className="w-6 h-6 flex flex-col justify-center space-y-1">
@@ -68,19 +72,18 @@ export default function Navbar() {
         </div>
       </button>
 
-      {/* Dropdown — angular HUD-style cards, each fully separate, sliding
-          in from the right with a decisive "slam" ease and a diagonal cut
-          on the trailing edge. Hover inverts to the accent color. */}
       <div className="fixed top-20 right-6 z-40 flex flex-col items-end gap-2.5">
         {navLinks.map((link, i) => {
           const isHovered = hovered === link.href;
           return (
-            <Link
+            <a
               key={link.href}
               href={link.href}
               onClick={() => {
                 setIsOpen(false);
-                if (pathname === link.href) {
+                // Same-route click: tell the page to replay its animations
+                // (Astro View Transitions won't fire astro:after-swap for same-path nav).
+                if (window.location.pathname === link.href) {
                   window.dispatchEvent(
                     new CustomEvent('replay-animations', { detail: { path: link.href } })
                   );
@@ -100,19 +103,15 @@ export default function Navbar() {
                   ? 'opacity, transform, background-color, border-color'
                   : 'opacity, transform',
                 transitionDuration: isOpen ? '320ms' : '160ms',
-                transitionTimingFunction: isOpen
-                  ? 'cubic-bezier(0.16, 1, 0.3, 1)'
-                  : 'ease-in',
+                transitionTimingFunction: isOpen ? 'cubic-bezier(0.16, 1, 0.3, 1)' : 'ease-in',
                 transitionDelay: isOpen ? `${i * 50}ms` : '0ms',
                 pointerEvents: isOpen ? 'auto' : 'none',
               }}
             >
-              {/* Accent bar */}
               <span
                 className="w-1.5 shrink-0"
                 style={{ backgroundColor: isHovered ? palette.base : accent, transition: 'background-color 120ms ease' }}
               />
-
               <span className="flex items-center gap-3 px-4 py-3">
                 <span
                   className="text-[10px] font-bold tracking-widest"
@@ -127,7 +126,7 @@ export default function Navbar() {
                   {link.label}
                 </span>
               </span>
-            </Link>
+            </a>
           );
         })}
       </div>
