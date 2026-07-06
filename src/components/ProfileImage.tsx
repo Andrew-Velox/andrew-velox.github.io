@@ -21,6 +21,7 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
   const [dot, setDot] = useState({ size: 40, offset: 20, emojiSize: 10 });
   const [isHovered, setIsHovered] = useState(false);
   const [expandLeft, setExpandLeft] = useState(false);
+  const [pillMaxWidth, setPillMaxWidth] = useState(200);
 
   // Check if it's a video file (guard against src being undefined/empty
   // on an early render before the real value is available)
@@ -167,6 +168,22 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
       setExpandLeft(spaceRight < estimatedPillWidth);
     }
   };
+
+  // Compute expandLeft proactively on mount, on resize, and whenever the
+  // dot's size/offset settle. This way the anchor side is already correct by
+  // the time the user taps on a narrow screen, so the first interaction no
+  // longer flips the formula and causes a pixel jump.
+  useEffect(() => {
+    computeExpandDirection();
+    const onResize = () => computeExpandDirection();
+    window.addEventListener('resize', onResize);
+    const ro = new ResizeObserver(onResize);
+    if (dotRef.current) ro.observe(dotRef.current);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      ro.disconnect();
+    };
+  }, [dot.size, dot.offset]);
 
   const handleDotEnter = () => {
     computeExpandDirection();
