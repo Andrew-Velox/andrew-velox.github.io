@@ -40,7 +40,7 @@ export default function JellyAvatar({
 
     // ---- Physics state (unchanged jelly-drag feel) ----
     let imgX = 0;
-    let imgY = 0;
+    let imgY = -size * 2.2; // start well above the canvas for the drop-in
     let targetX = 0;
     let targetY = 0;
     let vx = 0;
@@ -48,6 +48,7 @@ export default function JellyAvatar({
     let scaleX = 1;
     let scaleY = 1;
     let skewX = 0;
+    let hasLanded = false;
 
     let isDragging = false;
     let dragStartX = 0;
@@ -134,9 +135,16 @@ export default function JellyAvatar({
       imgY += vy;
 
       // Velocity-driven squash/stretch — the "jelly" feel, minus pixelation
-      scaleX = 1 + Math.abs(vx) * 0.003 - Math.abs(vy) * 0.002;
-      scaleY = 1 + Math.abs(vy) * 0.003 - Math.abs(vx) * 0.002;
+      // Amplify the squash/stretch during the drop-in for a dramatic jelly landing
+      const squashBoost = hasLanded ? 1 : 2.4;
+      scaleX = 1 + Math.abs(vx) * 0.003 * squashBoost - Math.abs(vy) * 0.002 * squashBoost;
+      scaleY = 1 + Math.abs(vy) * 0.003 * squashBoost - Math.abs(vx) * 0.002 * squashBoost;
       skewX = vx * 0.004;
+
+      // Mark landed once the drop settles near the rest position
+      if (!hasLanded && Math.abs(imgY) < 2 && Math.abs(vy) < 4) {
+        hasLanded = true;
+      }
 
       ctx.clearRect(0, 0, size, size);
 
@@ -192,7 +200,7 @@ export default function JellyAvatar({
           width: `${size}px`,
           height: `${size}px`,
           maxWidth: '100%',
-          borderRadius: rounded ? '9999px' : '0',
+          // borderRadius: rounded ? '9999px' : '0',
           overflow: 'hidden',
           boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
           WebkitBoxReflect:
