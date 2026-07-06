@@ -24,7 +24,13 @@ type Circle = {
 	duration: number;
 };
 
-const DEFAULT_COLORS = ['#66A7DD', '#3E83E1', '#214EC2'];
+const DEFAULT_COLORS = ['#5b21b6', '#9333ea', '#db2777'];
+// ['#1e1b4b', '#3730a3', '#06b6d4'];
+// ['#2e1065', '#c026d3', '#fb923c'];
+// ['#5b21b6', '#9333ea', '#db2777'];
+// ['#1a1b26', '#292e42', '#7aa2f7'];
+// ['#18181b', '#27272a', '#e11d48'];
+// ['#0a0a0a', '#171717', '#525252'];
 
 function easeOutExpo(t: number): number {
 	return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);

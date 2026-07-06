@@ -31,7 +31,7 @@ export default function Home() {
             speed={100}
             className="font-semibold text-white/80 drop-shadow-lg"
             style={{
-              fontFamily: 'var(--font-major-mono)',
+              fontFamily: 'var(--font-audiowide)',
             }}
             
           />
