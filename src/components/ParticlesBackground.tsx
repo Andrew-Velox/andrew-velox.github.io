@@ -85,14 +85,14 @@ export default function ParticlesBackground() {
     };
 
     const drawBackground = (w: number, h: number) => {
-      // Galaxy gradient: deep indigo core fading to near-black edges
+      // Galaxy gradient: deep crimson core fading to near-black edges
       const cx = w * 0.5 + offsetRef.current.x * 30;
       const cy = h * 0.55 + offsetRef.current.y * 30;
       const radius = Math.max(w, h) * 0.9;
       const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-      grad.addColorStop(0, '#000000');
-      grad.addColorStop(0.35, '#000000');
-      grad.addColorStop(0.7, '#000000');
+      grad.addColorStop(0, '#181818');
+      grad.addColorStop(0.35, '#181818');
+      grad.addColorStop(0.7, '#181818');
       grad.addColorStop(1, '#000000');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, w, h);
@@ -120,7 +120,7 @@ export default function ParticlesBackground() {
         Math.min(w, h) * 0.55
       );
       nebula2.addColorStop(0, 'rgba(0, 0, 0, 0.1)');
-      nebula2.addColorStop(1, 'rgba(220, 120, 180, 0)');
+      nebula2.addColorStop(1, 'rgba(220, 60, 60, 0)');
       ctx.fillStyle = nebula2;
       ctx.fillRect(0, 0, w, h);
     };
@@ -152,9 +152,9 @@ export default function ParticlesBackground() {
         const tailX = shooting.x - shooting.vx / Math.hypot(shooting.vx, shooting.vy) * shooting.len;
         const tailY = shooting.y - shooting.vy / Math.hypot(shooting.vx, shooting.vy) * shooting.len;
         const grad = ctx.createLinearGradient(shooting.x, shooting.y, tailX, tailY);
-        grad.addColorStop(0, `rgba(255,255,255,${alpha})`);
-        grad.addColorStop(0.3, `rgba(180,200,255,${0.6 * alpha})`);
-        grad.addColorStop(1, 'rgba(120,150,255,0)');
+        grad.addColorStop(0, `rgba(135,206,235,${alpha})`);
+        grad.addColorStop(0.3, `rgba(135,206,235,${0.6 * alpha})`);
+        grad.addColorStop(1, 'rgba(135,206,235,0)');
         ctx.strokeStyle = grad;
         ctx.lineWidth = 2;
         ctx.lineCap = 'round';
@@ -165,8 +165,8 @@ export default function ParticlesBackground() {
 
         // Glowing head
         const headGrad = ctx.createRadialGradient(shooting.x, shooting.y, 0, shooting.x, shooting.y, 5);
-        headGrad.addColorStop(0, `rgba(255,255,255,${alpha})`);
-        headGrad.addColorStop(1, 'rgba(255,255,255,0)');
+        headGrad.addColorStop(0, `rgba(135,206,235,${alpha})`);
+        headGrad.addColorStop(1, 'rgba(135,206,235,0)');
         ctx.fillStyle = headGrad;
         ctx.beginPath();
         ctx.arc(shooting.x, shooting.y, 5, 0, Math.PI * 2);
@@ -196,22 +196,21 @@ export default function ParticlesBackground() {
         if (s.r > 1.4 && s.hue !== 0) {
           // Bright colored stars: halo + bright core
           const halo = ctx.createRadialGradient(sx, sy, 0, sx, sy, s.r * 6);
-          const color = `hsl(${s.hue}, 80%, 70%)`;
-          halo.addColorStop(0, color.replace('hsl', 'hsla').replace(')', `, ${0.35 * twinkle})`));
+          halo.addColorStop(0, `rgba(135,206,235,${0.35 * twinkle})`);
           halo.addColorStop(1, 'rgba(0,0,0,0)');
           ctx.fillStyle = halo;
           ctx.beginPath();
           ctx.arc(sx, sy, s.r * 6, 0, Math.PI * 2);
           ctx.fill();
 
-          ctx.fillStyle = `rgba(255,255,255,${twinkle})`;
+          ctx.fillStyle = `rgba(135,206,235,${twinkle})`;
           ctx.beginPath();
           ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
           ctx.fill();
         } else {
           // Faint background stars
           const a = twinkle * (0.5 + (1 - s.z) * 0.4);
-          ctx.fillStyle = `rgba(255,255,255,${a})`;
+          ctx.fillStyle = `rgba(135,206,235,${a})`;
           ctx.beginPath();
           ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
           ctx.fill();

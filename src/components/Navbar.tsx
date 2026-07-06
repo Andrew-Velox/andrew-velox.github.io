@@ -87,9 +87,13 @@ export default function Navbar() {
                 minWidth: 190,
                 opacity: isOpen ? 1 : 0,
                 transform: isOpen ? 'translateX(0)' : 'translateX(40px)',
-                transition: isOpen
-                  ? `opacity 260ms cubic-bezier(0.16, 1, 0.3, 1), transform 320ms cubic-bezier(0.16, 1, 0.3, 1), background-color 120ms ease, border-color 120ms ease`
-                  : `opacity 160ms ease-in, transform 160ms ease-in`,
+                transitionProperty: isOpen
+                  ? 'opacity, transform, background-color, border-color'
+                  : 'opacity, transform',
+                transitionDuration: isOpen ? '320ms' : '160ms',
+                transitionTimingFunction: isOpen
+                  ? 'cubic-bezier(0.16, 1, 0.3, 1)'
+                  : 'ease-in',
                 transitionDelay: isOpen ? `${i * 50}ms` : '0ms',
                 pointerEvents: isOpen ? 'auto' : 'none',
               }}
