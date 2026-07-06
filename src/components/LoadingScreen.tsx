@@ -115,11 +115,11 @@ export default function LoadingScreen() {
             transform: 'rotate(-2deg)',
           }}
         >
-          Mohabbat
-        </h1>
-        <p className="text-xs sm:text-sm uppercase tracking-[0.35em]  animate-pulse">
           Loading the menu…
-        </p>
+        </h1>
+        {/* <p className="text-xs sm:text-sm uppercase tracking-[0.35em]  animate-pulse">
+          Loading the menu…
+        </p> */}
 
         {/* Tiny progress bar */}
         <div className="mt-3 h-[2px] w-40 overflow-hidden rounded-full bg-white/10">
