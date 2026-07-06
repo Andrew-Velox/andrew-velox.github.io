@@ -143,7 +143,10 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
 
     const available = goLeft ? spaceLeft : spaceRight;
     setExpandLeft(goLeft);
-    setPillMaxWidth(Math.max(80, Math.min(200, available - 8)));
+    // Floor at 170px so "Focusing On Myself" always renders fully — the text
+    // is whitespace-nowrap inside an overflow-hidden pill, so any maxWidth
+    // smaller than its natural width clips it mid-word on narrow screens.
+    setPillMaxWidth(Math.max(170, Math.min(220, available - 8)));
   };
 
   useEffect(() => {
