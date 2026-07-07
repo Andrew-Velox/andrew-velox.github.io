@@ -16,7 +16,7 @@ export default function Home() {
 
       <div className="flex flex-col gap-4 sm:gap-6 items-center text-center touch-none select-none">
         <h1
-          className="text-3xl sm:text-5xl font-normal text-white drop-shadow-[0_4px_20px_rgba(255,255,255,0.4)] tracking-wide select-none"
+          className="text-3xl sm:text-5xl font-normal text-white  tracking-wide select-none"
           style={{
             fontFamily: 'var(--font-press-start)',
             letterSpacing: '0.02em',
