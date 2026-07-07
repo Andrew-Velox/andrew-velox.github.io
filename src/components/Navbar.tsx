@@ -59,10 +59,20 @@ export default function Navbar() {
     : { base: 'rgba(255, 255, 255, 0.92)', text: '#161616', subtext: '#8a8a8f', border: 'rgba(0,0,0,0.1)' };
 
   return (
-    <div ref={navRef} style={{ viewTransitionName: 'navbar' }}>
+    <div
+      ref={navRef}
+      style={{
+        viewTransitionName: 'navbar',
+        position: 'fixed',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: 50,
+      }}
+    >
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed top-6 right-6 z-50 p-2 transition-colors drop-shadow-lg text-white hover:text-white/70"
+        style={{ pointerEvents: 'auto' }}
         aria-label={isOpen ? 'Close menu' : 'Open menu'}
       >
         <div className="w-6 h-6 flex flex-col justify-center space-y-1">
