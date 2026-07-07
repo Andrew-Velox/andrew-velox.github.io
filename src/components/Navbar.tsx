@@ -79,11 +79,17 @@ export default function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              onClick={() => {
+              onClick={(e) => {
                 setIsOpen(false);
-                // Same-route click: tell the page to replay its animations
-                // (Astro View Transitions won't fire astro:after-swap for same-path nav).
+                // Same-route click: prevent Astro's <ClientRouter /> from doing a
+                // redundant view-transition swap (re-fetching the same page + double
+                // remounting the React islands). Calling preventDefault sets
+                // event.defaultPrevented=true, which Astro's click interceptor checks
+                // and bails on. We only need the lightweight replay-animations event
+                // to re-trigger the page's FadeIns. This eliminates the lag/disjoint
+                // animation seen on small devices where the double remount is costly.
                 if (window.location.pathname === link.href) {
+                  e.preventDefault();
                   window.dispatchEvent(
                     new CustomEvent('replay-animations', { detail: { path: link.href } })
                   );
