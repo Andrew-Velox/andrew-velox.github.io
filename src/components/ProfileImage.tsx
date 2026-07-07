@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
-import type { MouseEvent as ReactMouseEvent } from 'react';
+'use client';
+
+import React, { useState, useRef, useEffect } from 'react';
 
 interface ProfileImageProps {
   src: string;
@@ -7,6 +8,7 @@ interface ProfileImageProps {
   className?: string;
 }
 
+// Global cache for media preloading
 const mediaCache = new Map<string, { loaded: boolean; element: HTMLVideoElement | HTMLImageElement }>();
 
 export default function ProfileImage({ src, alt, className }: ProfileImageProps) {
@@ -21,18 +23,24 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
   const [expandLeft, setExpandLeft] = useState(false);
   const [pillMaxWidth, setPillMaxWidth] = useState(200);
 
+  // Check if it's a video file (guard against src being undefined/empty
+  // on an early render before the real value is available)
   const isVideo = !!src && (src.endsWith('.webm') || src.endsWith('.mp4') || src.endsWith('.mov'));
 
   useEffect(() => {
+    // Detect iOS
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     setIsIOS(iOS);
   }, []);
 
+  // Scale the presence dot proportionally to the circle's actual size
+  // (250px on mobile, 300px on sm+) so it looks correct on all devices.
   useEffect(() => {
     const el = wrapperRef.current;
     if (!el) return;
     const update = () => {
       const w = el.offsetWidth;
+      // Halo: ~13% of circle width. Offset: ~6.5% of width. Emoji: ~6.7% of width.
       const size = Math.max(28, Math.round(w * 0.13));
       const offset = Math.max(10, Math.round(w * 0.065));
       const emojiSize = Math.max(14, Math.round(w * 0.058));
@@ -47,6 +55,7 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
   useEffect(() => {
     if (!src) return;
 
+    // Check cache first
     const cached = mediaCache.get(src);
     if (cached && cached.loaded) {
       setMediaLoaded(true);
@@ -54,6 +63,7 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
       return;
     }
 
+    // Check sessionStorage for faster subsequent loads
     const cacheKey = `media_${src}`;
     const sessionCached = sessionStorage.getItem(cacheKey);
     if (sessionCached === 'loaded') {
@@ -64,38 +74,56 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
 
     if (isVideo && videoRef.current) {
       const video = videoRef.current;
+
+      // Reset states
       setMediaLoaded(false);
       setHasError(false);
 
-      if (!cached) video.load();
+      // Don't reload if already cached
+      if (!cached) {
+        video.load();
+      }
 
       const playVideo = async () => {
         try {
+          // iOS-specific setup
           video.muted = true;
           video.playsInline = true;
           video.defaultMuted = true;
+
+          // Multiple attempts for iOS
           await video.play();
           setMediaLoaded(true);
+
+          // Cache successful load
           sessionStorage.setItem(cacheKey, 'loaded');
           mediaCache.set(src, { loaded: true, element: video });
         } catch (error) {
           console.warn('Video autoplay failed, trying alternative approach:', error);
+
+          // Fallback for iOS: Try to play on user interaction
           const playOnInteraction = async () => {
             try {
               await video.play();
               setMediaLoaded(true);
+
+              // Cache successful load
               sessionStorage.setItem(cacheKey, 'loaded');
               mediaCache.set(src, { loaded: true, element: video });
+
               document.removeEventListener('touchstart', playOnInteraction);
               document.removeEventListener('click', playOnInteraction);
             } catch (e) {
               console.warn('Video play failed:', e);
             }
           };
+
           document.addEventListener('touchstart', playOnInteraction, { once: true });
           document.addEventListener('click', playOnInteraction, { once: true });
         }
       };
+
+      // Small delay for iOS
       setTimeout(playVideo, 100);
     }
   }, [src, isVideo]);
@@ -104,6 +132,8 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
     const cacheKey = `media_${src}`;
     setMediaLoaded(true);
     setHasError(false);
+
+    // Cache successful load
     sessionStorage.setItem(cacheKey, 'loaded');
     mediaCache.set(src, { loaded: true, element: new Image() });
   };
@@ -118,6 +148,8 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
     const cacheKey = `media_${src}`;
     setMediaLoaded(true);
     setHasError(false);
+
+    // Cache successful load
     sessionStorage.setItem(cacheKey, 'loaded');
     if (videoRef.current) {
       mediaCache.set(src, { loaded: true, element: videoRef.current });
@@ -125,30 +157,22 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
     }
   };
 
+  // Decide expand direction based on real available viewport space.
+  // Only matters on small screens where the avatar sits close to the edge;
+  // on larger screens there's almost always room on the right.
   const computeExpandDirection = () => {
-    if (!dotRef.current) return;
-    const rect = dotRef.current.getBoundingClientRect();
-    const spaceRight = window.innerWidth - rect.right;
-    const spaceLeft = rect.left;
-    const desiredPillWidth = 210;
-
-    const canRight = spaceRight >= desiredPillWidth;
-    const canLeft = spaceLeft >= desiredPillWidth;
-
-    let goLeft: boolean;
-    if (canRight && !canLeft) goLeft = false;
-    else if (canLeft && !canRight) goLeft = true;
-    else if (!canRight && !canLeft) goLeft = spaceLeft > spaceRight;
-    else goLeft = false;
-
-    const available = goLeft ? spaceLeft : spaceRight;
-    setExpandLeft(goLeft);
-    // Floor at 170px so "Focusing On Myself" always renders fully — the text
-    // is whitespace-nowrap inside an overflow-hidden pill, so any maxWidth
-    // smaller than its natural width clips it mid-word on narrow screens.
-    setPillMaxWidth(Math.max(170, Math.min(220, available - 8)));
+    if (dotRef.current) {
+      const rect = dotRef.current.getBoundingClientRect();
+      const spaceRight = window.innerWidth - rect.right;
+      const estimatedPillWidth = 210; // rough width of expanded text + padding
+      setExpandLeft(spaceRight < estimatedPillWidth);
+    }
   };
 
+  // Compute expandLeft proactively on mount, on resize, and whenever the
+  // dot's size/offset settle. This way the anchor side is already correct by
+  // the time the user taps on a narrow screen, so the first interaction no
+  // longer flips the formula and causes a pixel jump.
   useEffect(() => {
     computeExpandDirection();
     const onResize = () => computeExpandDirection();
@@ -166,12 +190,15 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
     setIsHovered(true);
   };
 
-  const handleDotClick = (e: ReactMouseEvent) => {
+  // Mobile/touch: mouseenter fires on tap but mouseleave never fires, so
+  // hover state gets stuck open. Handle taps explicitly as a toggle instead.
+  const handleDotClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     computeExpandDirection();
     setIsHovered((prev) => !prev);
   };
 
+  // Tapping anywhere else on the page closes the expanded pill.
   useEffect(() => {
     if (!isHovered) return;
     const handleOutside = (e: MouseEvent | TouchEvent) => {
@@ -192,27 +219,35 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
       ref={wrapperRef}
       className={`${className} flex-shrink-0 touch-none select-none relative`}
     >
+      {/* Container that maintains size to prevent layout shift */}
       <div className="w-full h-full relative overflow-hidden rounded-full">
+        {/* Skeleton Loading Effect - Positioned absolutely to avoid layout shift */}
         {!mediaLoaded && !hasError && (
           <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/20 to-white/10 animate-pulse">
             <div className="w-full h-full rounded-full bg-gradient-to-br from-white/5 via-transparent to-white/5"></div>
           </div>
         )}
 
+        {/* Error State - Positioned absolutely */}
         {hasError && (
           <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 via-red-400/30 to-red-500/20 flex items-center justify-center">
             <div className="text-white/60 text-sm">Media Error</div>
           </div>
         )}
 
+        {/* Render Video or Image - Always present to maintain layout */}
         {!hasError && (
           <>
+            {/* Use static image fallback for iOS with WebM */}
             {isVideo && isIOS && src.endsWith('.webm') ? (
               <img
                 src="/Fin2.webp"
                 alt={alt}
                 className="w-full h-full object-cover rounded-full transition-opacity duration-300"
-                style={{ opacity: mediaLoaded ? 1 : 0, pointerEvents: 'none' }}
+                style={{
+                  opacity: mediaLoaded ? 1 : 0,
+                  pointerEvents: 'none',
+                }}
                 draggable={false}
                 onLoad={handleLoad}
                 onError={handleError}
@@ -222,7 +257,10 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
                 ref={videoRef}
                 src={src}
                 className="w-full h-full object-cover rounded-full transition-opacity duration-300"
-                style={{ opacity: mediaLoaded ? 1 : 0, pointerEvents: 'none' }}
+                style={{
+                  opacity: mediaLoaded ? 1 : 0,
+                  pointerEvents: 'none',
+                }}
                 autoPlay
                 loop
                 muted
@@ -239,7 +277,10 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
                 src={src}
                 alt={alt}
                 className="w-full h-full object-cover rounded-full transition-opacity duration-300"
-                style={{ opacity: mediaLoaded ? 1 : 0, pointerEvents: 'none' }}
+                style={{
+                  opacity: mediaLoaded ? 1 : 0,
+                  pointerEvents: 'none',
+                }}
                 draggable={false}
                 onLoad={handleLoad}
                 onError={handleError}
@@ -249,6 +290,10 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
         )}
       </div>
 
+      {/* GitHub-style online presence dot — expands into a pill on hover.
+          Anchors from the right normally, but flips to anchor from the
+          left (growing leftward) on small screens where there isn't
+          enough room to the right of the avatar. */}
       <div
         ref={dotRef}
         className="absolute z-10 pointer-events-auto"
@@ -264,7 +309,7 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
           style={{
             height: dot.size,
             width: isHovered ? 'auto' : dot.size,
-            maxWidth: isHovered ? pillMaxWidth : dot.size,
+            maxWidth: isHovered ? 200 : dot.size,
             flexDirection: expandLeft ? 'row-reverse' : 'row',
             boxShadow: isHovered
               ? '0 0 0 2px rgba(255, 255, 255, 0.4), 0 2px 8px rgba(0,0,0,0.6)'
@@ -275,12 +320,18 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
           onClick={handleDotClick}
           aria-label="Focusing On Myself"
         >
+          {/* Fixed-size circular box — loader cat always centered here, never moves */}
           <span
             className="flex items-center justify-center shrink-0 overflow-hidden"
-            style={{ width: dot.size, height: dot.size, boxSizing: 'border-box' }}
+            style={{
+              width: dot.size,
+              height: dot.size,
+              boxSizing: 'border-box',
+            }}
             role="img"
             aria-hidden="true"
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/projects_img/Octocat.svg"
               alt=""
@@ -289,10 +340,11 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
             />
           </span>
 
+          {/* Text tail — clipped to zero width when collapsed */}
           <span
             className="whitespace-nowrap font-medium text-white text-sm transition-all duration-300 ease-out"
             style={{
-              maxWidth: isHovered ? pillMaxWidth : 0,
+              maxWidth: isHovered ? 200 : 0,
               opacity: isHovered ? 1 : 0,
               marginLeft: expandLeft && isHovered ? 10 : 0,
               marginRight: !expandLeft && isHovered ? 10 : 0,

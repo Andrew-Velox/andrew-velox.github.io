@@ -1,12 +1,18 @@
+'use client';
+
 import { useEffect, useRef } from 'react';
 
 interface JellyAvatarProps {
   src: string;
   size?: number;
-  rounded?: boolean;
+  rounded?: boolean; // render as a circle instead of a square
 }
 
-export default function JellyAvatar({ src, size = 450, rounded = true }: JellyAvatarProps) {
+export default function JellyAvatar({
+  src,
+  size = 450,
+  rounded = true,
+}: JellyAvatarProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -20,6 +26,7 @@ export default function JellyAvatar({ src, size = 450, rounded = true }: JellyAv
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Use devicePixelRatio so the image stays sharp on retina screens
     const dpr = window.devicePixelRatio || 1;
     canvas.width = size * dpr;
     canvas.height = size * dpr;
@@ -31,8 +38,9 @@ export default function JellyAvatar({ src, size = 450, rounded = true }: JellyAv
     };
     if (!isLoaded) img.addEventListener('load', onImgLoad);
 
+    // ---- Physics state (unchanged jelly-drag feel) ----
     let imgX = 0;
-    let imgY = -size * 2.2;
+    let imgY = -size * 2.2; // start well above the canvas for the drop-in
     let targetX = 0;
     let targetY = 0;
     let vx = 0;
@@ -52,12 +60,14 @@ export default function JellyAvatar({ src, size = 450, rounded = true }: JellyAv
       dragStartX = e.clientX - targetX - rect.left;
       dragStartY = e.clientY - targetY - rect.top;
     };
+
     const onMouseMove = (e: MouseEvent) => {
       if (!isDragging) return;
       const rect = container.getBoundingClientRect();
       targetX = e.clientX - dragStartX - rect.left;
       targetY = e.clientY - dragStartY - rect.top;
     };
+
     const onMouseUp = () => {
       isDragging = false;
       targetX = 0;
@@ -65,6 +75,7 @@ export default function JellyAvatar({ src, size = 450, rounded = true }: JellyAv
     };
 
     const activeTouchIdRef: { id: number | null } = { id: null };
+
     const onTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 0) return;
       const touch = e.touches[0];
@@ -74,17 +85,23 @@ export default function JellyAvatar({ src, size = 450, rounded = true }: JellyAv
       dragStartX = touch.clientX - targetX - rect.left;
       dragStartY = touch.clientY - targetY - rect.top;
     };
+
     const onTouchMove = (e: TouchEvent) => {
       if (!isDragging || activeTouchIdRef.id === null) return;
-      const touch = Array.from(e.touches).find((t) => t.identifier === activeTouchIdRef.id);
+      const touch = Array.from(e.touches).find(
+        (t) => t.identifier === activeTouchIdRef.id
+      );
       if (!touch) return;
       const rect = container.getBoundingClientRect();
       targetX = touch.clientX - dragStartX - rect.left;
       targetY = touch.clientY - dragStartY - rect.top;
     };
+
     const onTouchEnd = (e: TouchEvent) => {
       if (activeTouchIdRef.id === null) return;
-      const stillTouching = Array.from(e.touches).some((t) => t.identifier === activeTouchIdRef.id);
+      const stillTouching = Array.from(e.touches).some(
+        (t) => t.identifier === activeTouchIdRef.id
+      );
       if (!stillTouching) {
         isDragging = false;
         activeTouchIdRef.id = null;
@@ -104,6 +121,7 @@ export default function JellyAvatar({ src, size = 450, rounded = true }: JellyAv
     let rafId = 0;
 
     const drawLoop = () => {
+      // Spring physics for inertial drag
       const springStrength = 0.15;
       const friction = 0.78;
 
@@ -116,11 +134,14 @@ export default function JellyAvatar({ src, size = 450, rounded = true }: JellyAv
       imgX += vx;
       imgY += vy;
 
+      // Velocity-driven squash/stretch — the "jelly" feel, minus pixelation
+      // Amplify the squash/stretch during the drop-in for a dramatic jelly landing
       const squashBoost = hasLanded ? 1 : 2.4;
       scaleX = 1 + Math.abs(vx) * 0.003 * squashBoost - Math.abs(vy) * 0.002 * squashBoost;
       scaleY = 1 + Math.abs(vy) * 0.003 * squashBoost - Math.abs(vx) * 0.002 * squashBoost;
       skewX = vx * 0.004;
 
+      // Mark landed once the drop settles near the rest position
       if (!hasLanded && Math.abs(imgY) < 2 && Math.abs(vy) < 4) {
         hasLanded = true;
       }
@@ -163,7 +184,15 @@ export default function JellyAvatar({ src, size = 450, rounded = true }: JellyAv
 
   return (
     <div className="flex flex-col items-center select-none">
-      <img ref={imgRef} src={src} alt="" crossOrigin="anonymous" style={{ display: 'none' }} />
+      {/* Hidden source image, drawn to canvas each frame */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        ref={imgRef}
+        src={src}
+        alt=""
+        crossOrigin="anonymous"
+        style={{ display: 'none' }}
+      />
 
       <div
         style={{
@@ -180,14 +209,18 @@ export default function JellyAvatar({ src, size = 450, rounded = true }: JellyAv
             maxWidth: '100%',
             overflow: 'hidden',
             WebkitBoxReflect:
-              'below 2px linear-gradient(transparent 40%, rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.3) 100%)',
+              'below 0px linear-gradient(transparent 40%, rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.3) 100%)',
             touchAction: 'none',
             cursor: 'grab',
           }}
         >
           <canvas
             ref={canvasRef}
-            style={{ display: 'block', width: '100%', height: '100%' }}
+            style={{
+              display: 'block',
+              width: '100%',
+              height: '100%',
+            }}
           />
         </div>
       </div>

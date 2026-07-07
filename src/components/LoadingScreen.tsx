@@ -1,30 +1,26 @@
-import { useState, useEffect } from 'react';
+'use client';
 
-const FIRSTLOAD_KEY = '__loadingShown';
+import { useState, useEffect } from 'react';
 
 export default function LoadingScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [hide, setHide] = useState(false);
 
   useEffect(() => {
-    // Only show the loader on the first site load, not on View Transition swaps.
-    if (sessionStorage.getItem(FIRSTLOAD_KEY) === '1') {
-      setIsLoading(false);
-      return;
-    }
-
     let mounted = true;
     let safetyTimer: ReturnType<typeof setTimeout> | null = null;
 
+    // Hide the loader as soon as the page reports it's fully loaded,
+    // with a small floor so the cat gif is visible long enough to register.
     const FADE_MS = 350;
     const MIN_VISIBLE_MS = 700;
-    const SAFETY_MS = 4000;
+    const SAFETY_MS = 4000; // hard cap so it can never get stuck
 
     const finish = () => {
       if (!mounted) return;
       setHide(true);
+      // Remove from DOM after the CSS fade completes.
       window.setTimeout(() => mounted && setIsLoading(false), FADE_MS);
-      sessionStorage.setItem(FIRSTLOAD_KEY, '1');
     };
 
     const start = performance.now();
@@ -41,6 +37,7 @@ export default function LoadingScreen() {
       window.addEventListener('load', onLoad, { once: true });
     }
 
+    // Safety cap in case 'load' never fires (rare network/CORS edge cases).
     safetyTimer = setTimeout(finish, SAFETY_MS);
 
     return () => {
@@ -57,8 +54,11 @@ export default function LoadingScreen() {
       className={`fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden transition-opacity duration-300 ${
         hide ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
-      style={{ background: '#000000' }}
+      style={{
+        background: '#000000',
+      }}
     >
+      {/* Faint stars (CSS only, decorative) */}
       <div className="pointer-events-none absolute inset-0 opacity-70">
         {Array.from({ length: 40 }).map((_, i) => {
           const top = `${(i * 37) % 100}%`;
@@ -83,15 +83,18 @@ export default function LoadingScreen() {
         })}
       </div>
 
+      {/* Soft violet halo behind the cat */}
       <div
         className="pointer-events-none absolute rounded-full blur-3xl"
         style={{
           width: 380,
           height: 380,
-          background: 'radial-gradient(circle, rgba(0, 0, 0, 0.45) 0%, rgba(139,92,246,0) 70%)',
+          background:
+            'radial-gradient(circle, rgba(0, 0, 0, 0.45) 0%, rgba(139,92,246,0) 70%)',
         }}
       />
 
+      {/* Cat */}
       <div className="relative z-10 animate-[catBounce_1.4s_ease-in-out_infinite]">
         <img
           src="/projects_img/cat_laoding.gif"
@@ -103,6 +106,7 @@ export default function LoadingScreen() {
         />
       </div>
 
+      {/* Brand + caption */}
       <div className="relative z-10 mt-6 flex flex-col items-center gap-2 text-center">
         <h1
           className="text-3xl sm:text-4xl font-bold text-white tracking-wide"
@@ -113,10 +117,35 @@ export default function LoadingScreen() {
         >
           Loading the menu…
         </h1>
+        {/* <p className="text-xs sm:text-sm uppercase tracking-[0.35em]  animate-pulse">
+          Loading the menu…
+        </p> */}
+
+        {/* Tiny progress bar */}
         <div className="mt-3 h-[2px] w-40 overflow-hidden rounded-full bg-white/10">
           <div className="h-full w-1/3 animate-[barSlide_1.2s_ease-in-out_infinite] bg-gray-400/80" />
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes catBounce {
+          0%,
+          100% {
+            transform: translateY(0) rotate(-1deg);
+          }
+          50% {
+            transform: translateY(-10px) rotate(1deg);
+          }
+        }
+        @keyframes barSlide {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(300%);
+          }
+        }
+      `}</style>
     </div>
   );
 }

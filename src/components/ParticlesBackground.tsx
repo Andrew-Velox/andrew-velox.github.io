@@ -1,13 +1,15 @@
+'use client';
+
 import { useEffect, useRef } from 'react';
 
 interface Star {
   x: number;
   y: number;
-  z: number;
+  z: number; // depth (0..1), used for size and parallax
   r: number;
   twinkleSpeed: number;
   twinklePhase: number;
-  hue: number;
+  hue: number; // 0..360 (subtle color tint)
 }
 
 interface Shooting {
@@ -24,7 +26,6 @@ export default function ParticlesBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
   const offsetRef = useRef({ x: 0, y: 0 });
-  const resizeRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -36,9 +37,10 @@ export default function ParticlesBackground() {
     let stars: Star[] = [];
     let shooting: Shooting | null = null;
     let nextShoot = 1.5 + Math.random() * 3;
-    const TILT = 0.15;
+    const TILT = 0.15; // how much far stars drift with mouse (subtle parallax)
 
     const spawnShooting = (w: number) => {
+      // Start near top, shoot down-right (or down-left)
       const fromLeft = Math.random() > 0.5;
       const angle = fromLeft ? Math.PI * 0.22 : Math.PI - Math.PI * 0.22;
       const speed = 13 + Math.random() * 10;
@@ -64,10 +66,11 @@ export default function ParticlesBackground() {
       shooting = null;
       nextShoot = 1.5 + Math.random() * 3;
 
+      // Scale star count with area, but cap for perf
       const area = w * h;
       const target = Math.min(900, Math.max(300, Math.floor(area / 1800)));
       stars = Array.from({ length: target }, () => {
-        const z = Math.random();
+        const z = Math.random(); // 0 = close/big, 1 = far/small
         return {
           x: Math.random() * w,
           y: Math.random() * h,
@@ -75,13 +78,14 @@ export default function ParticlesBackground() {
           r: (1 - z) * 1.6 + z * 0.4 + Math.random() * 0.4,
           twinkleSpeed: 0.4 + Math.random() * 1.6,
           twinklePhase: Math.random() * Math.PI * 2,
+          // Most stars white, occasional blue/purple/gold tints
           hue: Math.random() < 0.85 ? 0 : [210, 270, 45][Math.floor(Math.random() * 3)],
         };
       });
     };
-    resizeRef.current = resize;
 
     const drawBackground = (w: number, h: number) => {
+      // Galaxy gradient: deep crimson core fading to near-black edges
       const cx = w * 0.5 + offsetRef.current.x * 30;
       const cy = h * 0.55 + offsetRef.current.y * 30;
       const radius = Math.max(w, h) * 0.9;
@@ -93,6 +97,7 @@ export default function ParticlesBackground() {
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, w, h);
 
+      // Faint nebula glow
       const nebula = ctx.createRadialGradient(
         w * 0.7 + offsetRef.current.x * 20,
         h * 0.3 + offsetRef.current.y * 20,
@@ -129,6 +134,7 @@ export default function ParticlesBackground() {
 
       drawBackground(w, h);
 
+      // Shooting stars timer
       nextShoot -= dt;
       if (nextShoot <= 0) {
         spawnShooting(w);
@@ -138,6 +144,7 @@ export default function ParticlesBackground() {
         shooting.x += shooting.vx;
         shooting.y += shooting.vy;
         shooting.life += dt;
+        // Fade with life: bright then fade out
         const lifeFrac = shooting.life / shooting.maxLife;
         let alpha = 1;
         if (lifeFrac > 0.65) alpha = Math.max(0, 1 - (lifeFrac - 0.65) / 0.35);
@@ -156,6 +163,7 @@ export default function ParticlesBackground() {
         ctx.lineTo(tailX, tailY);
         ctx.stroke();
 
+        // Glowing head
         const headGrad = ctx.createRadialGradient(shooting.x, shooting.y, 0, shooting.x, shooting.y, 5);
         headGrad.addColorStop(0, `rgba(135,206,235,${alpha})`);
         headGrad.addColorStop(1, 'rgba(135,206,235,0)');
@@ -169,12 +177,15 @@ export default function ParticlesBackground() {
         }
       }
 
+      // Parallax-shifted offset per star (closer stars move more)
       const ox = offsetRef.current.x;
       const oy = offsetRef.current.y;
 
       for (const s of stars) {
+        // Slow automatic drift (closer stars drift faster for parallax depth)
         s.x += (0.05 + (1 - s.z) * 0.12) * Math.cos(s.twinklePhase);
         s.y += (0.03 + (1 - s.z) * 0.06);
+        // Wrap around so the field looks infinite
         let sx = ((s.x % w) + w) % w + ox * (1 - s.z) * 60 * TILT * 4;
         let sy = ((s.y % h) + h) % h + oy * (1 - s.z) * 60 * TILT * 4;
         sx = ((sx % w) + w) % w;
@@ -183,6 +194,7 @@ export default function ParticlesBackground() {
         const twinkle = 0.6 + 0.4 * Math.sin(t * s.twinkleSpeed + s.twinklePhase);
 
         if (s.r > 1.4 && s.hue !== 0) {
+          // Bright colored stars: halo + bright core
           const halo = ctx.createRadialGradient(sx, sy, 0, sx, sy, s.r * 6);
           halo.addColorStop(0, `rgba(135,206,235,${0.35 * twinkle})`);
           halo.addColorStop(1, 'rgba(0,0,0,0)');
@@ -196,6 +208,7 @@ export default function ParticlesBackground() {
           ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
           ctx.fill();
         } else {
+          // Faint background stars
           const a = twinkle * (0.5 + (1 - s.z) * 0.4);
           ctx.fillStyle = `rgba(135,206,235,${a})`;
           ctx.beginPath();
@@ -214,13 +227,6 @@ export default function ParticlesBackground() {
       offsetRef.current.y += (ny - offsetRef.current.y) * 0.05;
     };
 
-    // Re-bind on View Transitions swaps (the persisted canvas survives, but
-    // viewport dimensions may have changed via scroll restoration).
-    const onAfterSwap = () => {
-      if (resizeRef.current) resizeRef.current();
-    };
-    document.addEventListener('astro:after-swap', onAfterSwap);
-
     resize();
     step();
     window.addEventListener('resize', resize);
@@ -230,7 +236,6 @@ export default function ParticlesBackground() {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('astro:after-swap', onAfterSwap);
     };
   }, []);
 
