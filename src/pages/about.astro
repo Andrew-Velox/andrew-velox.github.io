@@ -5,7 +5,7 @@ import AboutContent from '../components/AboutContent.tsx';
 ---
 
 <Base title="About - Mohabbat">
-  <Navbar client:load />
+  <Navbar client:load transition:persist="navbar" />
   <main class="w-full max-w-4xl mx-auto px-4 py-8 pb-24 relative z-20">
     <AboutContent client:load />
   </main>

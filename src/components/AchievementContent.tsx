@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import FadeIn from './FadeIn';
 
 interface Item {
@@ -106,8 +107,27 @@ function AchievementCard({ item }: { item: Item }) {
 }
 
 export default function AchievementContent() {
+  const [replayKey, setReplayKey] = useState(0);
+
+  useEffect(() => {
+    const onReplay = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (!detail || detail.path === '/achievements') {
+        setReplayKey((k) => k + 1);
+      }
+    };
+    const onSwap = () => setReplayKey((k) => k + 1);
+
+    window.addEventListener('replay-animations', onReplay);
+    document.addEventListener('astro:after-swap', onSwap);
+    return () => {
+      window.removeEventListener('replay-animations', onReplay);
+      document.removeEventListener('astro:after-swap', onSwap);
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen w-full bg-gradient-to-r text-white">
+    <div key={replayKey} className="min-h-screen w-full bg-gradient-to-r text-white">
       <div className="flex flex-col items-center justify-center min-h-screen w-full">
         <div className="max-w-3xl w-full mx-auto px-4 py-10">
           <h1 className="text-4xl font-bold mb-2 text-center text-white">Achievements</h1>

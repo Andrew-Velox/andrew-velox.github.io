@@ -7,7 +7,7 @@ import TypingText from '../components/TypingText.tsx';
 
 <Base title="Mohabbat">
   <main class="w-full max-w-4xl mx-auto px-4 py-8 flex flex-col items-center justify-center gap-6 sm:gap-8 relative z-20 touch-none -mt-20 sm:mt-0">
-    <Navbar client:load />
+    <Navbar client:load transition:persist="navbar" />
 
     <ProfileImage
       client:load

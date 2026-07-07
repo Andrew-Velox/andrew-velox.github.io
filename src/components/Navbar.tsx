@@ -59,7 +59,7 @@ export default function Navbar() {
     : { base: 'rgba(255, 255, 255, 0.92)', text: '#161616', subtext: '#8a8a8f', border: 'rgba(0,0,0,0.1)' };
 
   return (
-    <div ref={navRef}>
+    <div ref={navRef} style={{ viewTransitionName: 'navbar' }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed top-6 right-6 z-50 p-2 transition-colors drop-shadow-lg text-white hover:text-white/70"
@@ -79,7 +79,7 @@ export default function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              data-astro-prefetch="false"
+data-astro-prefetch="hover"
               onClick={(e) => {
                 setIsOpen(false);
                 // Same-route click: prevent Astro's <ClientRouter /> from doing a

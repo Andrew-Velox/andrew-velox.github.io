@@ -76,10 +76,22 @@ body {
   }
 }
 
-/* View Transitions */
+/* View Transitions — near-instant to match the snappy pre-Astro feel */
 @media (prefers-reduced-motion: no-preference) {
   ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation-duration: 0.3s;
+    animation-duration: 0.12s;
   }
+}
+
+/* The navbar persists across page swaps (transition:persist="navbar").
+   Without its own view-transition layer, the root snapshot (taken the
+   moment a link is clicked) shows the open dropdown and visually masks
+   the real navbar's close animation playing underneath for ~120ms —
+   looking like the close was canceled. Giving it a view-transition-name
+   pulls it out of the root snapshot, and disabling its own animation
+   means the live DOM (with the close transition) shows through instantly. */
+::view-transition-old(navbar),
+::view-transition-new(navbar) {
+  animation: none;
 }
