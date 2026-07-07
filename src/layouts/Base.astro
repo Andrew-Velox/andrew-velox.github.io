@@ -18,7 +18,7 @@ import '@fontsource/kalam/400.css';
 import LoadingScreen from '../components/LoadingScreen.tsx';
 import MediaPreloader from '../components/MediaPreloader.tsx';
 import ClickFireworks from '../components/ClickFireworks.tsx';
-import ParticlesBackground from '../components/ParticlesBackground.tsx';
+// import ParticlesBackground from '../components/ParticlesBackground.tsx';
 import ChatBot from '../components/ChatBot.tsx';
 import Footer from '../components/Footer.astro';
 
@@ -48,7 +48,7 @@ const {
     <LoadingScreen client:load />
     <MediaPreloader client:load />
     <ClickFireworks client:load transition:persist />
-    <ParticlesBackground client:load transition:persist />
+    {/* <ParticlesBackground client:load transition:persist /> */}
     <div class="relative z-10 min-h-screen">
       <div class="min-h-screen pb-16 flex items-center justify-center">
         <slot />

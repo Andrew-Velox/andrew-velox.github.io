@@ -79,6 +79,7 @@ export default function Navbar() {
             <a
               key={link.href}
               href={link.href}
+              data-astro-prefetch="false"
               onClick={(e) => {
                 setIsOpen(false);
                 // Same-route click: prevent Astro's <ClientRouter /> from doing a
@@ -88,6 +89,13 @@ export default function Navbar() {
                 // and bails on. We only need the lightweight replay-animations event
                 // to re-trigger the page's FadeIns. This eliminates the lag/disjoint
                 // animation seen on small devices where the double remount is costly.
+                //
+                // The `data-astro-prefetch="false"` above is equally important: it
+                // stops Astro's touchstart/mousedown prefetch listener from fetching
+                // the page we're already on. On low-end mobile + slow connections,
+                // Astro's `prefetchAll` would otherwise kick off a background fetch +
+                // DOMParser parse during the animation replay — competing for CPU and
+                // causing the same lag even with the swap blocked.
                 if (window.location.pathname === link.href) {
                   e.preventDefault();
                   window.dispatchEvent(
