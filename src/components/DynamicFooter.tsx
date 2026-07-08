@@ -69,10 +69,17 @@ export default function DynamicFooter() {
         loading="lazy"
         style={{ marginBottom: '-20px' }}
       />
-      <footer className="w-full flex flex-row items-center justify-between gap-4 py-3 sm:py-6 border-t backdrop-blur-md px-4 sm:px-8 text-sm border-white/20 bg-white/5">
+      <footer className="relative w-full flex flex-row items-center justify-between gap-4 h-14 sm:h-16 overflow-hidden border-t backdrop-blur-md px-4 sm:px-8 text-sm border-white/20 bg-white/5">
         <div className="text-xs sm:text-sm line-clamp-1 text-white/80">
           © {new Date().getFullYear()} Mohabbat (vlx).
         </div>
+
+        <img
+          src="https://count.getloli.com/@mohabbat-portfolio?name=mohabbat-portfolio&theme=booru-lewd&padding=3&offset=0&align=center&scale=1&pixelated=1&darkmode=0"
+          alt="visitor count"
+          className="h-10 sm:h-12 w-auto object-contain shrink-0"
+        />
+
         <div className="flex gap-3 sm:gap-4 items-center">
           {socialLinks.map((link) => (
             <FooterLink key={link.label} {...link} />
