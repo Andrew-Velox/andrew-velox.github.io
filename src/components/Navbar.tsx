@@ -48,7 +48,7 @@ export default function Navbar() {
 
   // Punchy anime-HUD palette: bold accent, near-black/white bases —
   // deliberately higher contrast than a soft glass panel.
-  const accent = '#ff2d55';
+  const accent = '#862ce1';
   const palette = isDarkMode
     ? { base: 'rgba(17, 17, 20, 0.9)', text: '#f2f2f2', subtext: '#8a8a8f', border: 'rgba(255,255,255,0.12)' }
     : { base: 'rgba(255, 255, 255, 0.92)', text: '#161616', subtext: '#8a8a8f', border: 'rgba(0,0,0,0.1)' };
@@ -93,7 +93,7 @@ export default function Navbar() {
                 clipPath: 'polygon(0 0, 100% 0, 92% 100%, 0% 100%)',
                 backgroundColor: isHovered ? accent : palette.base,
                 border: `1px solid ${isHovered ? accent : palette.border}`,
-                minWidth: 190,
+                minWidth: 150,
                 opacity: isOpen ? 1 : 0,
                 transform: isOpen ? 'translateX(0)' : 'translateX(40px)',
                 transitionProperty: isOpen
@@ -114,12 +114,6 @@ export default function Navbar() {
               />
 
               <span className="flex items-center gap-3 px-4 py-3">
-                <span
-                  className="text-[10px] font-bold tracking-widest"
-                  style={{ color: isHovered ? palette.base : accent, transition: 'color 120ms ease' }}
-                >
-                  {String(i + 1).padStart(2, '0')}
-                </span>
                 <span
                   className="text-sm font-extrabold tracking-wide italic"
                   style={{ color: isHovered ? '#ffffff' : palette.text, transition: 'color 120ms ease' }}
