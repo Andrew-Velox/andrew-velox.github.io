@@ -60,7 +60,7 @@ export default function NotFound() {
           style={{
             fontFamily: 'var(--font-permanent-marker)',
             transform: 'rotate(-2deg)',
-            textShadow: '0 4px 24px rgba(139,92,246,0.45)',
+            // textShadow: '0 4px 24px rgba(139,92,246,0.45)',
           }}
         >
           404
