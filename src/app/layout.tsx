@@ -154,7 +154,7 @@ export default function RootLayout({
         <MediaPreloader />
         <ClickFireworks />
         {/* <BgGif src="/bg_animaton/ani.gif" /> */}
-        {/* <ParticlesBackground /> */}
+        <ParticlesBackground />
         <div className="relative z-10 min-h-screen">
           <div className="min-h-screen pb-16 flex items-center justify-center">
             {children}

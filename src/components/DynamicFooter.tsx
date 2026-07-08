@@ -75,7 +75,7 @@ export default function DynamicFooter() {
         </div>
 
         <img
-          src="https://count.getloli.com/@mohabbat-portfolio?name=mohabbat-portfolio&theme=booru-lewd&padding=3&offset=0&align=center&scale=1&pixelated=1&darkmode=0"
+          src="https://count.getloli.com/@mohabbat-portfolio?name=mohabbat-portfolio&theme=booru-lewd&padding=4&offset=0&align=center&scale=1&pixelated=1&darkmode=0"
           alt="visitor count"
           className="h-10 sm:h-12 w-auto object-contain shrink-0"
         />
