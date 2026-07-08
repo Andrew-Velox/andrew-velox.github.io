@@ -71,7 +71,7 @@ export default function DynamicFooter() {
       />
       <footer className="relative w-full flex flex-row items-center justify-between gap-4 h-14 sm:h-16 overflow-hidden border-t backdrop-blur-md px-4 sm:px-8 text-sm border-white/20 bg-white/5">
         <div className="text-xs sm:text-sm line-clamp-1 text-white/80">
-          © {new Date().getFullYear()} Mohabbat (vlx).
+          © {new Date().getFullYear()} Mohabbat
         </div>
 
         <img

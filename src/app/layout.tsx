@@ -11,6 +11,7 @@ import {
   Caveat_Brush,
   Bungee_Inline,
   Kalam,
+  Saira,
 } from "next/font/google";
 import "./globals.css";
 import MediaPreloader from "../components/MediaPreloader";
@@ -124,6 +125,15 @@ const kalam = Kalam({
   adjustFontFallback: true,
 });
 
+const saira = Saira({
+  variable: "--font-saira",
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+  fallback: ["system-ui", "Arial", "sans-serif"],
+  adjustFontFallback: true,
+});
+
 export const metadata: Metadata = {
   title: "Mohabbat",
   description: "I love Rust",
@@ -138,7 +148,7 @@ export default function RootLayout({
     <html lang="en" className="[color-scheme:light_dark]">
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} ${pressStart.variable} ${audiowide.variable} ${majorMono.variable} ${dancing.variable} ${permanentMarker.variable} ${rubikSpray.variable} ${caveatBrush.variable} ${bungeeInline.variable} ${kalam.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${pressStart.variable} ${audiowide.variable} ${majorMono.variable} ${dancing.variable} ${permanentMarker.variable} ${rubikSpray.variable} ${caveatBrush.variable} ${bungeeInline.variable} ${kalam.variable} ${saira.variable} antialiased`}
       >
         <LoadingScreen />
         <MediaPreloader />
