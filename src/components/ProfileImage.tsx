@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 
 interface ProfileImageProps {
   src: string;
@@ -21,7 +21,8 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
   const [dot, setDot] = useState({ size: 40, offset: 20, emojiSize: 10 });
   const [isHovered, setIsHovered] = useState(false);
   const [expandLeft, setExpandLeft] = useState(false);
-  const [pillMaxWidth, setPillMaxWidth] = useState(200);
+  const textRef = useRef<HTMLSpanElement>(null);
+  const [textWidth, setTextWidth] = useState(140);
 
   // Check if it's a video file (guard against src being undefined/empty
   // on an early render before the real value is available)
@@ -35,7 +36,12 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
 
   // Scale the presence dot proportionally to the circle's actual size
   // (250px on mobile, 300px on sm+) so it looks correct on all devices.
-  useEffect(() => {
+  // useLayoutEffect runs before the browser paints, so the correct
+  // mobile-proportional size is applied before anything is shown —
+  // otherwise the hardcoded desktop-shaped default briefly paints first
+  // and then visibly animates down to the mobile size (transition-all
+  // picks it up), which reads as a stray "pop" right after load.
+  useLayoutEffect(() => {
     const el = wrapperRef.current;
     if (!el) return;
     const update = () => {
@@ -50,6 +56,17 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
     const ro = new ResizeObserver(update);
     ro.observe(el);
     return () => ro.disconnect();
+  }, []);
+
+  // Measure the tail text's real pixel width so the expand animation can
+  // transition between two concrete numbers (collapsed width -> full width)
+  // instead of animating toward CSS `auto`, which isn't interpolatable and
+  // was letting the text render outside the pill for a frame on narrow
+  // screens where the collapsed/expanded sizes are closer together.
+  useLayoutEffect(() => {
+    if (textRef.current) {
+      setTextWidth(textRef.current.scrollWidth);
+    }
   }, []);
 
   useEffect(() => {
@@ -308,8 +325,8 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
           className="inline-flex items-center rounded-full bg-neutral-800 overflow-hidden transition-all duration-300 ease-out cursor-default"
           style={{
             height: dot.size,
-            width: isHovered ? 'auto' : dot.size,
-            maxWidth: isHovered ? 200 : dot.size,
+            width: isHovered ? dot.size + 10 + textWidth : dot.size,
+            flexWrap: 'nowrap',
             flexDirection: expandLeft ? 'row-reverse' : 'row',
             boxShadow: isHovered
               ? '0 0 0 2px rgba(255, 255, 255, 0.4), 0 2px 8px rgba(0,0,0,0.6)'
@@ -340,14 +357,21 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
             />
           </span>
 
-          {/* Text tail — clipped to zero width when collapsed */}
+          {/* Text tail — its own width is never constrained; the pill's
+              overflow-hidden + animating width above is what reveals it.
+              (Previously this span also animated its own maxWidth in
+              parallel with the pill's, and the two independent animations
+              could momentarily disagree on how much space was available,
+              which is what let the text render outside the pill for a
+              frame on narrow screens.) */}
           <span
-            className="whitespace-nowrap font-medium text-white text-sm transition-all duration-300 ease-out"
+            ref={textRef}
+            className="whitespace-nowrap font-medium text-white text-sm transition-opacity duration-300 ease-out shrink-0"
             style={{
-              maxWidth: isHovered ? 200 : 0,
               opacity: isHovered ? 1 : 0,
               marginLeft: expandLeft && isHovered ? 10 : 0,
               marginRight: !expandLeft && isHovered ? 10 : 0,
+              transition: 'opacity 300ms ease-out, margin 300ms ease-out',
             }}
           >
             Focusing On Myself
