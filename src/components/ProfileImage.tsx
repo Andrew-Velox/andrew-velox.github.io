@@ -176,34 +176,40 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
 
   // Decide expand direction based on real available viewport space.
   // Only matters on small screens where the avatar sits close to the edge;
-  // on larger screens there's almost always room on the right.
+  // on larger screens there's almost always room on the right. Uses the
+  // actual measured expanded width (not a guess) so this never disagrees
+  // with the width the pill will actually animate to. Measures the
+  // *avatar circle* (wrapperRef), not the pill itself — the pill's own
+  // rect changes every frame while it's animating open, so observing it
+  // created a feedback loop that could flip the anchor mid-hover.
   const computeExpandDirection = () => {
-    if (dotRef.current) {
-      const rect = dotRef.current.getBoundingClientRect();
-      const spaceRight = window.innerWidth - rect.right;
-      const estimatedPillWidth = 210; // rough width of expanded text + padding
-      setExpandLeft(spaceRight < estimatedPillWidth);
+    if (wrapperRef.current) {
+      const rect = wrapperRef.current.getBoundingClientRect();
+      const closedDotRight = rect.left + rect.width - dot.offset;
+      const spaceRight = window.innerWidth - closedDotRight;
+      const expandedPillWidth = dot.size + 10 + textWidth;
+      setExpandLeft(spaceRight < expandedPillWidth);
     }
   };
 
   // Compute expandLeft proactively on mount, on resize, and whenever the
-  // dot's size/offset settle. This way the anchor side is already correct by
-  // the time the user taps on a narrow screen, so the first interaction no
-  // longer flips the formula and causes a pixel jump.
+  // dot's size/offset/text width settle. This way the anchor side is
+  // already correct by the time the user hovers/taps, so the interaction
+  // itself never flips the anchor (left/right isn't transitioned, so a
+  // flip mid-hover would otherwise cause a visible jump/duplicate frame).
   useEffect(() => {
     computeExpandDirection();
     const onResize = () => computeExpandDirection();
     window.addEventListener('resize', onResize);
     const ro = new ResizeObserver(onResize);
-    if (dotRef.current) ro.observe(dotRef.current);
+    if (wrapperRef.current) ro.observe(wrapperRef.current);
     return () => {
       window.removeEventListener('resize', onResize);
       ro.disconnect();
     };
-  }, [dot.size, dot.offset]);
+  }, [dot.size, dot.offset, textWidth]);
 
   const handleDotEnter = () => {
-    computeExpandDirection();
     setIsHovered(true);
   };
 
@@ -211,7 +217,6 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
   // hover state gets stuck open. Handle taps explicitly as a toggle instead.
   const handleDotClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    computeExpandDirection();
     setIsHovered((prev) => !prev);
   };
 
