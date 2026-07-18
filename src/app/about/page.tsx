@@ -47,20 +47,18 @@ export default function About() {
           <FadeIn direction="left" delay={250} duration={700}>
             <p className="text-base sm:text-lg text-white/90">
               <span className="font-semibold">vlx / mohabbat</span>
-              <span className="text-white/60"> 　モハバット</span>
+              {/* <span className="text-white/60"> 　モハバット</span> */}
             </p>
           </FadeIn>
           <FadeIn direction="left" delay={350} duration={700}>
             <p className="text-base sm:text-lg text-white/90 leading-relaxed">
-              I code something. /{' '}
-              <span className="text-white/60">たまにコード書くよ。</span>
+              I code something. {"[>_<]"}{' '}
+              {/* <span className="text-white/60">たまにコード書くよ。</span> */}
             </p>
           </FadeIn>
           <FadeIn direction="left" delay={450} duration={700}>
             <p className="text-base sm:text-lg text-white/90 leading-relaxed pt-2">
-              I’m Mohabbat — on some platforms you might know me as Andrew Velox. I like to keep my identity a bit hidden, so I use this kind of random made-up name. {'[>_<]'}
-              <br />
-              I’m currently pursuing my BSc in Computer Science and Engineering at{' '}
+              I’m Mohabbat. I’m currently pursuing my BSc in Computer Science and Engineering at{' '}
               <a
                 href="https://www.green.edu.bd/"
                 target="_blank"

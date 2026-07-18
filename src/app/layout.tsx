@@ -161,7 +161,7 @@ export default function RootLayout({
           </div>
           <DynamicFooter />
         </div>
-        <ChatBot />
+        {/* <ChatBot /> */}
       </body>
     </html>
   );
