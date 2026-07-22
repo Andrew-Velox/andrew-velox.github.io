@@ -366,7 +366,7 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
               overflow-hidden + animating width above is what reveals it.
               (Previously this span also animated its own maxWidth in
               parallel with the pill's, and the two independent animations
-              could momentarily disagree on how much space was available,
+              could momentarily disagree on how much space was available, 
               which is what let the text render outside the pill for a
               frame on narrow screens.) */}
           <span
