@@ -209,14 +209,26 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
     };
   }, [dot.size, dot.offset, textWidth]);
 
-  const handleDotEnter = () => {
-    setIsHovered(true);
+  // Gated to real mice: touch devices synthesize a mouseenter right before
+  // click on the very first tap, so if this also handled touch, that
+  // synthetic mouseenter would open the pill and the click's toggle would
+  // immediately close it again in the same tap — the first tap would look
+  // like it did nothing, requiring a second tap to actually show anything.
+  const handleDotEnter = (e: React.PointerEvent) => {
+    if (e.pointerType === 'mouse') setIsHovered(true);
   };
 
-  // Mobile/touch: mouseenter fires on tap but mouseleave never fires, so
-  // hover state gets stuck open. Handle taps explicitly as a toggle instead.
+  const handleDotLeave = (e: React.PointerEvent) => {
+    if (e.pointerType === 'mouse') setIsHovered(false);
+  };
+
   const handleDotClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+  };
+
+  // Touch/pen has no hover, so tapping toggles the pill directly instead.
+  const handleDotPointerUp = (e: React.PointerEvent) => {
+    if (e.pointerType === 'mouse') return;
     setIsHovered((prev) => !prev);
   };
 
@@ -337,9 +349,10 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
               ? '0 0 0 2px rgba(255, 255, 255, 0.4), 0 2px 8px rgba(0,0,0,0.6)'
               : '0 0 0 2px rgb(38, 33, 33), 0 1px 2px rgba(0,0,0,0.4)',
           }}
-          onMouseEnter={handleDotEnter}
-          onMouseLeave={() => setIsHovered(false)}
+          onPointerEnter={handleDotEnter}
+          onPointerLeave={handleDotLeave}
           onClick={handleDotClick}
+          onPointerUp={handleDotPointerUp}
           aria-label="Focusing On Myself"
         >
           {/* Fixed-size circular box — loader cat always centered here, never moves */}

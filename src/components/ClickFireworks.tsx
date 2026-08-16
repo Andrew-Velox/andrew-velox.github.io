@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 
+type ParticleShape = 'heart' | 'kanji';
+
 type Particle = {
 	x: number;
 	y: number;
@@ -9,9 +11,14 @@ type Particle = {
 	radius: number;
 	vx: number;
 	vy: number;
+	gravity: number;
 	alpha: number;
 	startTime: number;
 	duration: number;
+	shape: ParticleShape;
+	glyph?: string;
+	rotation: number;
+	rotationSpeed: number;
 };
 
 type Circle = {
@@ -24,13 +31,14 @@ type Circle = {
 	duration: number;
 };
 
-const DEFAULT_COLORS = ['#5b21b6', '#9333ea', '#db2777'];
-// ['#1e1b4b', '#3730a3', '#06b6d4'];
-// ['#2e1065', '#c026d3', '#fb923c'];
-// ['#5b21b6', '#9333ea', '#db2777'];
-// ['#1a1b26', '#292e42', '#7aa2f7'];
-// ['#18181b', '#27272a', '#e11d48'];
-// ['#0a0a0a', '#171717', '#525252'];
+const HEART_COLORS = ['#f43f5e', '#ec4899', '#fb7185'];
+const KANJI_COLORS = ['#e5e7eb', '#a855f7', '#facc15'];
+
+// A tasteful pool of kanji — love, dream, light, craft, way, etc.
+const KANJI_GLYPHS = ['愛', '夢', '光', '心', '風', '月', '星', '力', '侍', '忍', '道', '匠', '工', '火', '空'];
+
+const KANJI_FONT_STACK =
+	"'Noto Sans JP', 'Hiragino Kaku Gothic Pro', 'Yu Gothic', 'Meiryo', sans-serif";
 
 function easeOutExpo(t: number): number {
 	return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
@@ -50,9 +58,53 @@ function setCanvasSize(canvas: HTMLCanvasElement) {
 	if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
+function drawHeart(
+	ctx: CanvasRenderingContext2D,
+	cx: number,
+	cy: number,
+	size: number,
+	color: string,
+	alpha: number,
+	rotation: number
+) {
+	const top = size * 0.3;
+	ctx.save();
+	ctx.globalAlpha = alpha;
+	ctx.translate(cx, cy);
+	ctx.rotate(rotation);
+	ctx.beginPath();
+	ctx.moveTo(0, -size / 2 + top);
+	ctx.bezierCurveTo(0, -size / 2, -size / 2, -size / 2, -size / 2, -size / 2 + top);
+	ctx.bezierCurveTo(-size / 2, top / 2, 0, top / 2, 0, size / 2);
+	ctx.bezierCurveTo(0, top / 2, size / 2, top / 2, size / 2, -size / 2 + top);
+	ctx.bezierCurveTo(size / 2, -size / 2, 0, -size / 2, 0, -size / 2 + top);
+	ctx.closePath();
+	ctx.fillStyle = color;
+	ctx.fill();
+	ctx.restore();
+}
+
+function drawKanji(
+	ctx: CanvasRenderingContext2D,
+	cx: number,
+	cy: number,
+	size: number,
+	color: string,
+	alpha: number,
+	glyph: string
+) {
+	ctx.save();
+	ctx.globalAlpha = alpha;
+	ctx.fillStyle = color;
+	ctx.font = `700 ${size}px ${KANJI_FONT_STACK}`;
+	ctx.textAlign = 'center';
+	ctx.textBaseline = 'middle';
+	ctx.fillText(glyph, cx, cy);
+	ctx.restore();
+}
+
 export default function ClickFireworks({
-	colors = DEFAULT_COLORS,
-	numberOfParticles = 24,
+	numberOfParticles = 18,
 }: {
 	colors?: string[];
 	numberOfParticles?: number;
@@ -61,7 +113,6 @@ export default function ClickFireworks({
 	const particlesRef = useRef<Particle[]>([]);
 	const circlesRef = useRef<Circle[]>([]);
 	const rafRef = useRef<number | null>(null);
-	const lastClearRef = useRef<number>(0);
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -74,11 +125,13 @@ export default function ClickFireworks({
 		const handleResize = () => setCanvasSize(canvas);
 		window.addEventListener('resize', handleResize);
 
-		const handlePointerDown = (e: MouseEvent | TouchEvent) => {
-			const now = performance.now();
-			// clear canvas with a quick fade animation timing
-			lastClearRef.current = now;
+		const ensureLoopRunning = () => {
+			if (rafRef.current === null) {
+				rafRef.current = requestAnimationFrame(render);
+			}
+		};
 
+		const handlePointerDown = (e: MouseEvent | TouchEvent) => {
 			const pointerX =
 				'clientX' in e
 					? e.clientX
@@ -93,7 +146,7 @@ export default function ClickFireworks({
 			const y = pointerY - rect.top;
 			const startTime = performance.now();
 
-			// expanding circle
+			// expanding shockwave ring
 			circlesRef.current.push({
 				x,
 				y,
@@ -104,27 +157,37 @@ export default function ClickFireworks({
 				duration: randomInRange(1200, 1800),
 			});
 
-			// particles
+			// heart + kanji particles — real projectile motion: launched outward,
+			// gravity curves the path continuously from the moment of the burst
 			for (let i = 0; i < numberOfParticles; i++) {
-				const angle = (Math.random() * Math.PI * 2);
-				const distance = randomInRange(50, 100);
-				const dir = Math.random() < 0.5 ? -1 : 1;
-				const targetX = x + distance * dir * Math.cos(angle);
-				const targetY = y + distance * dir * Math.sin(angle);
+				const angle = Math.random() * Math.PI * 2;
+				const speed = randomInRange(160, 340); // px/s
 
-				const color = colors[Math.floor(Math.random() * colors.length)];
+				const isHeart = Math.random() < 0.4;
+				const shape: ParticleShape = isHeart ? 'heart' : 'kanji';
+				const color = isHeart
+					? HEART_COLORS[Math.floor(Math.random() * HEART_COLORS.length)]
+					: KANJI_COLORS[Math.floor(Math.random() * KANJI_COLORS.length)];
+
 				particlesRef.current.push({
 					x,
 					y,
 					color,
-					radius: randomInRange(10, 20),
-					vx: targetX - x,
-					vy: targetY - y,
-					alpha: randomInRange(0.4, 0.9),
+					radius: isHeart ? randomInRange(12, 20) : randomInRange(16, 26),
+					vx: speed * Math.cos(angle),
+					vy: speed * Math.sin(angle),
+					gravity: randomInRange(420, 620), // px/s^2
+					alpha: randomInRange(0.5, 0.9),
 					startTime,
-					duration: randomInRange(900, 1500),
+					duration: randomInRange(1200, 1800),
+					shape,
+					glyph: isHeart ? undefined : KANJI_GLYPHS[Math.floor(Math.random() * KANJI_GLYPHS.length)],
+					rotation: randomInRange(0, Math.PI * 2),
+					rotationSpeed: randomInRange(-2, 2),
 				});
 			}
+
+			ensureLoopRunning();
 		};
 
 		document.addEventListener('mousedown', handlePointerDown);
@@ -133,33 +196,40 @@ export default function ClickFireworks({
 		const render = () => {
 			const now = performance.now();
 
-			// clear canvas with light trail fade to mimic fireworks persistence
-			ctx.fillStyle = 'rgba(0, 0, 0, 0.0001)';
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-			// draw particles
+			// draw particles — real projectile motion (position = x + v*t + 1/2*g*t^2)
 			for (let i = particlesRef.current.length - 1; i >= 0; i--) {
 				const p = particlesRef.current[i];
 				const elapsed = now - p.startTime;
-				const t = Math.min(elapsed / p.duration, 1);
-				if (t >= 1) {
+				const lifeT = Math.min(elapsed / p.duration, 1);
+				if (lifeT >= 1) {
 					particlesRef.current.splice(i, 1);
 					continue;
 				}
-				const eased = easeOutExpo(t);
-				const cx = p.x + p.vx * eased;
-				const cy = p.y + p.vy * eased;
-				const r = p.radius * (1 - eased) + 0.1 * eased;
+				const t = elapsed / 1000; // seconds, for kinematics
+				const cx = p.x + p.vx * t;
+				const cy = p.y + p.vy * t + 0.5 * p.gravity * t * t;
+				const scale = 1 - lifeT * 0.35;
+				// stay fully visible through the arc, fade only in the last third
+				const alpha = p.alpha * (lifeT < 0.66 ? 1 : 1 - (lifeT - 0.66) / 0.34);
 
-				ctx.globalAlpha = p.alpha * (1 - eased * 0.5);
-				ctx.beginPath();
-				ctx.arc(cx, cy, Math.max(r, 0.1), 0, Math.PI * 2, true);
-				ctx.fillStyle = p.color;
-				ctx.fill();
-				ctx.globalAlpha = 1;
+				if (p.shape === 'heart') {
+					drawHeart(
+						ctx,
+						cx,
+						cy,
+						Math.max(p.radius * scale, 0.1),
+						p.color,
+						alpha,
+						p.rotation + p.rotationSpeed * (elapsed / 1000)
+					);
+				} else if (p.glyph) {
+					drawKanji(ctx, cx, cy, Math.max(p.radius * scale, 0.1), p.color, alpha, p.glyph);
+				}
 			}
 
-			// draw expanding circle
+			// draw expanding shockwave ring
 			for (let i = circlesRef.current.length - 1; i >= 0; i--) {
 				const c = circlesRef.current[i];
 				const elapsed = now - c.startTime;
@@ -182,10 +252,13 @@ export default function ClickFireworks({
 				ctx.globalAlpha = 1;
 			}
 
-			rafRef.current = requestAnimationFrame(render);
+			if (particlesRef.current.length > 0 || circlesRef.current.length > 0) {
+				rafRef.current = requestAnimationFrame(render);
+			} else {
+				// nothing left to animate — stop the loop until the next click
+				rafRef.current = null;
+			}
 		};
-
-		rafRef.current = requestAnimationFrame(render);
 
 		return () => {
 			window.removeEventListener('resize', handleResize);
@@ -193,7 +266,7 @@ export default function ClickFireworks({
 			document.removeEventListener('touchstart', handlePointerDown);
 			if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
 		};
-	}, [colors, numberOfParticles]);
+	}, [numberOfParticles]);
 
 	return (
 		<canvas
@@ -205,7 +278,7 @@ export default function ClickFireworks({
 				top: 0,
 				width: '100vw',
 				height: '100vh',
-				zIndex: 1,
+				zIndex: 9999,
 				pointerEvents: 'none',
 			}}
 		/>
