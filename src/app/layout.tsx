@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { preload } from "react-dom";
+import fs from "fs";
+import path from "path";
 import {
   Geist,
   Geist_Mono,
@@ -22,6 +23,7 @@ import LoadingScreen from "../components/LoadingScreen";
 import ClickFireworks from "../components/ClickFireworks";
 import RightClickNotice from "../components/RightClickNotice";
 import GreetingToast from "../components/GreetingToast";
+import RotatingBackground from "../components/RotatingBackground";
 // import ParticlesBackground from "../components/ParticlesBackground";
 // import BgGif from "../components/BgGif";
 // import ParticlesBackground from "../components/ParticlesBackground";
@@ -142,14 +144,24 @@ export const metadata: Metadata = {
   description: "I love Rust",
 };
 
+// Read at build time so any image dropped into public/images/backgrounds
+// is automatically in the rotation on the next build — no code change.
+const IMAGE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp"]);
+
+function getBackgroundImages(): string[] {
+  const dir = path.join(process.cwd(), "public", "images", "backgrounds");
+  return fs
+    .readdirSync(dir)
+    .filter((name) => IMAGE_EXTENSIONS.has(path.extname(name).toLowerCase()))
+    .map((name) => `/images/backgrounds/${name}`);
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // The glass (backdrop-blur) cards only look frosted once this image is
-  // behind them, so fetch it with the HTML instead of after first paint.
-  preload("/images/backgrounds/bg.jpg", { as: "image", fetchPriority: "high" });
+  const backgroundImages = getBackgroundImages();
   return (
     <html lang="en" className="[color-scheme:light_dark]">
       <body
@@ -163,13 +175,7 @@ export default function RootLayout({
         <GreetingToast />
         {/* <BgGif src="/bg_animaton/ani.gif" /> */}
         {/* <ParticlesBackground /> */}
-        <div
-          aria-hidden="true"
-          className="fixed inset-0 z-0 pointer-events-none bg-[url('/images/backgrounds/bg.jpg')] bg-cover bg-top origin-top scale-110"
-        >
-          {/* dark overlay to keep text readable over the bright sky */}
-          <div className="absolute inset-0 bg-[#181818]/20" />
-        </div>
+        <RotatingBackground images={backgroundImages} />
         <div className="relative z-10 min-h-screen">
           <div className="min-h-screen pb-16 flex items-center justify-center">
             {children}
