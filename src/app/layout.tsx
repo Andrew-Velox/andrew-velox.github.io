@@ -21,7 +21,7 @@ import ChatBot from "../components/ChatBot";
 import ClickFireworks from "../components/ClickFireworks";
 // import ParticlesBackground from "../components/ParticlesBackground";
 // import BgGif from "../components/BgGif";
-import ParticlesBackground from "../components/ParticlesBackground";
+// import ParticlesBackground from "../components/ParticlesBackground";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -154,7 +154,14 @@ export default function RootLayout({
         <MediaPreloader />
         <ClickFireworks />
         {/* <BgGif src="/bg_animaton/ani.gif" /> */}
-        <ParticlesBackground />
+        {/* <ParticlesBackground /> */}
+        <div
+          aria-hidden="true"
+          className="fixed inset-0 z-0 pointer-events-none bg-[url('/projects_img/bg.jpg')] bg-cover bg-top origin-top scale-110"
+        >
+          {/* dark overlay to keep text readable over the bright sky */}
+          <div className="absolute inset-0 bg-[#181818]/20" />
+        </div>
         <div className="relative z-10 min-h-screen">
           <div className="min-h-screen pb-16 flex items-center justify-center">
             {children}
