@@ -36,7 +36,7 @@ export default function About() {
       <section className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-10 w-full">
         {/* Interactive Pixel Avatar (drops in with jelly bounce) */}
         <div className="flex-shrink-0">
-          <PixelJellyAvatar src="/prof.png" size={180} />
+          <PixelJellyAvatar src="/images/profile/prof.png" size={180} />
         </div>
 
         {/* Profile text */}

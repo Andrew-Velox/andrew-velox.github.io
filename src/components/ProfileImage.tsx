@@ -275,7 +275,7 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
             {/* Use static image fallback for iOS with WebM */}
             {isVideo && isIOS && src.endsWith('.webm') ? (
               <img
-                src="/Fin2.webp"
+                src="/images/profile/Fin2.webp"
                 alt={alt}
                 className="w-full h-full object-cover rounded-full transition-opacity duration-300"
                 style={{
@@ -368,7 +368,7 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/projects_img/Octocat.svg"
+              src="/images/mascots/Octocat.svg"
               alt=""
               className="w-full h-full object-cover"
               draggable={false}

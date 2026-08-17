@@ -25,7 +25,7 @@ const projects: Project[] = [
         category: 'web',
         link: undefined,
         github: "https://github.com/Andrew-Velox/Mega-Project",
-        image: '/projects_img/project5.png',
+        image: '/images/projects/project5.png',
     },
     {
         id: 2,
@@ -35,7 +35,7 @@ const projects: Project[] = [
         category: 'web',
         link: 'https://mew-shop-eight.vercel.app/',
         github: 'https://github.com/Andrew-Velox/Meow-Chat',
-        image: '/projects_img/project1.png',
+        image: '/images/projects/project1.png',
     },
     {
         id: 3,
@@ -45,7 +45,7 @@ const projects: Project[] = [
         category: 'web',
         link: 'https://mew-shop-eight.vercel.app/',
         github: 'https://github.com/Andrew-Velox/mew_shop',
-        image: '/projects_img/project2.png',
+        image: '/images/projects/project2.png',
     },
     {
         id: 4,
@@ -55,7 +55,7 @@ const projects: Project[] = [
         category: 'tools',
         link: 'https://chromewebstore.google.com/detail/cf-fetcher/pehfoogjijedipaehbibmjcajbcbimef',
         github: 'https://github.com/Andrew-Velox/Codeforces-Submission-Fetcher-Extension',
-        image: '/projects_img/project3.png',
+        image: '/images/projects/project3.png',
     },
     {
         id: 5,
@@ -65,7 +65,7 @@ const projects: Project[] = [
         category: 'web',
         link: 'https://tiktok-fullstack-project.vercel.app/',
         github: '#',
-        image: '/projects_img/project4.png',
+        image: '/images/projects/project4.png',
     },
     {
         id: 6,
@@ -75,7 +75,7 @@ const projects: Project[] = [
         category: 'web',
         link: undefined,
         github: 'https://github.com/GreenUniversityComputerClub',
-        image: '/projects_img/club_web_contribution.png',
+        image: '/images/projects/club_web_contribution.png',
     },
     {
         id: 7,
@@ -85,7 +85,7 @@ const projects: Project[] = [
         category: 'tools',
         link: undefined,
         github: 'https://github.com/Andrew-Velox/animfetch',
-        image: '/projects_img/animfetch.png',
+        image: '/images/projects/animfetch.png',
     },
 ];
 

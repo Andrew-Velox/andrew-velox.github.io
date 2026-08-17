@@ -21,16 +21,26 @@ export function QuoteCard() {
   }, []);
 
   return (
-    <div className="rounded-md bg-black/25 backdrop-blur-md shadow-lg p-6 flex flex-col justify-center gap-3">
+    <div className="h-full rounded-md bg-black/25 backdrop-blur-md shadow-lg p-4 lg:p-5 flex flex-col justify-between text-sm lg:text-base transition-all duration-300 ease-out">
+      <span
+        className="text-4xl leading-none font-serif font-bold text-white/85 select-none"
+        aria-hidden="true"
+      >
+        &ldquo;
+      </span>
       <div
-        className={`transition-opacity duration-700 ${quote ? 'opacity-100' : 'opacity-0'}`}
+        className={`px-3 lg:px-6 transition-opacity duration-700 ${quote ? 'opacity-100' : 'opacity-0'}`}
         style={{ fontFamily: 'var(--font-kalam)' }}
       >
         <p className="text-white/90 leading-relaxed">{quote?.text}</p>
-        <p className="text-right text-white/85 font-semibold mt-3">
-          - &quot; {quote?.author} &quot;
-        </p>
+        <p className="text-white/60 mt-2 text-xs lg:text-sm">— {quote?.author}</p>
       </div>
+      <span
+        className="text-4xl leading-none font-serif font-bold text-white/85 select-none self-end"
+        aria-hidden="true"
+      >
+        &rdquo;
+      </span>
     </div>
   );
 }
@@ -76,7 +86,7 @@ export function ClockCard() {
   const pad = (n: number) => String(n).padStart(2, '0');
 
   return (
-    <div className="rounded-md bg-black/25 backdrop-blur-md shadow-lg p-6 flex flex-col items-center justify-center gap-2 text-center">
+    <div className="rounded-md bg-black/25 backdrop-blur-md shadow-lg p-6 flex flex-col items-center justify-center gap-2 text-center transition-all duration-300 ease-out">
       <p className="text-white/85 text-xs xl:text-sm tracking-wide whitespace-nowrap">
         {now
           ? `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()} · ${weekdays[now.getDay()]}`
@@ -88,7 +98,7 @@ export function ClockCard() {
       >
         {now ? `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}` : '--:--:--'}
       </p>
-      <p className="text-white/70 text-sm tracking-wide whitespace-nowrap">{weather}</p>
+      <p className="text-white/70 text-xs lg:text-sm tracking-wide whitespace-nowrap">{weather}</p>
     </div>
   );
 }

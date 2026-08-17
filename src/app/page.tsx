@@ -46,26 +46,26 @@ const navTiles = [
 export default function Home() {
   return (
     <>
-      <main className="w-full max-w-4xl lg:max-w-7xl mx-auto px-4 py-8 flex flex-col lg:flex-row items-center justify-center lg:justify-between gap-6 sm:gap-8 lg:gap-24 relative z-20 touch-none -mt-20 sm:mt-0">
-        {/* Hamburger nav — small screens only; desktop uses the glass tiles */}
-        <div className="lg:hidden">
+      <main className="w-full max-w-4xl lg:max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-center md:justify-between gap-6 sm:gap-8 md:gap-10 lg:gap-24 relative z-20 touch-none -mt-20 sm:mt-0 transition-all duration-300 ease-out">
+        {/* Hamburger nav — small screens only; md+ uses the glass tiles */}
+        <div className="md:hidden">
           <Navbar />
         </div>
 
         {/* Hero — stacked & centered on mobile, avatar + name side by side on
             desktop with the welcome line underneath the pair */}
-        <div className="flex flex-col items-center gap-4 sm:gap-6 lg:items-start lg:shrink-0">
-          <div className="flex flex-col items-center gap-6 sm:gap-8 lg:flex-row">
+        <div className="flex flex-col items-center gap-4 sm:gap-6 md:shrink-0">
+          <div className="flex flex-col items-center gap-6 sm:gap-8 md:flex-row">
             <ProfileImage
-              src="/Fin2.webm"
+              src="/images/profile/Fin2.webm"
               alt="Ken"
-              className="w-[230px] h-[230px] sm:w-[300px] sm:h-[300px] lg:w-[190px] lg:h-[190px] rounded-full object-cover border-4 border-white/30 dark:border-white/20 backdrop-blur-sm mx-auto lg:mx-0 shadow-2xl pointer-events-none shrink-0"
+              className="w-[230px] h-[230px] sm:w-[300px] sm:h-[300px] md:w-[150px] md:h-[150px] lg:w-[225px] lg:h-[225px] rounded-full object-cover border-4 border-white/30 dark:border-white/20 backdrop-blur-sm mx-auto md:mx-0 shadow-2xl pointer-events-none shrink-0 transition-all duration-300 ease-out"
             />
 
-            <div className="flex flex-col items-center text-center lg:items-start lg:text-left touch-none select-none">
+            <div className="flex flex-col items-center text-center md:items-start md:text-left touch-none select-none">
               {/* Mobile name — unchanged pixel style */}
               <h1
-                className="lg:hidden text-3xl sm:text-5xl font-normal text-white tracking-wide select-none"
+                className="md:hidden text-3xl sm:text-5xl font-normal text-white tracking-wide select-none"
                 style={{
                   fontFamily: 'var(--font-press-start)',
                   letterSpacing: '0.02em',
@@ -76,20 +76,26 @@ export default function Home() {
 
               {/* Desktop name — big handwritten name with small suffix */}
               <h1
-                className="hidden lg:flex items-baseline gap-2 select-none drop-shadow-lg whitespace-nowrap"
+                className="hidden md:flex items-baseline gap-2 select-none drop-shadow-lg whitespace-nowrap"
                 style={{ fontFamily: 'var(--font-kalam)' }}
               >
-                <span className="text-5xl xl:text-6xl text-[#eef3e8]/95 leading-none">
+                <span className="text-4xl lg:text-5xl xl:text-6xl text-[#eef3e8]/95 leading-none transition-all duration-300 ease-out">
                   Mohabbat
                 </span>
-                <span className="text-lg xl:text-xl text-[#eef3e8]/80">
+                <span className="text-base lg:text-lg xl:text-xl text-[#eef3e8]/80 transition-all duration-300 ease-out">
                   &apos;s Portfolio
                 </span>
               </h1>
             </div>
           </div>
 
-          <h2 className="text-lg sm:text-2xl lg:text-lg xl:text-xl font-medium text-white/90 drop-shadow-lg touch-none select-none">
+          {/* On tablet the quote lives under the avatar; on lg+ it moves
+              up into the dashboard next to the clock */}
+          <div className="hidden md:block lg:hidden w-full">
+            <QuoteCard />
+          </div>
+
+          <h2 className="text-lg sm:text-2xl md:text-base lg:text-lg xl:text-xl font-medium text-white/90 drop-shadow-lg touch-none select-none transition-all duration-300 ease-out">
             <TypingText
               text="Welcome To My Portfolio [>_<]"
               speed={100}
@@ -101,26 +107,28 @@ export default function Home() {
           </h2>
         </div>
 
-        {/* Glass dashboard — desktop only, middle right */}
-        <div className="hidden lg:flex flex-col gap-16 lg:flex-1 max-w-xl">
-          {/* Quote + date/clock cards */}
-          <div className="grid grid-cols-2 gap-5">
-            <QuoteCard />
+        {/* Glass dashboard — md+ screens, middle right */}
+        <div className="hidden md:flex flex-col gap-10 lg:gap-16 md:flex-1 min-w-0 max-w-xl transition-all duration-300 ease-out">
+          {/* Clock full-width on tablet; quote joins it side by side on lg+ */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 transition-all duration-300 ease-out">
+            <div className="hidden lg:block">
+              <QuoteCard />
+            </div>
             <ClockCard />
           </div>
 
           {/* Nav tiles */}
-          <nav aria-label="Main navigation" className="grid grid-cols-2 gap-5">
+          <nav aria-label="Main navigation" className="grid grid-cols-2 gap-4 lg:gap-5 transition-all duration-300 ease-out">
             {navTiles.map((tile) => (
               <Link
                 key={tile.href}
                 href={tile.href}
-                className="group flex items-center justify-center gap-4 rounded-md bg-black/25 backdrop-blur-md px-6 py-10 shadow-lg transition-all duration-300 hover:bg-black/40 hover:-translate-y-1"
+                className="group flex items-center justify-center gap-3 lg:gap-4 rounded-md bg-black/25 backdrop-blur-md px-4 py-7 lg:px-6 lg:py-10 shadow-lg transition-all duration-300 hover:bg-black/40 hover:-translate-y-1"
               >
                 <span className="text-white/90 shrink-0 transition-transform duration-300 group-hover:scale-110">
                   {tile.icon}
                 </span>
-                <span className="text-white/90 font-medium tracking-wide">
+                <span className="hidden lg:inline text-white/90 font-medium tracking-wide lg:text-base">
                   {tile.label}
                 </span>
               </Link>

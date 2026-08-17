@@ -46,7 +46,7 @@ export default function NotFound() {
       <div className="relative z-10 flex flex-col items-center">
         <div className="animate-[catBounce_1.4s_ease-in-out_infinite]">
           <img
-            src="/projects_img/cat_laoding.gif"
+            src="/images/mascots/cat_laoding.gif"
             alt="404 cat"
             width={220}
             height={220}

@@ -63,7 +63,7 @@ export default function DynamicFooter() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[60]">
       <img
-        src="/projects_img/pixel-cat.gif"
+        src="/images/mascots/pixel-cat.gif"
         alt="Sitting cat"
         className="absolute left-4 sm:left-8 bottom-full z-10 h-30 sm:h-32 w-auto select-none pointer-events-none drop-shadow-sm"
         loading="lazy"
@@ -74,11 +74,14 @@ export default function DynamicFooter() {
           © {new Date().getFullYear()} Mohabbat
         </div>
 
+        {/* Visitor counter — temporarily disabled while count.getloli.com is
+            unavailable; a hanging counter image delays the window `load`
+            event, which keeps the LoadingScreen up until its safety cap.
         <img
           src="https://count.getloli.com/@mohabbat-portfolio?name=mohabbat-portfolio&theme=booru-lewd&padding=4&offset=0&align=center&scale=1&pixelated=1&darkmode=0"
           alt="visitor count"
           className="h-10 sm:h-12 w-auto object-contain shrink-0"
-        />
+        /> */}
 
         <div className="flex gap-3 sm:gap-4 items-center">
           {socialLinks.map((link) => (

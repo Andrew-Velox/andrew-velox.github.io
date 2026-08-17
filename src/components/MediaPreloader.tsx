@@ -6,7 +6,7 @@ export default function MediaPreloader() {
   useEffect(() => {
     // Preload video
     const video = document.createElement('video');
-    video.src = '/Fin2.webm';
+    video.src = '/images/profile/Fin2.webm';
     video.preload = 'metadata';
     video.muted = true;
     video.playsInline = true;
@@ -14,15 +14,15 @@ export default function MediaPreloader() {
     
     // Preload fallback image for iOS
     const img = new Image();
-    img.src = '/Fin2.webp';
+    img.src = '/images/profile/Fin2.webp';
     
     // Store in cache
     const handleVideoLoad = () => {
-      sessionStorage.setItem('media_/Fin2.webm', 'loaded');
+      sessionStorage.setItem('media_/images/profile/Fin2.webm', 'loaded');
     };
     
     const handleImageLoad = () => {
-      sessionStorage.setItem('media_/Fin2.webp', 'loaded');
+      sessionStorage.setItem('media_/images/profile/Fin2.webp', 'loaded');
     };
     
     video.addEventListener('loadedmetadata', handleVideoLoad);

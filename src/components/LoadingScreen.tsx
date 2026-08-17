@@ -97,7 +97,7 @@ export default function LoadingScreen() {
       {/* Cat */}
       <div className="relative z-10 animate-[catBounce_1.4s_ease-in-out_infinite]">
         <img
-          src="/projects_img/cat_laoding.gif"
+          src="/images/mascots/cat_laoding.gif"
           alt="Loading cat"
           width={220}
           height={220}
