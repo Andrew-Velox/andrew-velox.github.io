@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import { motion } from 'framer-motion';
+
+const STATUS_TEXT = 'Focusing On Myself';
 
 interface ProfileImageProps {
   src: string;
@@ -46,9 +49,14 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
     if (!el) return;
     const update = () => {
       const w = el.offsetWidth;
-      // Halo: ~13% of circle width. Offset: ~6.5% of width. Emoji: ~6.7% of width.
+      // Halo: ~13% of circle width, floored at 28px. Below that floor
+      // (avatars under ~215px, e.g. the 150px tablet size) the badge
+      // takes up proportionally more of the circle, so the normal 6.5%
+      // offset reads as sitting too far inward — pull it in toward the
+      // corner instead with a smaller offset just for that range.
       const size = Math.max(28, Math.round(w * 0.13));
-      const offset = Math.max(10, Math.round(w * 0.065));
+      const offset =
+        w * 0.13 < 28 ? Math.max(2, Math.round(w * 0.02)) : Math.round(w * 0.065);
       const emojiSize = Math.max(14, Math.round(w * 0.058));
       setDot({ size, offset, emojiSize });
     };
@@ -384,15 +392,33 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
               frame on narrow screens.) */}
           <span
             ref={textRef}
-            className="whitespace-nowrap font-medium text-white text-sm transition-opacity duration-300 ease-out shrink-0"
+            className="whitespace-nowrap font-medium text-white text-sm shrink-0"
             style={{
-              opacity: isHovered ? 1 : 0,
               marginLeft: expandLeft && isHovered ? 10 : 0,
               marginRight: !expandLeft && isHovered ? 10 : 0,
-              transition: 'opacity 300ms ease-out, margin 300ms ease-out',
+              transition: 'margin 300ms ease-out',
             }}
+            aria-hidden="true"
           >
-            Focusing On Myself
+            {/* Focus-in reveal: the text slides in from the opening
+                direction while sharpening from a blur — literally coming
+                into focus. Rendered as one span, so the textWidth
+                measurement above stays valid. */}
+            <motion.span
+              className="inline-block"
+              animate={
+                isHovered
+                  ? { opacity: 1, x: 0, filter: 'blur(0px)' }
+                  : { opacity: 0, x: expandLeft ? -12 : 12, filter: 'blur(6px)' }
+              }
+              transition={{
+                delay: isHovered ? 0.1 : 0,
+                duration: 0.35,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {STATUS_TEXT}
+            </motion.span>
           </span>
         </div>
       </div>

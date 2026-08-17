@@ -1,6 +1,3 @@
-'use client';
-import { motion } from 'framer-motion';
-
 const achievementsData = [
 	{
 		section: 'Regional Programming Contests',
@@ -63,18 +60,20 @@ const achievementsData = [
 	},
 ];
 
-function AchievementCard({ item }) {
+interface AchievementItem {
+	title: string;
+	link?: string;
+	rank?: string;
+	date?: string;
+	place?: string;
+}
+
+function AchievementCard({ item }: { item: AchievementItem }) {
 	return (
-		<motion.div
-			initial={{ opacity: 0, y: 40 }}
-			whileInView={{ opacity: 1, y: 0 }}
-			viewport={{ once: true }}
-			transition={{ duration: 0.5 }}
-			className="relative flex items-start"
-		>
+		<div className="relative flex items-start">
 			{/* Timeline dot */}
 			<span className="absolute left-3 w-6 h-6 bg-green-500 border-4 border-white rounded-full shadow" />
-			<div className="ml-16 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-6 flex-1 transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl bg-white/10 dark:bg-white/5 backdrop-blur-md">
+			<div className="ml-16 rounded-md shadow-lg p-6 flex-1 transition-all duration-300 hover:scale-[1.02] hover:bg-black/40 bg-black/25 backdrop-blur-md">
 				<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
 					<span className="font-semibold text-lg text-white">
 						{item.link ? (
@@ -103,7 +102,7 @@ function AchievementCard({ item }) {
 					</div>
 				)}
 			</div>
-		</motion.div>
+		</div>
 	);
 }
 

@@ -18,7 +18,7 @@ import "./globals.css";
 import MediaPreloader from "../components/MediaPreloader";
 import DynamicFooter from "../components/DynamicFooter";
 import LoadingScreen from "../components/LoadingScreen";
-import ChatBot from "../components/ChatBot";
+// import ChatBot from "../components/ChatBot";
 import ClickFireworks from "../components/ClickFireworks";
 import RightClickNotice from "../components/RightClickNotice";
 import GreetingToast from "../components/GreetingToast";
