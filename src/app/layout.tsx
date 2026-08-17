@@ -19,6 +19,7 @@ import DynamicFooter from "../components/DynamicFooter";
 import LoadingScreen from "../components/LoadingScreen";
 import ChatBot from "../components/ChatBot";
 import ClickFireworks from "../components/ClickFireworks";
+import RightClickNotice from "../components/RightClickNotice";
 // import ParticlesBackground from "../components/ParticlesBackground";
 // import BgGif from "../components/BgGif";
 // import ParticlesBackground from "../components/ParticlesBackground";
@@ -153,6 +154,7 @@ export default function RootLayout({
         <LoadingScreen />
         <MediaPreloader />
         <ClickFireworks />
+        <RightClickNotice />
         {/* <BgGif src="/bg_animaton/ani.gif" /> */}
         {/* <ParticlesBackground /> */}
         <div
