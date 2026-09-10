@@ -3,18 +3,19 @@
 import { useState, useEffect } from 'react';
 import PixelJellyAvatar from "../../components/PixelJellyAvatar";
 import FadeIn from "../../components/FadeIn";
+import GithubStatsSection from "../../components/GithubStats";
 
-const likesSkills: Array<[string, string]> = [
-  ['Clouds', 'くも'],
-  ['Pixel Art', 'ドット絵'],
-  ['Designing', 'デザイン'],
-  ['Programming', 'プログラミング'],
-  ['System Devlopment', 'システム開発'],
-  ['Computer Science', '計算機科学'],
-  ['Computer Graphics', 'コンピュータグラフィックス'],
-  ['Game Development', 'ゲーム開発'],
-  ['Competitive Programming', '競技プログラミング'],
-];
+// const likesSkills: string[] = [
+//   'Clouds',
+//   'Pixel Art',
+//   'Designing',
+//   'Programming',
+//   'System Development',
+//   'Computer Science',
+//   'Computer Graphics',
+//   'Game Development',
+//   'Competitive Programming',
+// ];
 
 export default function About() {
   const [replayKey, setReplayKey] = useState(0);
@@ -31,7 +32,7 @@ export default function About() {
   }, []);
 
   return (
-    <div key={replayKey} className="flex flex-col items-start justify-start gap-10 sm:gap-14 mt-8 sm:mt-12 text-white w-full max-w-3xl">
+    <div key={replayKey} className="flex flex-col items-start justify-start gap-12 sm:gap-16 mt-6 sm:mt-10 text-white w-full max-w-4xl">
       {/* Profile row: image (left) + bio (right) */}
       <section className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-10 w-full">
         {/* Interactive Pixel Avatar (drops in with jelly bounce) */}
@@ -40,30 +41,28 @@ export default function About() {
         </div>
 
         {/* Profile text */}
-        <div className="space-y-3 text-center sm:text-left">
+        <div className="space-y-3.5 text-center sm:text-left">
           <FadeIn direction="left" delay={150} duration={700}>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">Profile</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">Profile</h2>
           </FadeIn>
           <FadeIn direction="left" delay={250} duration={700}>
-            <p className="text-base sm:text-lg text-white/90">
-              <span className="font-semibold">vlx / mohabbat</span>
-              {/* <span className="text-white/60"> 　モハバット</span> */}
+            <p className="text-lg sm:text-xl text-white/95">
+              <span className="font-semibold text-emerald-400">vlx / mohabbat</span>
             </p>
           </FadeIn>
           <FadeIn direction="left" delay={350} duration={700}>
-            <p className="text-base sm:text-lg text-white/90 leading-relaxed">
-              I code something. {"[>_<]"}{' '}
-              {/* <span className="text-white/60">たまにコード書くよ。</span> */}
+            <p className="text-base sm:text-xl text-white/90 leading-relaxed font-mono">
+              I code something. {"[>_<]"}
             </p>
           </FadeIn>
           <FadeIn direction="left" delay={450} duration={700}>
-            <p className="text-base sm:text-lg text-white/90 leading-relaxed pt-2">
+            <p className="text-base sm:text-lg text-white/90 leading-relaxed pt-1">
               I’m Mohabbat. I’m currently pursuing my BSc in Computer Science and Engineering at{' '}
               <a
                 href="https://www.green.edu.bd/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-semibold text-green-400 hover:text-green-300 transition-colors duration-200"
+                className="font-semibold text-emerald-400 hover:text-emerald-300 underline underline-offset-4 decoration-emerald-500/50 hover:decoration-emerald-400 transition-colors duration-200"
               >
                 Green University of Bangladesh
               </a>
@@ -73,21 +72,31 @@ export default function About() {
         </div>
       </section>
 
-      {/* Likes & Skills — full-width section under the profile row */}
-      <section className="w-full">
-        <FadeIn direction="left" delay={600} duration={700}>
-          <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-white">Likes &amp; Skills</h3>
+      {/* Likes & Skills */}
+      {/* <section className="w-full">
+        <FadeIn direction="left" delay={550} duration={700}>
+          <div className="flex items-center gap-3 mb-5">
+            <span className="h-px w-8 bg-emerald-400/80" />
+            <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              Likes &amp; Skills
+            </h3>
+          </div>
         </FadeIn>
-        <ul className="space-y-1.5 text-base sm:text-lg text-white/90">
-          {likesSkills.map(([en, ja], i) => (
-            <FadeIn key={en} direction="left" delay={700 + i * 80} duration={600}>
-              <li>
-                <span className="font-medium text-white">{en}</span>
-                <span className="text-white/60"> / {ja}</span>
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-base sm:text-lg text-white/90">
+          {likesSkills.map((skill, i) => (
+            <FadeIn key={skill} direction="left" delay={600 + i * 50} duration={600}>
+              <li className="relative flex items-center gap-3 px-4 py-3 border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-emerald-400/40 hover:bg-white/[0.06] transition-all duration-200">
+                <span className="h-2 w-2 rounded-full bg-emerald-400/80 shrink-0" />
+                <span className="font-medium text-white text-base sm:text-lg">{skill}</span>
               </li>
             </FadeIn>
           ))}
         </ul>
+      </section> */}
+
+      {/* GitHub Section — Activity, Heatmap, Tech Stack & Pinned Repositories */}
+      <section className="w-full">
+        <GithubStatsSection />
       </section>
     </div>
   );

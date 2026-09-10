@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 
-type ParticleShape = 'heart' | 'kanji';
+type ParticleShape = 'heart' | 'star';
 
 type Particle = {
 	x: number;
@@ -16,7 +16,6 @@ type Particle = {
 	startTime: number;
 	duration: number;
 	shape: ParticleShape;
-	glyph?: string;
 	rotation: number;
 	rotationSpeed: number;
 };
@@ -31,14 +30,8 @@ type Circle = {
 	duration: number;
 };
 
-const HEART_COLORS = ['#f43f5e', '#ec4899', '#fb7185'];
-const KANJI_COLORS = ['#e5e7eb', '#a855f7', '#facc15'];
-
-// A tasteful pool of kanji — love, dream, light, craft, way, etc.
-const KANJI_GLYPHS = ['愛', '夢', '光', '心', '風', '月', '星', '力', '侍', '忍', '道', '匠', '工', '火', '空'];
-
-const KANJI_FONT_STACK =
-	"'Noto Sans JP', 'Hiragino Kaku Gothic Pro', 'Yu Gothic', 'Meiryo', sans-serif";
+const HEART_COLORS = ['#f43f5e', '#ec4899', '#fb7185', '#fda4af'];
+const STAR_COLORS = ['#facc15', '#e5e7eb', '#34d399', '#a855f7', '#38bdf8'];
 
 function easeOutExpo(t: number): number {
 	return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
@@ -50,10 +43,15 @@ function randomInRange(min: number, max: number): number {
 
 function setCanvasSize(canvas: HTMLCanvasElement) {
 	const dpr = window.devicePixelRatio || 1;
-	canvas.width = window.innerWidth * dpr;
-	canvas.height = window.innerHeight * dpr;
-	canvas.style.width = `${window.innerWidth}px`;
-	canvas.style.height = `${window.innerHeight}px`;
+	const rect = canvas.getBoundingClientRect();
+	const width = Math.max(Math.round(rect.width * dpr), 1);
+	const height = Math.max(Math.round(rect.height * dpr), 1);
+
+	if (canvas.width !== width || canvas.height !== height) {
+		canvas.width = width;
+		canvas.height = height;
+	}
+
 	const ctx = canvas.getContext('2d');
 	if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
@@ -69,7 +67,7 @@ function drawHeart(
 ) {
 	const top = size * 0.3;
 	ctx.save();
-	ctx.globalAlpha = alpha;
+	ctx.globalAlpha = Math.max(alpha, 0);
 	ctx.translate(cx, cy);
 	ctx.rotate(rotation);
 	ctx.beginPath();
@@ -84,22 +82,41 @@ function drawHeart(
 	ctx.restore();
 }
 
-function drawKanji(
+function drawStar(
 	ctx: CanvasRenderingContext2D,
 	cx: number,
 	cy: number,
-	size: number,
+	spikes: number,
+	outerRadius: number,
+	innerRadius: number,
 	color: string,
 	alpha: number,
-	glyph: string
+	rotation: number
 ) {
+	let rot = (Math.PI / 2) * 3 + rotation;
+	let x = cx;
+	let y = cy;
+	const step = Math.PI / spikes;
+
 	ctx.save();
-	ctx.globalAlpha = alpha;
+	ctx.globalAlpha = Math.max(alpha, 0);
+	ctx.beginPath();
+	ctx.moveTo(cx, cy - outerRadius);
+	for (let i = 0; i < spikes; i++) {
+		x = cx + Math.cos(rot) * outerRadius;
+		y = cy + Math.sin(rot) * outerRadius;
+		ctx.lineTo(x, y);
+		rot += step;
+
+		x = cx + Math.cos(rot) * innerRadius;
+		y = cy + Math.sin(rot) * innerRadius;
+		ctx.lineTo(x, y);
+		rot += step;
+	}
+	ctx.lineTo(cx, cy - outerRadius);
+	ctx.closePath();
 	ctx.fillStyle = color;
-	ctx.font = `700 ${size}px ${KANJI_FONT_STACK}`;
-	ctx.textAlign = 'center';
-	ctx.textBaseline = 'middle';
-	ctx.fillText(glyph, cx, cy);
+	ctx.fill();
 	ctx.restore();
 }
 
@@ -144,46 +161,48 @@ export default function ClickFireworks({
 			const rect = canvas.getBoundingClientRect();
 			const x = pointerX - rect.left;
 			const y = pointerY - rect.top;
+
+			// Ignore events outside the canvas bounds
+			if (x < 0 || x > rect.width || y < 0 || y > rect.height) return;
+
 			const startTime = performance.now();
 
-			// expanding shockwave ring
+			// Expanding shockwave ring
 			circlesRef.current.push({
 				x,
 				y,
 				radius: 0.1,
 				alpha: 0.5,
-				lineWidth: 6,
+				lineWidth: 5,
 				startTime,
-				duration: randomInRange(1200, 1800),
+				duration: randomInRange(1000, 1500),
 			});
 
-			// heart + kanji particles — real projectile motion: launched outward,
-			// gravity curves the path continuously from the moment of the burst
+			// Burst particles
 			for (let i = 0; i < numberOfParticles; i++) {
 				const angle = Math.random() * Math.PI * 2;
 				const speed = randomInRange(160, 340); // px/s
 
-				const isHeart = Math.random() < 0.4;
-				const shape: ParticleShape = isHeart ? 'heart' : 'kanji';
+				const isHeart = Math.random() < 0.45;
+				const shape: ParticleShape = isHeart ? 'heart' : 'star';
 				const color = isHeart
 					? HEART_COLORS[Math.floor(Math.random() * HEART_COLORS.length)]
-					: KANJI_COLORS[Math.floor(Math.random() * KANJI_COLORS.length)];
+					: STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)];
 
 				particlesRef.current.push({
 					x,
 					y,
 					color,
-					radius: isHeart ? randomInRange(12, 20) : randomInRange(16, 26),
+					radius: isHeart ? randomInRange(12, 18) : randomInRange(10, 16),
 					vx: speed * Math.cos(angle),
 					vy: speed * Math.sin(angle),
-					gravity: randomInRange(420, 620), // px/s^2
-					alpha: randomInRange(0.5, 0.9),
+					gravity: randomInRange(400, 580), // px/s^2
+					alpha: randomInRange(0.6, 0.95),
 					startTime,
-					duration: randomInRange(1200, 1800),
+					duration: randomInRange(1200, 1700),
 					shape,
-					glyph: isHeart ? undefined : KANJI_GLYPHS[Math.floor(Math.random() * KANJI_GLYPHS.length)],
 					rotation: randomInRange(0, Math.PI * 2),
-					rotationSpeed: randomInRange(-2, 2),
+					rotationSpeed: randomInRange(-2.5, 2.5),
 				});
 			}
 
@@ -196,9 +215,17 @@ export default function ClickFireworks({
 		const render = () => {
 			const now = performance.now();
 
+			// Ensure transform is set properly and the full physical canvas buffer is cleared
+			const dpr = window.devicePixelRatio || 1;
+			ctx.save();
+			ctx.setTransform(1, 0, 0, 1, 0, 0);
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.restore();
 
-			// draw particles — real projectile motion (position = x + v*t + 1/2*g*t^2)
+			// Set user coordinates to match CSS pixels
+			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+			// Draw particles with projectile kinematics
 			for (let i = particlesRef.current.length - 1; i >= 0; i--) {
 				const p = particlesRef.current[i];
 				const elapsed = now - p.startTime;
@@ -207,12 +234,11 @@ export default function ClickFireworks({
 					particlesRef.current.splice(i, 1);
 					continue;
 				}
-				const t = elapsed / 1000; // seconds, for kinematics
+				const t = elapsed / 1000;
 				const cx = p.x + p.vx * t;
 				const cy = p.y + p.vy * t + 0.5 * p.gravity * t * t;
-				const scale = 1 - lifeT * 0.35;
-				// stay fully visible through the arc, fade only in the last third
-				const alpha = p.alpha * (lifeT < 0.66 ? 1 : 1 - (lifeT - 0.66) / 0.34);
+				const scale = Math.max(1 - lifeT * 0.35, 0.1);
+				const alpha = p.alpha * (lifeT < 0.65 ? 1 : 1 - (lifeT - 0.65) / 0.35);
 
 				if (p.shape === 'heart') {
 					drawHeart(
@@ -222,14 +248,24 @@ export default function ClickFireworks({
 						Math.max(p.radius * scale, 0.1),
 						p.color,
 						alpha,
-						p.rotation + p.rotationSpeed * (elapsed / 1000)
+						p.rotation + p.rotationSpeed * t
 					);
-				} else if (p.glyph) {
-					drawKanji(ctx, cx, cy, Math.max(p.radius * scale, 0.1), p.color, alpha, p.glyph);
+				} else {
+					drawStar(
+						ctx,
+						cx,
+						cy,
+						5,
+						Math.max(p.radius * scale, 0.1),
+						Math.max(p.radius * scale * 0.5, 0.05),
+						p.color,
+						alpha,
+						p.rotation + p.rotationSpeed * t
+					);
 				}
 			}
 
-			// draw expanding shockwave ring
+			// Draw expanding shockwave rings
 			for (let i = circlesRef.current.length - 1; i >= 0; i--) {
 				const c = circlesRef.current[i];
 				const elapsed = now - c.startTime;
@@ -239,23 +275,23 @@ export default function ClickFireworks({
 					continue;
 				}
 				const eased = easeOutExpo(t);
-				const radius = randomInRange(50, 100) * eased;
-				const lineWidth = c.lineWidth * (1 - eased);
-				const alpha = c.alpha * (1 - eased);
+				const radius = 80 * eased;
+				const lineWidth = Math.max(c.lineWidth * (1 - eased), 0.1);
+				const alpha = Math.max(c.alpha * (1 - eased), 0);
 
+				ctx.save();
 				ctx.globalAlpha = alpha;
 				ctx.beginPath();
 				ctx.arc(c.x, c.y, Math.max(radius, 0.1), 0, Math.PI * 2, true);
 				ctx.lineWidth = lineWidth;
 				ctx.strokeStyle = '#FFFFFF';
 				ctx.stroke();
-				ctx.globalAlpha = 1;
+				ctx.restore();
 			}
 
 			if (particlesRef.current.length > 0 || circlesRef.current.length > 0) {
 				rafRef.current = requestAnimationFrame(render);
 			} else {
-				// nothing left to animate — stop the loop until the next click
 				rafRef.current = null;
 			}
 		};
@@ -272,15 +308,8 @@ export default function ClickFireworks({
 		<canvas
 			ref={canvasRef}
 			aria-hidden="true"
-			style={{
-				position: 'fixed',
-				left: 0,
-				top: 0,
-				width: '100vw',
-				height: '100vh',
-				zIndex: 9999,
-				pointerEvents: 'none',
-			}}
+			className="fixed inset-0 w-full h-full pointer-events-none z-[9999]"
 		/>
 	);
 }
+

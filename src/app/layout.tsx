@@ -21,7 +21,7 @@ import DynamicFooter from "../components/DynamicFooter";
 import LoadingScreen from "../components/LoadingScreen";
 // import ChatBot from "../components/ChatBot";
 import ClickFireworks from "../components/ClickFireworks";
-import RightClickNotice from "../components/RightClickNotice";
+// import RightClickNotice from "../components/RightClickNotice";
 import GreetingToast from "../components/GreetingToast";
 import RotatingBackground from "../components/RotatingBackground";
 // import ParticlesBackground from "../components/ParticlesBackground";
@@ -150,10 +150,11 @@ const IMAGE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp"]);
 
 function getBackgroundImages(): string[] {
   const dir = path.join(process.cwd(), "public", "images", "backgrounds");
-  return fs
-    .readdirSync(dir)
-    .filter((name) => IMAGE_EXTENSIONS.has(path.extname(name).toLowerCase()))
-    .map((name) => `/images/backgrounds/${name}`);
+  // return fs
+  //   .readdirSync(dir)
+  //   .filter((name) => IMAGE_EXTENSIONS.has(path.extname(name).toLowerCase()))
+  //   .map((name) => `/images/backgrounds/${name}`);
+    return [];
 }
 
 export default function RootLayout({
@@ -171,7 +172,7 @@ export default function RootLayout({
         <LoadingScreen />
         <MediaPreloader />
         <ClickFireworks />
-        <RightClickNotice />
+        {/* <RightClickNotice /> */}
         <GreetingToast />
         {/* <BgGif src="/bg_animaton/ani.gif" /> */}
         {/* <ParticlesBackground /> */}
