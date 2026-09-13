@@ -137,20 +137,24 @@ export function ContributionGraph({ days, totalContributions }: ContributionGrap
   return (
     <div className="w-full select-none">
       {/* Header with Title and Total */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3.5 mb-3 border-b border-white/10">
-        <div className="flex items-center gap-2.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-sm sm:text-base font-bold tracking-wider text-white uppercase font-mono">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 pb-3 sm:pb-3.5 mb-3 border-b border-white/10">
+        <div className="flex items-center gap-2">
+          <span className="h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+          <span className="text-xs sm:text-sm md:text-base font-bold tracking-wider text-white uppercase font-mono">
             Contributions Heatmap
           </span>
         </div>
-        <div className="font-mono text-xs sm:text-sm text-emerald-400 font-medium bg-emerald-950/60 border border-emerald-500/30 px-3 py-1.5 rounded">
+        <div className="font-mono text-[11px] sm:text-xs md:text-sm text-emerald-400 font-medium bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded">
           {activeTotal.toLocaleString()} contributions in the last year
         </div>
       </div>
 
       {/* Contribution Calendar Grid */}
-      <div ref={scrollContainerRef} className="w-full overflow-x-auto pb-2 scrollbar-thin">
+      <div
+        ref={scrollContainerRef}
+        className="w-full overflow-x-auto pb-2 scrollbar-thin touch-pan-x"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
         <div className="inline-flex flex-col min-w-[760px] gap-1.5 pt-1">
           {/* Month labels row */}
           <div className="relative h-5 mb-1 pl-8">
@@ -211,28 +215,29 @@ export function ContributionGraph({ days, totalContributions }: ContributionGrap
       </div>
 
       {/* Footer / Status bar & Legend */}
-      <div className="mt-3.5 pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 border-t border-white/10 font-mono text-sm">
-        {/* Dynamic Hover Status with fixed height and consistent text size */}
-        <div className="h-7 flex items-center min-w-0 overflow-hidden">
+      <div className="mt-3.5 pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 border-t border-white/10 font-mono text-xs sm:text-sm">
+        {/* Dynamic Hover / Tap Status with fixed height and consistent text size */}
+        <div className="h-6 sm:h-7 flex items-center min-w-0 overflow-hidden">
           {hoveredDay ? (
-            <p className="text-sm font-mono text-white/90 truncate leading-none">
+            <p className="text-xs sm:text-sm font-mono text-white/90 truncate leading-none">
               <span className="text-emerald-400 font-bold">{hoveredDay.count}</span> contribution
               {hoveredDay.count === 1 ? '' : 's'} on{' '}
               <span className="text-white/80">{formatDateDisplay(hoveredDay.date)}</span>
             </p>
           ) : (
-            <p className="text-sm font-mono text-white/50 truncate leading-none">
-              Hover or tap on any cell to view daily activity
+            <p className="text-xs sm:text-sm font-mono text-white/50 truncate leading-none">
+              <span className="hidden sm:inline">Hover or tap on any cell to view daily activity</span>
+              <span className="sm:hidden">Tap any cell to view activity</span>
             </p>
           )}
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-2 text-sm text-white/60 font-medium shrink-0">
+        <div className="flex items-center gap-2 text-xs sm:text-sm text-white/60 font-medium shrink-0 self-end sm:self-auto">
           <span>Less</span>
           <div className="flex items-center gap-1">
             {LEVEL_COLORS.map((colorClass, idx) => (
-              <div key={idx} className={`h-[11px] w-[11px] rounded-[2px] ${colorClass}`} />
+              <div key={idx} className={`h-[10px] w-[10px] sm:h-[11px] sm:w-[11px] rounded-[2px] ${colorClass}`} />
             ))}
           </div>
           <span>More</span>

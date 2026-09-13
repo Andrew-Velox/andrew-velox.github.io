@@ -69,8 +69,8 @@ export default function DynamicFooter() {
         loading="lazy"
         style={{ marginBottom: '-20px' }}
       />
-      <footer className="relative w-full flex flex-row items-center justify-between gap-4 h-14 sm:h-16 overflow-hidden border-t backdrop-blur-md px-4 sm:px-8 text-sm border-white/20 bg-white/5">
-        <div className="text-xs sm:text-sm line-clamp-1 text-white/80">
+      <footer className="relative w-full flex flex-row items-center justify-between gap-2 sm:gap-4 h-14 sm:h-16 overflow-hidden border-t backdrop-blur-md px-3 sm:px-8 text-sm border-white/20 bg-white/5">
+        <div className="text-[11px] sm:text-sm truncate text-white/80 shrink-0">
           © {new Date().getFullYear()} Mohabbat
         </div>
 
@@ -78,10 +78,10 @@ export default function DynamicFooter() {
           src="https://count.getloli.com/@mohabbat-portfolio?name=mohabbat-portfolio&theme=booru-lewd&padding=4&offset=0&align=center&scale=1&pixelated=1&darkmode=0"
           alt="visitor count"
           loading="lazy"
-          className="h-10 sm:h-12 w-auto object-contain shrink-0"
+          className="h-8 sm:h-12 w-auto object-contain shrink-0"
         />
 
-        <div className="flex gap-3 sm:gap-4 items-center">
+        <div className="flex gap-2 sm:gap-4 items-center shrink-0">
           {socialLinks.map((link) => (
             <FooterLink key={link.label} {...link} />
           ))}

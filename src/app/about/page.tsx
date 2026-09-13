@@ -32,31 +32,31 @@ export default function About() {
   }, []);
 
   return (
-    <div key={replayKey} className="flex flex-col items-start justify-start gap-12 sm:gap-16 mt-6 sm:mt-10 text-white w-full max-w-4xl">
+    <div key={replayKey} className="flex flex-col items-start justify-start gap-8 sm:gap-14 mt-4 sm:mt-8 text-white w-full max-w-4xl">
       {/* Profile row: image (left) + bio (right) */}
-      <section className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-10 w-full">
+      <section className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-10 w-full">
         {/* Interactive Pixel Avatar (drops in with jelly bounce) */}
         <div className="flex-shrink-0">
           <PixelJellyAvatar src="/images/profile/prof.png" size={180} />
         </div>
 
         {/* Profile text */}
-        <div className="space-y-3.5 text-center sm:text-left">
+        <div className="space-y-3 sm:space-y-3.5 text-center sm:text-left min-w-0 w-full">
           <FadeIn direction="left" delay={150} duration={700}>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">Profile</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">Profile</h2>
           </FadeIn>
           <FadeIn direction="left" delay={250} duration={700}>
-            <p className="text-lg sm:text-xl text-white/95">
+            <p className="text-base sm:text-lg md:text-xl text-white/95">
               <span className="font-semibold text-emerald-400">vlx / mohabbat</span>
             </p>
           </FadeIn>
           <FadeIn direction="left" delay={350} duration={700}>
-            <p className="text-base sm:text-xl text-white/90 leading-relaxed font-mono">
+            <p className="text-sm sm:text-lg md:text-xl text-white/90 leading-relaxed font-mono">
               I code something. {"[>_<]"}
             </p>
           </FadeIn>
           <FadeIn direction="left" delay={450} duration={700}>
-            <p className="text-base sm:text-lg text-white/90 leading-relaxed pt-1">
+            <p className="text-sm sm:text-base md:text-lg text-white/90 leading-relaxed pt-0.5 sm:pt-1">
               I’m Mohabbat. I’m currently pursuing my BSc in Computer Science and Engineering at{' '}
               <a
                 href="https://www.green.edu.bd/"
