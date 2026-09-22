@@ -4,6 +4,39 @@ import { useState, useEffect } from 'react';
 import PixelJellyAvatar from "../../components/PixelJellyAvatar";
 import FadeIn from "../../components/FadeIn";
 import GithubStatsSection from "../../components/GithubStats";
+import WavyTicker from "../../components/WavyTicker";
+import {
+  SiRust,
+  SiZig,
+  SiPython,
+  SiDjango,
+  SiNextdotjs,
+  SiReact,
+  SiTypescript,
+  SiTailwindcss,
+  SiDocker,
+  SiPostgresql,
+  SiGithub,
+  SiLinux,
+  SiJavascript,
+} from "react-icons/si";
+
+// Brand colors from simpleicons.org so each icon stays in its native palette.
+const tickerItems = [
+  { label: 'Rust',         svg: <SiRust />,         color: '#CE412B' },
+  { label: 'Zig',          svg: <SiZig />,          color: '#F7A41D' },
+  { label: 'Python',       svg: <SiPython />,       color: '#3776AB' },
+  { label: 'Django',       svg: <SiDjango />,       color: '#44B78B' },
+  { label: 'Next.js',      svg: <SiNextdotjs />,    color: '#FFFFFF' },
+  { label: 'React',        svg: <SiReact />,        color: '#61DAFB' },
+  { label: 'TypeScript',   svg: <SiTypescript />,   color: '#3178C6' },
+  { label: 'Tailwind CSS', svg: <SiTailwindcss />,  color: '#06B6D4' },
+  { label: 'Docker',       svg: <SiDocker />,       color: '#2496ED' },
+  { label: 'PostgreSQL',   svg: <SiPostgresql />,   color: '#4169E1' },
+  { label: 'GitHub',       svg: <SiGithub />,       color: '#FFFFFF' },
+  { label: 'Linux',        svg: <SiLinux />,        color: '#FCC624' },
+  { label: 'JavaScript',   svg: <SiJavascript />,   color: '#F7DF1E' },
+];
 
 // const likesSkills: string[] = [
 //   'Clouds',
@@ -32,7 +65,9 @@ export default function About() {
   }, []);
 
   return (
-    <div key={replayKey} className="flex flex-col items-start justify-start gap-8 sm:gap-14 mt-4 sm:mt-8 text-white w-full max-w-4xl">
+    <>
+      <div key={replayKey} className="w-full flex flex-col items-center">
+        <div className="flex flex-col items-start justify-start gap-8 sm:gap-14 mt-4 sm:mt-8 text-white w-full max-w-4xl">
       {/* Profile row: image (left) + bio (right) */}
       <section className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-10 w-full">
         {/* Interactive Pixel Avatar (drops in with jelly bounce) */}
@@ -95,9 +130,13 @@ export default function About() {
       </section> */}
 
       {/* GitHub Section — Activity, Heatmap, Tech Stack & Pinned Repositories */}
-      <section className="w-full">
-        <GithubStatsSection />
-      </section>
-    </div>
+        <section className="w-full">
+          <GithubStatsSection />
+        </section>
+        </div>
+      </div>
+
+      <WavyTicker items={tickerItems} />
+    </>
   );
 }
