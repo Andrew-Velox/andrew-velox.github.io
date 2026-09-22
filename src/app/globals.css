@@ -1,14 +1,5 @@
 @import 'tailwindcss';
 
-/* Seven-segment LCD font for the home page clock (DSEG by keshikan, SIL OFL) */
-@font-face {
-  font-family: 'DSEG7';
-  src: url('/fonts/DSEG7Classic-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -17,7 +8,7 @@
 :root {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-saira), var(--font-geist-sans);
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -31,7 +22,7 @@
 body {
   background: #181818;
   color: var(--foreground);
-  font-family: var(--font-saira), system-ui, Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, Arial, Helvetica, sans-serif;
 }
 
 /* Modern Scrollbar Styles */

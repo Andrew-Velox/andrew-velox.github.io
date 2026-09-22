@@ -3,6 +3,41 @@ import TypingText from '../components/TypingText';
 import ProfileImage from '../components/ProfileImage';
 import Link from 'next/link';
 import { QuoteCard, ClockCard } from '../components/HomeWidgets';
+import {
+  Press_Start_2P,
+  Audiowide,
+  Kalam,
+} from 'next/font/google';
+
+const pressStart = Press_Start_2P({
+  variable: '--font-press-start',
+  subsets: ['latin'],
+  weight: '400',
+  display: 'swap',
+  preload: true,
+  fallback: ['monospace', 'Courier New'],
+  adjustFontFallback: true,
+});
+
+const audiowide = Audiowide({
+  variable: '--font-audiowide',
+  subsets: ['latin'],
+  weight: '400',
+  display: 'swap',
+  preload: true,
+  fallback: ['fantasy', 'sans-serif'],
+  adjustFontFallback: true,
+});
+
+const kalam = Kalam({
+  variable: '--font-kalam',
+  subsets: ['latin'],
+  weight: '400',
+  display: 'swap',
+  preload: true,
+  fallback: ['cursive', 'sans-serif'],
+  adjustFontFallback: true,
+});
 
 const navTiles = [
   {
@@ -46,7 +81,7 @@ const navTiles = [
 export default function Home() {
   return (
     <>
-      <main className="w-full max-w-4xl lg:max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-center md:justify-between gap-6 sm:gap-8 md:gap-10 lg:gap-24 relative z-20 touch-none -mt-20 sm:mt-0 transition-all duration-300 ease-out">
+      <main className={`${pressStart.variable} ${audiowide.variable} ${kalam.variable} w-full max-w-4xl lg:max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-center md:justify-between gap-6 sm:gap-8 md:gap-10 lg:gap-24 relative z-20 touch-none -mt-20 sm:mt-0 transition-all duration-300 ease-out`}>
         {/* Hamburger nav — small screens only; md+ uses the glass tiles */}
         <div className="md:hidden">
           <Navbar />

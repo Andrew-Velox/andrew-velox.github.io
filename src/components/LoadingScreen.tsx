@@ -111,7 +111,6 @@ export default function LoadingScreen() {
         <h1
           className="text-3xl sm:text-4xl font-bold text-white tracking-wide"
           style={{
-            fontFamily: 'var(--font-permanent-marker)',
             transform: 'rotate(-2deg)',
           }}
         >

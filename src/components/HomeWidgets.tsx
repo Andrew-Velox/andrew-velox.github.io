@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import styles from './HomeWidgets.module.css';
 
 const quotes = [
   { text: 'Talk is cheap. Show me the code.', author: 'Linus Torvalds' },
