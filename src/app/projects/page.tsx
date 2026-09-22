@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import FadeIn from '../../components/FadeIn';
 import Carousel3D from '../../components/Carousel3D';
 import ProjectModal, { type Project, type Category } from '../../components/ProjectModal';
@@ -20,7 +20,7 @@ const projects: Project[] = [
       title: 'Ziex Devtools',
       description: "Ziex DevTools is a specialized browser extension built specifically for debugging applications made with the Ziex web framework for Zig. It integrates directly into your browser's developer console to give you a clear, real-time look into your application's state and performance",
       tags: ['Zig', 'Browser Extension', 'Debugging', 'Ziex Framework'],
-      category: 'tools',
+      category: 'extension',
       link: 'https://chromewebstore.google.com/detail/efnedneccooengjfmahlnmicgkalnopj?utm_source=item-share-cb',
       github: 'https://github.com/ziex-dev/ziex/tree/main/ide/devtool',
       image: '/images/projects/ziex_devtool.png',
@@ -81,7 +81,7 @@ const projects: Project[] = [
         description: 'Contributed a RAG-based AI chatbot assistant to my university computer club website. The club president can upload documents via Django admin panel, which are automatically indexed into a vector database. The chatbot intelligently answers queries based on the uploaded content.',
         tags: ['RAG', 'Django', 'Vector DB', 'LLM', 'Python',],
         category: 'web',
-        link: undefined,
+        link: 'https://gucc.green.edu.bd/',
         github: 'https://github.com/GreenUniversityComputerClub',
         image: '/images/projects/club_web_contribution.png',
     },
@@ -97,6 +97,18 @@ const filters: { value: 'all' | Category; label: string }[] = [
 export default function ProjectsPage() {
   const [activeFilter, setActiveFilter] = useState<'all' | Category>('all');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [isSmall, setIsSmall] = useState(false);
+
+  useEffect(() => {
+    const update = () => setIsSmall(window.innerWidth < 768);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  const cardW = isSmall ? 320 : 520;
+  const cardH = isSmall ? 160 : 260;
+  const radius = isSmall ? 380 : 620;
 
   const visibleProjects =
     activeFilter === 'all'
@@ -199,12 +211,12 @@ export default function ProjectsPage() {
               <span className="absolute bottom-3 left-3 w-3 h-3 border-b border-l border-white/40 pointer-events-none" />
               <span className="absolute bottom-3 right-3 w-3 h-3 border-b border-r border-white/40 pointer-events-none" />
 
-              <div className="relative w-full h-[440px] lg:h-[580px] min-w-0 overflow-hidden">
+              <div className="relative w-full h-[calc(100vh-280px)] sm:h-[calc(100vh-260px)] md:h-[460px] lg:h-[580px] min-h-[300px] min-w-0 overflow-hidden">
                 <Carousel3D
                   images={carouselImages}
-                  cardW={520}
-                  cardH={260}
-                  radius={620}
+                  cardW={cardW}
+                  cardH={cardH}
+                  radius={radius}
                   onCardClick={openProject}
                 />
               </div>
