@@ -47,7 +47,7 @@ export default function About() {
           </FadeIn>
           <FadeIn direction="left" delay={250} duration={700}>
             <p className="text-base sm:text-lg md:text-xl text-white/95">
-              <span className="font-semibold text-emerald-400">vlx / mohabbat</span>
+              <span className="font-semibold text-emerald-400">mohabbat</span>
             </p>
           </FadeIn>
           <FadeIn direction="left" delay={350} duration={700}>

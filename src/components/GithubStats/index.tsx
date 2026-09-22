@@ -29,16 +29,16 @@ export default function GithubStatsSection() {
               <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
                 GitHub Activity
               </h3>
-              <span className="font-mono text-xs sm:text-sm text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded font-medium inline-block">
+              {/* <span className="font-mono text-xs sm:text-sm text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded font-medium inline-block">
                 @{username}
-              </span>
+              </span> */}
             </div>
             <p className="text-xs sm:text-sm md:text-base text-white/70 font-mono">
               Open source telemetry, contributions &amp; repositories
             </p>
           </div>
 
-          <a
+          {/* <a
             href={`https://github.com/${username}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -46,7 +46,7 @@ export default function GithubStatsSection() {
           >
             <span>GitHub Profile</span>
             <ExternalLink size={14} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
+          </a> */}
         </div>
       </FadeIn>
 
@@ -99,9 +99,9 @@ export default function GithubStatsSection() {
       </FadeIn> */}
 
       {/* Featured Repositories Grid */}
-      <FadeIn direction="up" delay={400} duration={600}>
+      {/* <FadeIn direction="up" delay={400} duration={600}>
         <PinnedRepos />
-      </FadeIn>
+      </FadeIn> */}
     </div>
   );
 }

@@ -51,7 +51,7 @@ const Card = React.memo(({ src, transform, cardW, cardH, onClick }: CardProps) =
       type="button"
       onClick={onClick}
       aria-label="Open project details"
-      className="w-full h-full overflow-hidden transition-transform duration-300 hover:scale-[1.02] hover:z-10 cursor-pointer p-0 block text-left"
+      className="w-full h-full overflow-hidden rounded-xl transition-transform duration-300 hover:scale-[1.02] hover:z-10 cursor-pointer p-0 block text-left"
       style={{ backfaceVisibility: 'hidden' }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}

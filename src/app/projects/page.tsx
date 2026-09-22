@@ -149,7 +149,7 @@ export default function ProjectsPage() {
                 <div className="min-w-0">
                   <div className="flex items-center gap-3 mb-3">
                     <span className="h-px w-10 bg-red-600" />
-                    <span className="text-xs tracking-[0.35em] text-gray-500 font-mono uppercase">
+                    <span className="text-xs tracking-[0.35em] text-gray-300 font-mono uppercase">
                       Selected Works
                     </span>
                   </div>
@@ -180,7 +180,7 @@ export default function ProjectsPage() {
                       className={`group/filter relative pb-2 text-xs font-mono uppercase tracking-[0.35em] transition-colors duration-300 ${
                         isActive
                           ? 'text-white'
-                          : 'text-gray-500 hover:text-gray-300'
+                          : 'text-gray-300 hover:text-white'
                       }`}
                       aria-pressed={isActive}
                     >
@@ -195,7 +195,7 @@ export default function ProjectsPage() {
                 })}
               </div>
 
-              <p className="text-[0.7rem] tracking-[0.25em] text-gray-600 font-mono uppercase hidden md:block">
+              <p className="text-[0.7rem] tracking-[0.25em] text-gray-400 font-mono uppercase hidden md:block">
                 Drag · Click an image to view details
               </p>
             </div>
