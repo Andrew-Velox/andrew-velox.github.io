@@ -194,7 +194,7 @@ interface Props {
     imageShape?: "circle" | "square";
 }
 
-function __OriginkitBase_OrbGyro(props: Props) {
+function OriginkitBaseOrbGyro(props: Props) {
     const {
         style,
         dotColor = "#F4F1EA",
@@ -446,5 +446,5 @@ const __originkitPresetProps = {
 };
 
 export default function OrbGyro(props: Record<string, unknown>) {
-    return <__OriginkitBase_OrbGyro {...(__originkitPresetProps as unknown as Props)} {...(props as Props)} />;
+    return <OriginkitBaseOrbGyro {...(__originkitPresetProps as unknown as Props)} {...(props as Props)} />;
 }
