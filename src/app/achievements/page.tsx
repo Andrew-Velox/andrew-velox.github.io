@@ -1,3 +1,5 @@
+// import OrbGyro from '../../components/OrbGyro';
+
 const achievementsData = [
 	{
 		section: 'Regional Programming Contests',
@@ -111,6 +113,17 @@ export default function Achievements() {
 		<div className="min-h-screen w-full bg-gradient-to-r text-white">
 			<div className="flex flex-col items-center justify-center min-h-screen w-full">
 				<div className="max-w-3xl w-full mx-auto px-4 py-10">
+					{/* <div className="w-full flex justify-center mb-6">
+						<div className="w-96 h-96 sm:w-[28rem] sm:h-[28rem]">
+							<OrbGyro
+								imageSrc="/images/profile/prof.png"
+								imageSize={50}
+								imageShape="circle"
+								ball={{ spread: 180 }}
+								dotSize={150}
+							/>
+						</div>
+					</div> */}
 					<h1 className="text-4xl font-bold mb-2 text-center text-white">Achievements</h1>
 					<div className="w-24 h-1 bg-white mx-auto mb-10 rounded-full" />
 					<div className="space-y-16">

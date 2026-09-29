@@ -14,7 +14,8 @@ import RotatingBackground from "../components/RotatingBackground";
 // import ParticlesBackground from "../components/ParticlesBackground";
 // import BgGif from "../components/BgGif";
 // import ParticlesBackground from "../components/ParticlesBackground";
-
+ import MishiPet from "../components/MishiPet";
+ 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -60,6 +61,7 @@ export default function RootLayout({
         <ClickFireworks />
         {/* <RightClickNotice /> */}
         <GreetingToast />
+        {/* <MishiPet /> */}
         {/* <BgGif src="/bg_animaton/ani.gif" /> */}
         {/* <ParticlesBackground /> */}
         <RotatingBackground images={backgroundImages} />

@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { motion } from 'framer-motion';
+import OrbGyro from './OrbGyro';
 
 const STATUS_TEXT = 'Focusing On Myself';
 
@@ -9,12 +10,18 @@ interface ProfileImageProps {
   src: string;
   alt: string;
   className?: string;
+  enableOrbGyro?: boolean;
 }
 
 // Global cache for media preloading
 const mediaCache = new Map<string, { loaded: boolean; element: HTMLVideoElement | HTMLImageElement }>();
 
-export default function ProfileImage({ src, alt, className }: ProfileImageProps) {
+export default function ProfileImage({
+  src,
+  alt,
+  className,
+  enableOrbGyro = false,
+}: ProfileImageProps) {
   const [mediaLoaded, setMediaLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
@@ -261,6 +268,37 @@ export default function ProfileImage({ src, alt, className }: ProfileImageProps)
       ref={wrapperRef}
       className={`${className} flex-shrink-0 touch-none select-none relative`}
     >
+      {/* OrbGyro ring animation overlay — renders on top of the avatar
+          (between the avatar media and the presence dot pill at z-10),
+          so the rings are visible crossing over the image. The canvas
+          is sized larger than the wrapper so the rings extend past the
+          avatar border. Receives pointer events so drag-to-rotate works. */}
+      {enableOrbGyro && (
+        <div
+          aria-hidden
+          className="absolute"
+          style={{
+            top: '50%',
+            left: '50%',
+            width: '200%',
+            height: '200%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 5,
+          }}
+        >
+          <OrbGyro
+            dotColor="#ffffff"
+            accentColor="#ffffff"
+            speed={30}
+            density={150}
+            dotSize={120}
+            spinTurns={1}
+            ball={{ spread: 180, tilt: 0, turn: 0 }}
+            pointer={{ drag: 100, damping: 20 }}
+          />
+        </div>
+      )}
+
       {/* Container that maintains size to prevent layout shift */}
       <div className="w-full h-full relative overflow-hidden rounded-full">
         {/* Skeleton Loading Effect - Positioned absolutely to avoid layout shift */}

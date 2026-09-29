@@ -94,7 +94,8 @@ export default function Home() {
             <ProfileImage
               src="/images/profile/Fin2.webm"
               alt="Ken"
-              className="w-[230px] h-[230px] sm:w-[300px] sm:h-[300px] md:w-[150px] md:h-[150px] lg:w-[225px] lg:h-[225px] rounded-full object-cover border-4 border-white/30 dark:border-white/20 backdrop-blur-sm mx-auto md:mx-0 shadow-2xl pointer-events-none shrink-0 transition-all duration-300 ease-out"
+              enableOrbGyro
+              className="w-[230px] h-[230px] sm:w-[300px] sm:h-[300px] md:w-[150px] md:h-[150px] lg:w-[225px] lg:h-[225px] rounded-full object-cover border-4 border-white/30 dark:border-white/20 backdrop-blur-sm mx-auto md:mx-0 shadow-2xl shrink-0 transition-all duration-300 ease-out"
             />
 
             <div className="flex flex-col items-center text-center md:items-start md:text-left touch-none select-none">
