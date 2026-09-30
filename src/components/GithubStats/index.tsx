@@ -78,7 +78,7 @@ export default function GithubStatsSection() {
 
       {/* Contribution Calendar Graph */}
       <FadeIn direction="up" delay={250} duration={600}>
-        <div className="relative border border-white/10 bg-white/[0.02] p-3 sm:p-5 backdrop-blur-sm">
+        <div className="relative border border-white/10 bg-[#111114]/90 p-3 sm:p-5 backdrop-blur-sm">
           {/* Cyberpunk corner notches */}
           <span className="pointer-events-none absolute -top-px -left-px h-2.5 w-2.5 border-t-2 border-l-2 border-emerald-400/70" />
           <span className="pointer-events-none absolute -bottom-px -right-px h-2.5 w-2.5 border-b-2 border-r-2 border-emerald-400/70" />

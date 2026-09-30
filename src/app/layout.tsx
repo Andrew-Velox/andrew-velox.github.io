@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import fs from "fs";
-import path from "path";
+// import fs from "fs";
+// import path from "path";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import MediaPreloader from "../components/MediaPreloader";
@@ -10,11 +10,12 @@ import LoadingScreen from "../components/LoadingScreen";
 import ClickFireworks from "../components/ClickFireworks";
 // import RightClickNotice from "../components/RightClickNotice";
 import GreetingToast from "../components/GreetingToast";
-import RotatingBackground from "../components/RotatingBackground";
+// import RotatingBackground from "../components/RotatingBackground";
 // import ParticlesBackground from "../components/ParticlesBackground";
 // import BgGif from "../components/BgGif";
 // import ParticlesBackground from "../components/ParticlesBackground";
  import MishiPet from "../components/MishiPet";
+ import SpiderWeb from "../components/SpiderWeb";
  
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,23 +34,18 @@ export const metadata: Metadata = {
 
 // Read at build time so any image dropped into public/images/backgrounds
 // is automatically in the rotation on the next build — no code change.
-const IMAGE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp"]);
+// const IMAGE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp"]);
 
-function getBackgroundImages(): string[] {
-  const dir = path.join(process.cwd(), "public", "images", "backgrounds");
-  // return fs
-  //   .readdirSync(dir)
-  //   .filter((name) => IMAGE_EXTENSIONS.has(path.extname(name).toLowerCase()))
-  //   .map((name) => `/images/backgrounds/${name}`);
-    return [];
-}
+// function getBackgroundImages(): string[] {
+//   const dir = path.join(process.cwd(), "public", "images", "backgrounds");
+//   return [];
+// }
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const backgroundImages = getBackgroundImages();
   return (
     <html lang="en" className="[color-scheme:light_dark]">
       <body
@@ -64,7 +60,9 @@ export default function RootLayout({
         {/* <MishiPet /> */}
         {/* <BgGif src="/bg_animaton/ani.gif" /> */}
         {/* <ParticlesBackground /> */}
-        <RotatingBackground images={backgroundImages} />
+        <div className="fixed inset-0 z-0">
+          <SpiderWeb opacity={30} thickness={15} />
+        </div>
         <div className="relative z-10 min-h-screen">
           <div className="min-h-screen pb-16 flex items-center justify-center">
             {children}

@@ -11,7 +11,7 @@ interface StatCardProps {
 
 export function StatCard({ icon: Icon, label, value, subtext }: StatCardProps) {
   return (
-    <div className="group relative flex flex-1 min-w-0 w-full items-center gap-2.5 sm:gap-3.5 md:gap-4 border border-white/10 bg-white/[0.03] p-3 sm:px-4 sm:py-3.5 md:px-5 md:py-4 backdrop-blur-sm transition-all duration-300 hover:border-emerald-400/40 hover:bg-white/[0.06] hover:shadow-[0_0_18px_rgba(52,211,153,0.12)]">
+    <div className="group relative flex flex-1 min-w-0 w-full items-center gap-2.5 sm:gap-3.5 md:gap-4 border border-white/10 bg-[#111114]/90 p-3 sm:px-4 sm:py-3.5 md:px-5 md:py-4 backdrop-blur-sm transition-all duration-300 hover:border-emerald-400/40 hover:bg-[#111114]/95 hover:shadow-[0_0_18px_rgba(52,211,153,0.12)]">
       {/* Cyberpunk corner notches */}
       <span className="pointer-events-none absolute -top-px -left-px h-2.5 w-2.5 border-t border-l border-emerald-400/70 transition-colors duration-300 group-hover:border-emerald-400" />
       <span className="pointer-events-none absolute -bottom-px -right-px h-2.5 w-2.5 border-b border-r border-emerald-400/70 transition-colors duration-300 group-hover:border-emerald-400" />

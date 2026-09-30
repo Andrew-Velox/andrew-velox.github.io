@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>Spider Test</title>
+<style>body{margin:0;background:#111;color:white;font-family:monospace;padding:20px}canvas{border:1px solid lime}</style>
+</head>
+<body>
+<h1>Test page</h1>
+<div id="log" style="white-space:pre;font-size:11px"></div>
+<script type="module">
+const log = (m) => { document.getElementById('log').textContent += m + '\n'; console.log(m); };
+
+// Load SpiderWeb as raw text and inline it
+const res = await fetch('http://localhost:3000/_next/static/chunks/app/page.js').catch(() => null);
+log('fetched page.js: ' + (res ? res.status : 'null'));
+</script>
+</body>
+</html>

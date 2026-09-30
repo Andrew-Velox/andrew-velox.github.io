@@ -103,7 +103,7 @@ export function PinnedRepos({ repos = PINNED_REPOSITORIES }: { repos?: PinnedRep
             href={repo.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex flex-col justify-between border border-white/10 bg-white/[0.03] p-3.5 sm:p-5 backdrop-blur-sm transition-all duration-300 hover:border-emerald-400/40 hover:bg-white/[0.06] hover:shadow-[0_0_20px_rgba(52,211,153,0.12)]"
+            className="group relative flex flex-col justify-between border border-white/10 bg-[#111114]/90 p-3.5 sm:p-5 backdrop-blur-sm transition-all duration-300 hover:border-emerald-400/40 hover:bg-[#111114]/95 hover:shadow-[0_0_20px_rgba(52,211,153,0.12)]"
           >
             {/* Technical corner notches */}
             <span className="pointer-events-none absolute -top-px -left-px h-2.5 w-2.5 border-t border-l border-emerald-400/60 transition-colors duration-300 group-hover:border-emerald-400" />

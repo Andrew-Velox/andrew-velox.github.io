@@ -205,7 +205,7 @@ export default function ProjectsPage() {
         {/* Window — contains only the 3D carousel */}
         {carouselImages.length > 0 && (
           <FadeIn delay={120}>
-            <div className="relative border border-white/15 bg-white/[0.03] overflow-hidden">
+            <div className="relative border border-white/15 bg-[#111114]/70 backdrop-blur-sm overflow-hidden">
               <span className="absolute top-3 left-3 w-3 h-3 border-t border-l border-white/40 pointer-events-none" />
               <span className="absolute top-3 right-3 w-3 h-3 border-t border-r border-white/40 pointer-events-none" />
               <span className="absolute bottom-3 left-3 w-3 h-3 border-b border-l border-white/40 pointer-events-none" />

@@ -18,7 +18,7 @@ export const DEFAULT_LANGUAGES: LanguageStat[] = [
 
 export function LanguageStats({ languages = DEFAULT_LANGUAGES }: { languages?: LanguageStat[] }) {
   return (
-    <div className="relative border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm space-y-3.5">
+    <div className="relative border border-white/10 bg-[#111114]/90 p-5 backdrop-blur-sm space-y-3.5">
       {/* Technical corner notches */}
       <span className="pointer-events-none absolute -top-px -left-px h-2.5 w-2.5 border-t border-l border-emerald-400/60" />
       <span className="pointer-events-none absolute -bottom-px -right-px h-2.5 w-2.5 border-b border-r border-emerald-400/60" />
