@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { MishiPet } from "mishi-pet";
+import type { Petfolio as PetfolioInstance } from "petfolio";
 
-export default function MishiPet() {
-  const petRef = useRef<MishiPet | null>(null);
+export default function Petfolio() {
+  const petRef = useRef<PetfolioInstance | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -12,26 +12,26 @@ export default function MishiPet() {
 
     (async () => {
       try {
-        const mod = await import("mishi-pet");
+        const mod = await import("petfolio");
         if (cancelled) return;
 
         const reducedMotion = window.matchMedia(
           "(prefers-reduced-motion: reduce)"
         ).matches;
 
-        petRef.current = mod.MishiPet.summon({
+        petRef.current = mod.Petfolio.summon({
           autoStart: !reducedMotion,
           scale: 0.95,
         });
         setReady(true);
 
-        // The mishi-pet canvas is full-viewport (fixed; 100vw x 100vh) with
+        // The petfolio canvas is full-viewport (fixed; 100vw x 100vh) with
         // z-index: 99999 and the library forces pointer-events: auto after
         // creating it, which blocks all clicks on the page. Force it back
         // to "none" so buttons underneath remain clickable. The pet is purely
         // decorative on hover, so it doesn't need to capture pointer events.
         const canvas = document.getElementById(
-          "mishi-canvas"
+          "petfolio-canvas"
         ) as HTMLCanvasElement | null;
         if (canvas) {
           canvas.style.pointerEvents = "none";
@@ -39,7 +39,7 @@ export default function MishiPet() {
       } catch (err) {
         // Surface to console so the issue is visible in dev, but don't
         // break the page if the pet fails to load.
-        console.error("[MishiPet] failed to initialize:", err);
+        console.error("[Petfolio] failed to initialize:", err);
       }
     })();
 

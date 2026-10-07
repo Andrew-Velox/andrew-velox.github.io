@@ -1,0 +1,54 @@
+[
+  {
+    "source": "src/components/RightClickNotice.tsx",
+    "content": "For browsing experience, right-click is disabled on this site"
+  },
+  {
+    "source": "src/components/HomeWidgets.tsx",
+    "content": "Talk is cheap. Show me the code. First, solve the problem. Then, write the code. Simplicity is the ultimate sophistication. Make it work, make it right, make it fast. https://api.open-meteo.com/v1/forecast?latitude=23.8103&longitude=90.4125&current_weather=true"
+  },
+  {
+    "source": "src/components/DynamicFooter.tsx",
+    "content": "https://github.com/andrew-velox https://www.linkedin.com/in/mohabbatvlx/ mailto:mohabbat.bd2020@gmail.com https://count.getloli.com/@mohabbat-portfolio?name=mohabbat-portfolio&theme=booru-lewd&padding=4&offset=0&align=center&scale=1&pixelated=1&darkmode=0"
+  },
+  {
+    "source": "src/components/ChatBot.tsx",
+    "content": "https://simpeai.onrender.com/api/chat Hi! I'm Mohabbat's AI assistant. Ask me anything about his skills, projects, or experience! I respond as Mohabbat when he's unavailable. Note: First response may take ~30 seconds as the system initializes. Sorry, I encountered an error. Please try again. Sorry, the API is sleeping wait a little bit [-_-] Hi! I'm Mohabbat's AI assistant. Ask me anything about his skills, projects, or experience! I respond as Mohabbat when he's unavailable. Note: First response may take ~30 seconds as the system initializes."
+  },
+  {
+    "source": "src/components/GithubStats/index.tsx",
+    "content": "Open source telemetry, contributions & repositories Fetching contribution calendar…"
+  },
+  {
+    "source": "src/components/GithubStats/PinnedRepos.tsx",
+    "content": "An animated terminal system fetch you can work inside, written in Rust. Ships with 18 animations and zero dependencies. https://github.com/Andrew-Velox/animfetch Full-stack web framework for Zig. HTML syntax directly within Zig code, just like JSX but for Zig! https://github.com/ziex-dev/ziex Terminal-based TUI tool to track Codeforces problem solving, ratings, submissions, and contest performance. https://github.com/Andrew-Velox/codeforces-stats Andrew-Velox/Codeforces-Submission-Fetcher-Extension Chrome extension to fetch Codeforces accepted submissions and export rating-organized READMEs for GitHub repositories. https://github.com/Andrew-Velox/Codeforces-Submission-Fetcher-Extension ⚡ Curated list of awesome Large Language Model (LLM), Machine Learning, and AI projects built with Zig. https://github.com/Andrew-Velox/awesome-zig-llm https://github.com/Andrew-Velox/rust-user-map https://github.com/Andrew-Velox?tab=repositories"
+  },
+  {
+    "source": "src/app/not-found.tsx",
+    "content": "The page you're looking for doesn't exist or has been moved."
+  },
+  {
+    "source": "src/app/projects/page.tsx",
+    "content": "An animated system fetch you can work inside, written in Rust. The ASCII art stays pinned at the top of the terminal while your prompt and command output scroll below it. Ships with 18 animations (cats, foxes, planets, a black hole and more), runs on Linux and macOS with zero dependencies. https://aur.archlinux.org/packages/animfetch-bin https://github.com/Andrew-Velox/animfetch Ziex DevTools is a specialized browser extension built specifically for debugging applications made with the Ziex web framework for Zig. It integrates directly into your browser's developer console to give you a clear, real-time look into your application's state and performance https://chromewebstore.google.com/detail/efnedneccooengjfmahlnmicgkalnopj?utm_source=item-share-cb https://github.com/ziex-dev/ziex/tree/main/ide/devtool An advanced backend system powered by RAG (Retrieval-Augmented Generation) technology. Features smart blog indexing with vector database for interactive Q&A, plus a private study assistant that summarizes documents. Built as a centralized API for seamless web and mobile integration. https://github.com/Andrew-Velox/Mega-Project A modern, Discord-inspired real-time chat application implemented with Django and WebSockets. It supports private messaging, group conversations, file sharing, and a polished dark-themed user interface. Demo credentials: user1 / demo1234. https://meow-chat-7qic.onrender.com/ https://github.com/Andrew-Velox/Meow-Chat A modern, responsive Next.js website featuring a comprehensive navigation bar, an engaging homepage, and an SEO-optimized structure prepared for integration with a Django backend API. https://mew-shop-eight.vercel.app/ https://github.com/Andrew-Velox/mew_shop A Chrome extension that retrieves accepted Codeforces submissions and compiles them into a ZIP archive containing rating-organized README.md files. The archive can be uploaded to a GitHub repository to document and showcase problem-solving accomplishments. https://chromewebstore.google.com/detail/cf-fetcher/pehfoogjijedipaehbibmjcajbcbimef https://github.com/Andrew-Velox/Codeforces-Submission-Fetcher-Extension Contributed a RAG-based AI chatbot assistant to my university computer club website. The club president can upload documents via Django admin panel, which are automatically indexed into a vector database. The chatbot intelligently answers queries based on the uploaded content. https://github.com/GreenUniversityComputerClub Drag · Click an image to view details"
+  },
+  {
+    "source": "src/app/projects/layout.tsx",
+    "content": "Explore my portfolio of projects and work."
+  },
+  {
+    "source": "src/app/achievements/page.tsx",
+    "content": "ICPC ASIA DHAKA REGIONAL CONTEST 2024 https://bapsoj.org/contests/icpc-asia-dhaka-regional-contest-2024-onsite-round MIAKI PRESENTS KUET IUPC ONSITE 2025 https://bapsoj.org/contests/miaki-presents-kuet-iupc-onsite-2025 https://bapsoj.org/contests/uiu-inter-university-programming-contest-2025 https://toph.co/c/mtb-presents-aust-inter-university-2025 https://toph.co/c/bubt-inter-university-collaborative Inter Departmental Programming Contest 2024 Green University of Bangladesh No hackathon participation yet, but soon Inshallah!"
+  },
+  {
+    "source": "src/app/achievements/layout.tsx",
+    "content": "Explore my portfolio of Achievements and work."
+  },
+  {
+    "source": "src/app/about/page.tsx",
+    "content": "I’m Mohabbat. I’m currently pursuing my BSc in Computer Science and Engineering at Green University of Bangladesh"
+  },
+  {
+    "source": "src/app/about/layout.tsx",
+    "content": "Learn more about Mohabbat - Computer Science student"
+  }
+]

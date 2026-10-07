@@ -34,59 +34,128 @@ interface CardProps {
   cardW: number;
   cardH: number;
   onClick?: () => void;
+  label?: string;
+  description?: string;
+  crisp?: boolean;
 }
 
-const Card = React.memo(({ src, transform, cardW, cardH, onClick }: CardProps) => (
-  <div
-    className="absolute"
-    style={{
-      width: cardW,
-      height: cardH,
-      transform,
-      transformStyle: 'preserve-3d',
-      willChange: 'transform',
-    }}
-  >
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label="Open project details"
-      className="w-full h-full overflow-hidden rounded-xl transition-transform duration-300 hover:scale-[1.02] hover:z-10 cursor-pointer p-0 block text-left"
-      style={{ backfaceVisibility: 'hidden' }}
+// Bright, curated gradients; a stable pick per title so colours don't shuffle.
+const GRADIENTS = [
+  ['#ff3d9a', '#ff8a4c'], // pink → orange
+  ['#6a5cff', '#2ec5ff'], // indigo → sky
+  ['#00c9a7', '#5be37d'], // teal → green
+  ['#ff6b6b', '#ffb347'], // coral → amber
+  ['#a64dff', '#ff5fc8'], // violet → magenta
+  ['#2f80ff', '#7af0ff'], // blue → cyan
+];
+export const gradientFor = (text: string) => {
+  let h = 0;
+  for (let i = 0; i < text.length; i++) h = (h * 31 + text.charCodeAt(i)) >>> 0;
+  return GRADIENTS[h % GRADIENTS.length];
+};
+
+const Card = React.memo(({ src, transform, cardW, cardH, onClick, label, description, crisp }: CardProps) => {
+  const [c1, c2] = gradientFor(label ?? '');
+  return (
+    <div
+      className="absolute"
+      style={{
+        width: cardW,
+        height: cardH,
+        transform,
+        transformStyle: 'preserve-3d',
+        willChange: crisp ? undefined : 'transform',
+      }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={src}
-        alt="Carousel item"
-        width={cardW}
-        height={cardH}
-        className="w-full h-full object-cover pointer-events-none"
-        loading="lazy"
-        draggable={false}
-        onError={(e) => {
-          (e.currentTarget as HTMLImageElement).src = FALLBACK;
-        }}
-      />
-    </button>
-  </div>
-));
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={label ? `Open ${label} details` : 'Open project details'}
+        className={`w-full h-full transition-transform duration-300 hover:scale-[1.02] hover:z-10 cursor-pointer p-0 text-left ${
+          label ? 'flex flex-col' : 'block overflow-hidden rounded-xl'
+        }`}
+        style={{ backfaceVisibility: 'hidden' }}
+      >
+        {label ? (
+          <>
+            <span
+              className="relative flex-1 min-h-0 overflow-hidden rounded-md"
+              style={{
+                background: `linear-gradient(135deg, ${c1}, ${c2})`,
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25)',
+              }}
+            >
+              <span className="relative z-10 flex items-start justify-between gap-3 p-3 sm:p-4">
+                <span className="line-clamp-2 text-xs sm:text-sm leading-snug text-white drop-shadow-sm font-medium">
+                  {description}
+                </span>
+                <span aria-hidden className="shrink-0 text-lg leading-none text-white/80">→</span>
+              </span>
+              {/* Screenshot as a browser-window crop bleeding off the bottom-right */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={src}
+                alt={label}
+                className="absolute left-[12%] right-[-6%] top-[42%] rounded-t-sm object-cover object-top border border-white/30 shadow-2xl pointer-events-none"
+                style={{ height: '75%' }}
+                loading="lazy"
+                draggable={false}
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = FALLBACK;
+                }}
+              />
+            </span>
+          </>
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={src}
+            alt="Carousel item"
+            width={cardW}
+            height={cardH}
+            className="w-full h-full object-cover pointer-events-none"
+            loading="lazy"
+            draggable={false}
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = FALLBACK;
+            }}
+          />
+        )}
+      </button>
+    </div>
+  );
+});
 Card.displayName = 'Card';
 
 interface Carousel3DProps {
   images?: string[];
+  /** Optional project names; when given, each image becomes a card with a name footer. */
+  labels?: string[];
+  descriptions?: string[];
   radius?: number;
   cardW?: number;
   cardH?: number;
   onCardClick?: (index: number) => void;
+  /** Hijack mouse-wheel to spin the carousel (default). Turn off on scrolling pages. */
+  captureWheel?: boolean;
+  /** Sharper rendering: gentler perspective (less front-card magnification) and no will-change rasterisation. */
+  crisp?: boolean;
+  /** Called with the index of the card currently facing the viewer. */
+  onActiveChange?: (index: number) => void;
 }
 
 const Carousel3D = React.memo(
   ({
     images = DEFAULT_IMAGES,
+    labels,
+    descriptions,
     radius = RADIUS,
     cardW = CARD_W,
     cardH = CARD_H,
     onCardClick,
+    captureWheel = true,
+    crisp = false,
+    onActiveChange,
   }: Carousel3DProps) => {
     const parentRef = useRef<HTMLDivElement>(null);
     const wheelRef = useRef<HTMLDivElement>(null);
@@ -102,6 +171,14 @@ const Carousel3D = React.memo(
     const dragDistanceRef = useRef(0);
     const lastInteractionRef = useRef(Date.now());
     const animationFrameRef = useRef<number | null>(null);
+    const onActiveChangeRef = useRef(onActiveChange);
+    const activeRef = useRef(-1);
+    const countRef = useRef(images.length);
+    useEffect(() => {
+      onActiveChangeRef.current = onActiveChange;
+      countRef.current = images.length;
+      activeRef.current = -1; // re-announce after the set changes
+    }, [onActiveChange, images]);
 
     useEffect(() => {
       const handleMouseMove = (e: MouseEvent) => {
@@ -120,7 +197,7 @@ const Carousel3D = React.memo(
     // friction smoothing applies as for click+drag, instead of snapping).
     useEffect(() => {
       const el = parentRef.current;
-      if (!el) return;
+      if (!el || !captureWheel) return;
       const handleWheel = (e: WheelEvent) => {
         e.preventDefault();
         lastInteractionRef.current = Date.now();
@@ -128,7 +205,7 @@ const Carousel3D = React.memo(
       };
       el.addEventListener('wheel', handleWheel, { passive: false });
       return () => el.removeEventListener('wheel', handleWheel);
-    }, []);
+    }, [captureWheel]);
 
     // Reset rotation when the image set changes (e.g. filter applied), so the
     // first card lands at the front instead of inheriting a stale angle.
@@ -153,6 +230,28 @@ const Carousel3D = React.memo(
           }
         }
         tiltRef.current += (targetTiltRef.current - tiltRef.current) * 0.1;
+
+        // Which card currently faces the viewer? Card i sits at angle
+        // a_i = i*arc/(n-1) - arc/2, so it is frontmost when a_i + rotation ≡ 0.
+        const n = countRef.current;
+        if (n > 0 && onActiveChangeRef.current) {
+          const arc = Math.min(360, Math.max(0, (n - 1) * 50));
+          let best = 0;
+          let bestDist = Infinity;
+          for (let i = 0; i < n; i++) {
+            const a = n > 1 ? (i * arc) / (n - 1) - arc / 2 : 0;
+            const d = Math.abs((((a + rotationRef.current) % 360) + 540) % 360 - 180);
+            if (d < bestDist) {
+              bestDist = d;
+              best = i;
+            }
+          }
+          if (best !== activeRef.current) {
+            activeRef.current = best;
+            onActiveChangeRef.current(best);
+          }
+        }
+
         if (wheelRef.current) {
           wheelRef.current.style.transform =
             `rotateX(${tiltRef.current}deg) rotateY(${rotationRef.current}deg)`;
@@ -256,7 +355,7 @@ const cards = useMemo(() => {
         <div
           className="relative"
           style={{
-            perspective: 1500,
+            perspective: crisp ? 3500 : 1500,
             perspectiveOrigin: 'center',
             width: Math.max(cardW * 1.5, radius * 2.2),
             height: Math.max(cardH * 1.8, radius * 1.5),
@@ -269,7 +368,7 @@ const cards = useMemo(() => {
               width: cardW,
               height: cardH,
               transformStyle: 'preserve-3d',
-              willChange: 'transform',
+              willChange: crisp ? undefined : 'transform',
               position: 'absolute',
               left: '50%',
               top: '50%',
@@ -281,6 +380,9 @@ const cards = useMemo(() => {
               <Card
                 key={card.key}
                 src={card.src}
+                label={labels?.[card.key]}
+                description={descriptions?.[card.key]}
+                crisp={crisp}
                 transform={card.transform}
                 cardW={cardW}
                 cardH={cardH}

@@ -14,8 +14,8 @@ import GreetingToast from "../components/GreetingToast";
 // import ParticlesBackground from "../components/ParticlesBackground";
 // import BgGif from "../components/BgGif";
 // import ParticlesBackground from "../components/ParticlesBackground";
- import MishiPet from "../components/MishiPet";
- import SpiderWeb from "../components/SpiderWeb";
+ import Petfolio from "../components/Petfolio";
+ // import SpiderWeb from "../components/SpiderWeb";
  
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,12 +57,12 @@ export default function RootLayout({
         <ClickFireworks />
         {/* <RightClickNotice /> */}
         <GreetingToast />
-        {/* <MishiPet /> */}
+        {/* <Petfolio /> */}
         {/* <BgGif src="/bg_animaton/ani.gif" /> */}
         {/* <ParticlesBackground /> */}
-        <div className="fixed inset-0 z-0">
+        {/* <div className="fixed inset-0 z-0">
           <SpiderWeb opacity={30} thickness={15} />
-        </div>
+        </div> */}
         <div className="relative z-10 min-h-screen">
           <div className="min-h-screen pb-16 flex items-center justify-center">
             {children}

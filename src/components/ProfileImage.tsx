@@ -11,6 +11,7 @@ interface ProfileImageProps {
   alt: string;
   className?: string;
   enableOrbGyro?: boolean;
+orbScale?: number;
 }
 
 // Global cache for media preloading
@@ -21,6 +22,7 @@ export default function ProfileImage({
   alt,
   className,
   enableOrbGyro = false,
+orbScale = 200,
 }: ProfileImageProps) {
   const [mediaLoaded, setMediaLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -280,8 +282,8 @@ export default function ProfileImage({
           style={{
             top: '50%',
             left: '50%',
-            width: '200%',
-            height: '200%',
+            width: `${orbScale}%`,
+            height: `${orbScale}%`,
             transform: 'translate(-50%, -50%)',
             zIndex: 5,
           }}
