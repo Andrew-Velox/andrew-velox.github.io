@@ -125,7 +125,7 @@ const contributions = [
 
 export default function NewHome() {
   return (
-    <main className="self-start w-full max-w-6xl max-xl:max-w-none mx-auto px-0 xl:px-3 pt-0 pb-0 relative z-20">
+    <main className="self-start w-full max-w-6xl max-xl:max-w-none mx-auto px-0 xl:px-3 pt-0 pb-0 relative z-20 transition-[padding] duration-500 ease-out">
       <ProfileCard
         banner="/images/backgrounds/city-girl.jpg"
         bio="I’m Mohabbat. I’m currently pursuing my BSc in Computer Science and Engineering at Green University of Bangladesh."

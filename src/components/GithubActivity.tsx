@@ -32,17 +32,17 @@ export default async function GithubActivity({ user }: { user: string }) {
     <div>
       {ranges.length > 0 && <ContributionHeatmap user={user} ranges={ranges} streak={streak} />}
 
-      <div className={`grid gap-10 lg:grid-cols-[minmax(0,1fr)_17rem] ${ranges.length > 0 ? 'mt-10' : ''}`}>
+      <div className={`grid grid-cols-[minmax(0,1fr)_6.75rem] gap-3 sm:grid-cols-[minmax(0,1fr)_11rem] sm:gap-6 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-10 ${ranges.length > 0 ? 'mt-8 sm:mt-10' : ''}`}>
         {activity.length > 0 && <RecentActivity items={activity} />}
 
-        <div className={activity.length === 0 ? 'lg:col-span-2' : ''}>
+        <div className={`min-w-0 self-start sticky top-20 ${activity.length === 0 ? 'col-span-2' : ''}`}>
           <PanelHeading icon={Star}>Overview</PanelHeading>
-          <div className="mt-5 space-y-3">
+          <div className="mt-4 space-y-2 sm:mt-5 sm:space-y-3">
             {stats.map((s) => (
-              <div key={s.label} className="rounded-xl border border-white/10 bg-black/25 px-4 py-3">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/50">{s.label}</p>
-                <p className="mt-1 text-xl font-semibold text-white">{s.value}</p>
-                <p className="text-[11px] text-white/40">{s.note}</p>
+              <div key={s.label} className="rounded-xl border border-white/10 bg-black/25 px-2.5 py-2 sm:px-4 sm:py-3">
+                <p className="truncate font-mono text-[9px] uppercase tracking-[0.12em] text-white/50 sm:text-[10px] sm:tracking-[0.18em]">{s.label}</p>
+                <p className="mt-0.5 truncate text-base font-semibold text-white sm:mt-1 sm:text-xl">{s.value}</p>
+                <p className="hidden truncate text-[11px] text-white/40 sm:block">{s.note}</p>
               </div>
             ))}
           </div>

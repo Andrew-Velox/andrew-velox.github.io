@@ -85,7 +85,7 @@ export default function ProfileCard({
   return (
     // Two thin side rails only (no top, bottom or rounded corners): the banner runs to the top of the screen and the
     // rails run on down behind the fixed footer.
-    <div className="max-xl:border-x-0 max-xl:px-0 border-x border-white/20 px-[3px] sm:px-1 bg-white/10">
+    <div className="max-xl:border-x-0 max-xl:px-0 border-x border-white/20 px-[3px] sm:px-1 bg-white/10 transition-[padding,border-width] duration-500 ease-out">
     <section
       className="transition-colors duration-700"
       style={{ backgroundColor: bg }}
@@ -93,7 +93,7 @@ export default function ProfileCard({
       {/* Banner */}
       <div
         aria-hidden
-        className="h-[10.5rem] sm:h-[12rem] xl:h-[15.5rem] 2xl:h-[17rem]"
+        className="h-[10.5rem] sm:h-[13rem] md:h-[14.5rem] xl:h-[15.5rem] 2xl:h-[17rem] transition-[height] duration-500 ease-out"
         style={{
           backgroundImage: `url('${banner}')`,
           backgroundSize: 'cover',
@@ -101,11 +101,11 @@ export default function ProfileCard({
         }}
       />
 
-      <div className="relative px-4 sm:px-6 pb-24">
+      <div className="relative px-4 sm:px-6 pb-24 transition-[padding] duration-500 ease-out">
         {/* Avatar overlapping the banner's bottom edge, with a card-colored
             ring cutting into the banner like Discord */}
         <div
-          className="-mt-[56px] sm:-mt-[76px] w-fit mx-auto sm:mx-0 rounded-full p-1.5 sm:p-2 transition-colors duration-700"
+          className="-mt-[56px] sm:-mt-[76px] w-fit mx-auto sm:mx-0 rounded-full p-1.5 sm:p-2 transition-[background-color,margin,padding] duration-500 ease-out"
           style={{ backgroundColor: bg }}
         >
           <ProfileImage
@@ -113,14 +113,14 @@ export default function ProfileCard({
             alt="Mohabbat"
             enableOrbGyro
             orbScale={170}
-            className="w-[100px] h-[100px] sm:w-[136px] sm:h-[136px] rounded-full object-cover shadow-xl"
+            className="w-[100px] h-[100px] sm:w-[136px] sm:h-[136px] rounded-full object-cover shadow-xl transition-[width,height] duration-500 ease-out"
           />
         </div>
 
         {/* Identity */}
         <div className="mt-3 font-mono text-center sm:text-left">
           <div className="flex items-center justify-center sm:justify-start gap-2">
-            <h1 className="text-2xl sm:text-3xl font-semibold text-white">Mohabbat</h1>
+            <h1 className="text-2xl sm:text-3xl font-semibold text-white transition-[font-size,line-height] duration-500 ease-out">Mohabbat</h1>
           </div>
           <p className="mt-1 text-sm sm:text-base text-white/60">Software Engineer.</p>
           {bio && (

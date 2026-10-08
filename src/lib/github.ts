@@ -49,13 +49,16 @@ const FALLBACK: GithubSummary = {
   activity: [],
 };
 
+// In `next dev` a 24h fetch cache would keep showing yesterday's data; keep it short there.
+const REVALIDATE = process.env.NODE_ENV === 'development' ? 60 : 86_400;
+
 const headers: HeadersInit = {
   Accept: 'application/vnd.github+json',
   ...(process.env.GITHUB_TOKEN ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}),
 };
 
 async function getJson<T>(url: string): Promise<T> {
-  const res = await fetch(url, { headers, signal: AbortSignal.timeout(10_000), next: { revalidate: 86_400 } });
+  const res = await fetch(url, { headers, signal: AbortSignal.timeout(10_000), next: { revalidate: REVALIDATE } });
   if (!res.ok) throw new Error(`${url} → ${res.status}`);
   return res.json() as Promise<T>;
 }
@@ -105,19 +108,59 @@ function mapEvent(e: any): (Omit<ActivityItem, 'id'> & { key: string }) | null {
   }
 }
 
+// GitHub's public events feed can lag by many hours, so the newest pushes would be missing.
+// Repo `pushed_at` and the commits endpoint are real-time, so recent pushes come from there
+// (and carry the actual commit message).
+async function getRecentPushes(user: string): Promise<ActivityItem[]> {
+  const repos = await getJson<any[]>(
+    `https://api.github.com/users/${user}/repos?sort=pushed&direction=desc&per_page=4&type=owner`
+  );
+  const items = await Promise.all(
+    repos.map(async (r): Promise<ActivityItem | null> => {
+      try {
+        const commits = await getJson<any[]>(
+          `https://api.github.com/repos/${r.full_name}/commits?per_page=1&sha=${encodeURIComponent(r.default_branch)}`
+        );
+        const msg = String(commits[0]?.commit?.message ?? '').split('\n')[0];
+        return {
+          id: `push:${r.full_name}:${commits[0]?.sha ?? r.pushed_at}`,
+          kind: 'push',
+          repo: r.full_name,
+          text: msg ? (msg.length > 90 ? `${msg.slice(0, 87)}…` : msg) : `Pushed to ${r.default_branch}`,
+          tag: r.default_branch,
+          at: r.pushed_at,
+        };
+      } catch {
+        return null;
+      }
+    })
+  );
+  return items.filter((i): i is ActivityItem => i !== null);
+}
+
 async function getActivity(user: string): Promise<ActivityItem[]> {
-  const events = await getJson<any[]>(`https://api.github.com/users/${user}/events/public?per_page=50`);
+  const [events, pushes] = await Promise.allSettled([
+    getJson<any[]>(`https://api.github.com/users/${user}/events/public?per_page=50`),
+    getRecentPushes(user),
+  ]);
+  const pushed = pushes.status === 'fulfilled' ? pushes.value : [];
+  const pushedRepos = new Set(pushed.map((p) => p.repo));
+
+  const fromEvents: ActivityItem[] = [];
   const seen = new Set<string>();
-  const items: ActivityItem[] = [];
-  for (const e of events) {
+  for (const e of events.status === 'fulfilled' ? events.value : []) {
     const m = mapEvent(e);
     if (!m || seen.has(m.key)) continue; // newest first; keep one entry per thing
     seen.add(m.key);
+    // Pushes to repos we already read in real time would be stale duplicates
+    if (m.kind === 'push' && pushedRepos.has(m.repo)) continue;
     const { key: _key, ...rest } = m;
-    items.push({ id: String(e.id), ...rest });
-    if (items.length === 6) break;
+    fromEvents.push({ id: String(e.id), ...rest });
   }
-  return items;
+
+  return [...pushed, ...fromEvents]
+    .sort((a, b) => b.at.localeCompare(a.at))
+    .slice(0, 6);
 }
 
 async function getStars(user: string): Promise<number> {
@@ -137,7 +180,7 @@ async function getStars(user: string): Promise<number> {
 async function getContributions(user: string, query = ''): Promise<{ total: number; days: ContributionDay[] }> {
   const res = await fetch(`https://github.com/users/${user}/contributions${query}`, {
     signal: AbortSignal.timeout(15_000),
-    next: { revalidate: 86_400 },
+    next: { revalidate: REVALIDATE },
   });
   if (!res.ok) throw new Error(`contributions${query} → ${res.status}`);
   const html = await res.text();
