@@ -61,7 +61,7 @@ const socialLinks = [
 
 export default function DynamicFooter() {
   return (
-    <div className="theme-flip fixed bottom-0 left-0 right-0 z-[60]">
+    <div className="fixed bottom-0 left-0 right-0 z-[60]">
       <img
         src="/images/mascots/pixel-cat.gif"
         alt="Sitting cat"
@@ -69,8 +69,8 @@ export default function DynamicFooter() {
         loading="lazy"
         style={{ marginBottom: '-20px' }}
       />
-      <footer className="relative w-full flex flex-row items-center justify-between gap-2 sm:gap-4 h-14 sm:h-16 overflow-hidden border-t backdrop-blur-md px-3 sm:px-8 text-sm border-white/20 bg-white/5">
-        <div className="text-[11px] sm:text-sm truncate text-white/80 shrink-0">
+      <footer className="footer-glass text-white relative w-full flex flex-row items-center justify-between gap-2 sm:gap-4 h-14 sm:h-16 overflow-hidden border-t backdrop-blur-md px-3 sm:px-8 text-sm border-white/20 bg-white/5">
+        <div className="text-[11px] sm:text-sm truncate opacity-80 shrink-0">
           © {new Date().getFullYear()} Mohabbat
         </div>
 

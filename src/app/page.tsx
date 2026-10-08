@@ -150,7 +150,7 @@ export default function NewHome() {
           </Link>
         </div>
 
-        <section id="experience" className="mt-8 scroll-mt-24">
+        <section id="experience" className="mt-8 scroll-mt-16">
           <SectionHeading>Experience</SectionHeading>
           <div className="mt-5 space-y-10">
             {experience.map((e, i) => (
@@ -222,7 +222,7 @@ export default function NewHome() {
           </div>
         </section>
 
-        <section id="open-source" className="mt-8 scroll-mt-24">
+        <section id="open-source" className="mt-8 scroll-mt-16">
           <SectionHeading>Open Source Contributions</SectionHeading>
           <div className="mt-4 divide-y divide-dotted divide-white/20">
             {contributions.map((c) => (
@@ -250,14 +250,14 @@ export default function NewHome() {
           </div>
         </section>
 
-        <section id="projects" className="mt-8 scroll-mt-24">
+        <section id="projects" className="mt-8 scroll-mt-16">
           <SectionHeading>Projects</SectionHeading>
           <div className="mt-4">
             <ProjectsCarousel projects={projects} />
           </div>
         </section>
 
-        <section id="skills" className="mt-8 scroll-mt-24">
+        <section id="skills" className="mt-8 scroll-mt-16">
           <SectionHeading>Skills</SectionHeading>
           <div className="mt-4 divide-y divide-dotted divide-white/20">
             {skillGroups.map((g) => (
@@ -285,14 +285,14 @@ export default function NewHome() {
           </div>
         </section>
 
-        <section id="achievements" className="mt-8 scroll-mt-24">
+        <section id="achievements" className="mt-8 scroll-mt-16">
           <SectionHeading>Achievements</SectionHeading>
           <AchievementsTimeline />
         </section>
 
         {/* GitHub activity — numbers and the heatmap are fetched once at build
             time (static export), so visitors never wait on GitHub. */}
-        <section id="github" className="mt-12 scroll-mt-24">
+        <section id="github" className="mt-12 scroll-mt-16">
           <div>
             <GithubActivity user={GITHUB_USER} />
           </div>

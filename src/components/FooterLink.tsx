@@ -11,7 +11,7 @@ export function FooterLink({ icon, href, label }: FooterLinkProps) {
       target={href.startsWith('mailto:') ? undefined : '_blank'}
       rel={href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
       aria-label={label}
-      className="transition-colors text-white/80 hover:text-white"
+      className="transition-colors text-current opacity-80 hover:opacity-100"
     >
       {icon}
     </a>

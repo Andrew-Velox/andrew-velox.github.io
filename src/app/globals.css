@@ -102,3 +102,11 @@ html.light .theme-flip .keep-colors video {
   -webkit-filter: none;
   filter: none;
 }
+
+/* The footer is frosted glass (backdrop-blur). A filter on it or on a parent would stop the blur
+   from seeing the page behind, so in light mode it is themed directly instead of inverted. */
+html.light .footer-glass {
+  color: #111;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.15);
+}

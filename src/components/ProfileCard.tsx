@@ -75,16 +75,16 @@ export default function ProfileCard({
   }, [banner]);
 
   return (
-    // Glass frame: a frosted, translucent border ring around the themed card
-    <div className="rounded-[1.75rem] p-2 sm:p-2.5 border border-white/20 bg-white/10 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.15)]">
+    // Thin glass frame: a frosted, translucent border ring around the themed card
+    <div className="rounded-[1.25rem] p-[3px] sm:p-1 border border-white/20 bg-white/10 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.15)]">
     <section
-      className="rounded-[1.25rem] transition-colors duration-700"
+      className="rounded-[1rem] transition-colors duration-700"
       style={{ backgroundColor: bg }}
     >
       {/* Banner */}
       <div
         aria-hidden
-        className="h-32 sm:h-48 rounded-t-[1.25rem]"
+        className="h-32 sm:h-48 rounded-t-[1rem]"
         style={{
           backgroundImage: `url('${banner}')`,
           backgroundSize: 'cover',

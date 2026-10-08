@@ -159,7 +159,7 @@ export default function ThemeSwitch() {
   };
 
   return (
-    <div ref={boxRef} className="pointer-events-none absolute right-5 top-full -mt-2 h-0 w-6 sm:right-8">
+    <div ref={boxRef} className="pointer-events-none absolute right-5 top-0 h-0 w-6 sm:right-8">
       <svg aria-hidden className="absolute left-0 top-0 h-px w-6 overflow-visible">
         <path ref={pathRef} d="" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" className="text-white/55" />
       </svg>
