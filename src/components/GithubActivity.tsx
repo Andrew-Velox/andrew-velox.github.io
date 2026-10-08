@@ -35,7 +35,7 @@ export default async function GithubActivity({ user }: { user: string }) {
       <div className={`grid grid-cols-[minmax(0,1fr)_6.75rem] gap-3 sm:grid-cols-[minmax(0,1fr)_11rem] sm:gap-6 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-10 ${ranges.length > 0 ? 'mt-8 sm:mt-10' : ''}`}>
         {activity.length > 0 && <RecentActivity items={activity} />}
 
-        <div className={`min-w-0 self-start sticky top-20 ${activity.length === 0 ? 'col-span-2' : ''}`}>
+        <div className={`min-w-0 self-start ${activity.length === 0 ? 'col-span-2' : ''}`}>
           <PanelHeading icon={Star}>Overview</PanelHeading>
           <div className="mt-4 space-y-2 sm:mt-5 sm:space-y-3">
             {stats.map((s) => (
