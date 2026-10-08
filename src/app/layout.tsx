@@ -74,7 +74,7 @@ export default function RootLayout({
         </div> */}
         <SiteNavbar />
         <div className="relative z-10 min-h-screen">
-          <div className="theme-flip min-h-screen pt-[3.25rem] pb-16 flex items-center justify-center">
+          <div className="theme-flip min-h-screen pt-0 pb-16 flex items-center justify-center">
             {children}
           </div>
           <DynamicFooter />
