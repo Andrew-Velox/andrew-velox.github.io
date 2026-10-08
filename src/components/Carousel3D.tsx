@@ -79,7 +79,7 @@ const Card = React.memo(({ src, transform, cardW, cardH, onClick, label, descrip
         {label ? (
           <>
             <span
-              className="relative flex-1 min-h-0 overflow-hidden rounded-md"
+              className="keep-colors relative flex-1 min-h-0 overflow-hidden rounded-md"
               style={{
                 background: `linear-gradient(135deg, ${c1}, ${c2})`,
                 boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25)',

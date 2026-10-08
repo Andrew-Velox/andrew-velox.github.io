@@ -15,12 +15,27 @@ export interface ContributionRange {
   days: ContributionDay[];
 }
 
+export type ActivityKind =
+  | 'push' | 'pr' | 'merge' | 'star' | 'fork' | 'comment' | 'issue' | 'review' | 'create';
+
+export interface ActivityItem {
+  id: string;
+  kind: ActivityKind;
+  repo: string;
+  text: string;
+  tag: string;
+  at: string; // ISO timestamp
+}
+
 export interface GithubSummary {
   repos: number;
   stars: number;
   followers: number;
   commits: number;
+  prs: number;
+  prsMerged: number;
   ranges: ContributionRange[];
+  activity: ActivityItem[];
 }
 
 const FALLBACK: GithubSummary = {
@@ -28,7 +43,10 @@ const FALLBACK: GithubSummary = {
   stars: 255,
   followers: 77,
   commits: 2073,
+  prs: 54,
+  prsMerged: 45,
   ranges: [],
+  activity: [],
 };
 
 const headers: HeadersInit = {
@@ -40,6 +58,66 @@ async function getJson<T>(url: string): Promise<T> {
   const res = await fetch(url, { headers, signal: AbortSignal.timeout(10_000), next: { revalidate: 86_400 } });
   if (!res.ok) throw new Error(`${url} → ${res.status}`);
   return res.json() as Promise<T>;
+}
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Turn a raw public event into one readable line. Newer GitHub payloads no longer
+// include commit messages for pushes, so those read "Pushed to <branch>".
+function mapEvent(e: any): (Omit<ActivityItem, 'id'> & { key: string }) | null {
+  const repo: string = e.repo?.name ?? '';
+  const p = e.payload ?? {};
+  const at: string = e.created_at;
+  const clip = (t: string) => (t.length > 90 ? `${t.slice(0, 87)}…` : t);
+  switch (e.type) {
+    case 'PushEvent': {
+      const branch = String(p.ref ?? '').replace('refs/heads/', '');
+      return { kind: 'push', repo, text: `Pushed to ${branch}`, tag: branch, at, key: `push:${repo}:${branch}` };
+    }
+    case 'PullRequestEvent': {
+      const pr = p.pull_request ?? {};
+      const merged = p.action === 'closed' && pr.merged;
+      const verb = merged ? 'Merged' : p.action === 'closed' ? 'Closed' : p.action === 'reopened' ? 'Reopened' : 'Opened';
+      return { kind: merged ? 'merge' : 'pr', repo, text: `${verb} PR #${p.number}: ${clip(pr.title ?? '')}`, tag: `#${p.number}`, at, key: `pr:${repo}:${p.number}` };
+    }
+    case 'PullRequestReviewEvent':
+    case 'PullRequestReviewCommentEvent': {
+      const pr = p.pull_request ?? {};
+      return { kind: 'review', repo, text: `Reviewed PR #${pr.number}: ${clip(pr.title ?? '')}`, tag: 'review', at, key: `review:${repo}:${pr.number}` };
+    }
+    case 'IssueCommentEvent': {
+      const i = p.issue ?? {};
+      return { kind: 'comment', repo, text: `Commented on #${i.number}: ${clip(i.title ?? '')}`, tag: `#${i.number}`, at, key: `comment:${repo}:${i.number}` };
+    }
+    case 'IssuesEvent': {
+      const i = p.issue ?? {};
+      return { kind: 'issue', repo, text: `${p.action === 'closed' ? 'Closed' : 'Opened'} issue #${i.number}: ${clip(i.title ?? '')}`, tag: `#${i.number}`, at, key: `issue:${repo}:${i.number}` };
+    }
+    case 'WatchEvent':
+      return { kind: 'star', repo, text: `Starred ${repo}`, tag: 'starred', at, key: `star:${repo}` };
+    case 'ForkEvent':
+      return { kind: 'fork', repo, text: `Forked ${repo}`, tag: 'forked', at, key: `fork:${repo}` };
+    case 'CreateEvent': {
+      const what = p.ref_type === 'repository' ? 'repository' : `${p.ref_type} ${p.ref ?? ''}`.trim();
+      return { kind: 'create', repo, text: `Created ${what}`, tag: p.ref_type ?? 'new', at, key: `create:${repo}:${p.ref ?? ''}` };
+    }
+    default:
+      return null;
+  }
+}
+
+async function getActivity(user: string): Promise<ActivityItem[]> {
+  const events = await getJson<any[]>(`https://api.github.com/users/${user}/events/public?per_page=50`);
+  const seen = new Set<string>();
+  const items: ActivityItem[] = [];
+  for (const e of events) {
+    const m = mapEvent(e);
+    if (!m || seen.has(m.key)) continue; // newest first; keep one entry per thing
+    seen.add(m.key);
+    const { key: _key, ...rest } = m;
+    items.push({ id: String(e.id), ...rest });
+    if (items.length === 6) break;
+  }
+  return items;
 }
 
 async function getStars(user: string): Promise<number> {
@@ -96,10 +174,13 @@ async function getRanges(user: string, createdYear: number): Promise<Contributio
 }
 
 export async function getGithubSummary(user: string): Promise<GithubSummary> {
-  const [profile, stars, commits] = await Promise.allSettled([
+  const [profile, stars, commits, prs, prsMerged, activity] = await Promise.allSettled([
     getJson<{ public_repos: number; followers: number; created_at: string }>(`https://api.github.com/users/${user}`),
     getStars(user),
     getJson<{ total_count: number }>(`https://api.github.com/search/commits?q=author:${user}&per_page=1`),
+    getJson<{ total_count: number }>(`https://api.github.com/search/issues?q=author:${user}+type:pr&per_page=1`),
+    getJson<{ total_count: number }>(`https://api.github.com/search/issues?q=author:${user}+type:pr+is:merged&per_page=1`),
+    getActivity(user),
   ]);
   const createdYear = profile.status === 'fulfilled' ? new Date(profile.value.created_at).getFullYear() : 2022;
   const ranges = await getRanges(user, createdYear).catch(() => []);
@@ -108,6 +189,9 @@ export async function getGithubSummary(user: string): Promise<GithubSummary> {
     followers: profile.status === 'fulfilled' ? profile.value.followers : FALLBACK.followers,
     stars: stars.status === 'fulfilled' ? stars.value : FALLBACK.stars,
     commits: commits.status === 'fulfilled' ? commits.value.total_count : FALLBACK.commits,
+    prs: prs.status === 'fulfilled' ? prs.value.total_count : FALLBACK.prs,
+    prsMerged: prsMerged.status === 'fulfilled' ? prsMerged.value.total_count : FALLBACK.prsMerged,
     ranges,
+    activity: activity.status === 'fulfilled' ? activity.value : FALLBACK.activity,
   };
 }

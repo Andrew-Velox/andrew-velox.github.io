@@ -19,7 +19,7 @@ export default function AchievementsTimeline() {
               className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.2em] text-white/40"
               initial={{ opacity: 0, x: -12 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={{ once: true, margin: '0px 0px -40px 0px' }}
               transition={{ duration: 0.5, ease }}
             >
               {group.section}
@@ -32,7 +32,7 @@ export default function AchievementsTimeline() {
                 className="absolute left-0 top-0 bottom-0 w-px origin-top bg-white/15"
                 initial={{ scaleY: 0 }}
                 whileInView={{ scaleY: 1 }}
-                viewport={{ once: true, margin: '-40px' }}
+                viewport={{ once: true, margin: '0px 0px -40px 0px' }}
                 transition={{ duration: 0.9, ease }}
               />
 
@@ -63,7 +63,7 @@ export default function AchievementsTimeline() {
                     className="relative pb-7 pl-6 last:pb-0"
                     initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
                     whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                    viewport={{ once: true, margin: '-40px' }}
+                    viewport={{ once: true, margin: '0px 0px -40px 0px' }}
                     transition={{ duration: 0.55, delay: 0.1 + i * 0.08, ease }}
                   >
                     {/* Node pops in */}
@@ -74,7 +74,7 @@ export default function AchievementsTimeline() {
                       }`}
                       initial={{ scale: 0 }}
                       whileInView={{ scale: 1 }}
-                      viewport={{ once: true, margin: '-40px' }}
+                      viewport={{ once: true, margin: '0px 0px -40px 0px' }}
                       transition={{ type: 'spring', stiffness: 400, damping: 18, delay: 0.2 + i * 0.08 }}
                     />
 
@@ -93,9 +93,15 @@ export default function AchievementsTimeline() {
                           item.title
                         )}
                       </h4>
-                      <span className={`shrink-0 font-mono text-xs sm:text-sm ${top ? 'text-white' : 'text-white/50'}`}>
-                        {label}
-                      </span>
+                      {label && (
+                        <span
+                          className={`shrink-0 rounded-lg border px-3 py-1 text-sm font-medium ${
+                            top ? 'border-white/30 bg-white/10 text-white' : 'border-white/15 bg-white/5 text-white/80'
+                          }`}
+                        >
+                          {label}
+                        </span>
+                      )}
                     </div>
                     {meta && <p className="mt-1 text-xs text-white/40">{meta}</p>}
                   </motion.li>

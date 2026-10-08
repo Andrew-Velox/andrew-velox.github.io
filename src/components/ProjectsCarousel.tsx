@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import Carousel3D, { gradientFor } from './Carousel3D';
 import ProjectModal, { type Project, type Category } from './ProjectModal';
@@ -25,11 +26,12 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
     return () => window.removeEventListener('resize', update);
   }, []);
 
-  const { images, labels, descriptions, imageToProject } = useMemo(() => {
+  const { images, labels, descriptions, tags, imageToProject } = useMemo(() => {
     const map = new Map<string, Project>();
     const images: string[] = [];
     const labels: string[] = [];
     const descriptions: string[] = [];
+    const tags: string[][] = [];
     const visible = filter === 'all' ? projects : projects.filter((p) => p.category === filter);
     for (const p of visible) {
       if (p.image) {
@@ -37,9 +39,10 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
         images.push(p.image);
         labels.push(p.title);
         descriptions.push(p.description);
+        tags.push(p.tags);
       }
     }
-    return { images, labels, descriptions, imageToProject: map };
+    return { images, labels, descriptions, tags, imageToProject: map };
   }, [projects, filter]);
 
   const open = useCallback(
@@ -108,7 +111,33 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
           onActiveChange={setActive}
         />
       </div>
-      <ProjectModal project={selected} onClose={() => setSelected(null)} />
+      {/* Tags of the project currently in front — swaps with the title above */}
+      <div className="mt-3 min-h-[3.25rem] overflow-hidden" aria-live="polite">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.ul
+            key={labels[active] ?? 'none'}
+            className="flex flex-wrap gap-2"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {(tags[active] ?? []).map((t) => (
+              <li
+                key={t}
+                className="rounded-lg border-2 border-dotted bg-white/5 px-3 py-1 text-xs sm:text-sm font-medium text-white/85"
+                style={{ borderColor: `${gradientFor(labels[active] ?? '')[0]}66` }}
+              >
+                {t}
+              </li>
+            ))}
+          </motion.ul>
+        </AnimatePresence>
+      </div>
+
+      {/* Portal to <body>: the card's frosted-glass frame (backdrop-filter) would otherwise
+          become the containing block for this `position: fixed` overlay and offset it. */}
+      {selected && createPortal(<ProjectModal project={selected} onClose={() => setSelected(null)} />, document.body)}
     </>
   );
 }

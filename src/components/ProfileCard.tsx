@@ -57,9 +57,11 @@ function themeFromImage(src: string): Promise<string> {
 
 export default function ProfileCard({
   banner,
+  bio,
   children,
 }: {
   banner: string;
+  bio?: string;
   children?: React.ReactNode;
 }) {
   const [bg, setBg] = useState(FALLBACK_BG);
@@ -110,19 +112,11 @@ export default function ProfileCard({
         <div className="mt-3 font-mono text-center sm:text-left">
           <div className="flex items-center justify-center sm:justify-start gap-2">
             <h1 className="text-2xl sm:text-3xl font-semibold text-white">Mohabbat</h1>
-            <svg
-              aria-label="Verified"
-              className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 text-sky-500"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M22.5 12.5l-2.2-2.5.3-3.3-3.2-.8-1.7-2.9L12.5 4 9.6 2.8 7.9 5.7l-3.2.8.3 3.3-2.2 2.5 2.2 2.5-.3 3.3 3.2.8 1.7 2.9 2.9-1.2 2.9 1.2 1.7-2.9 3.2-.8-.3-3.3zM10.7 16.3l-3.5-3.5 1.4-1.4 2.1 2.1 4.7-4.7 1.4 1.4z" />
-            </svg>
           </div>
           <p className="mt-1 text-sm sm:text-base text-white/60">Rust developer.</p>
-          <p className="mt-3 text-[11px] sm:text-xs text-white/40 tracking-wide">
-            Last updated recently
-          </p>
+          {bio && (
+            <p className="mt-4 max-w-2xl font-sans text-sm sm:text-base leading-relaxed text-white/75">{bio}</p>
+          )}
         </div>
 
         {children && <div className="mt-8">{children}</div>}

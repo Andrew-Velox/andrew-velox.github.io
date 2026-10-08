@@ -55,3 +55,37 @@ body {
   backdrop-filter: blur(1.75px);
   -webkit-backdrop-filter: blur(0.75px);
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide the scrollbar on elements that scroll horizontally by design (navbar links) */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---- Light mode --------------------------------------------------------
+   The site is designed dark-first. Light mode is the dark design inverted
+   (invert + hue-rotate keeps hues, flips lightness), so every colour, hex
+   value and opacity utility follows without per-component theming.
+   Photos, video and gradient art are flipped back so they keep true colours. */
+html.light {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+html.light img,
+html.light video,
+html.light [style*="background-image"],
+html.light .keep-colors {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Inside a re-flipped block, children must not flip again */
+html.light .keep-colors img,
+html.light .keep-colors video {
+  filter: none;
+}

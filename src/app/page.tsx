@@ -13,10 +13,11 @@ import {
   SiLinux,
   SiJavascript,
 } from 'react-icons/si';
+import Link from 'next/link';
 import ProfileCard from '../components/ProfileCard';
 import GithubActivity from '../components/GithubActivity';
 import ProjectsCarousel from '../components/ProjectsCarousel';
-import { Globe } from 'lucide-react';
+import { Download, Globe, Mail } from 'lucide-react';
 import AchievementsTimeline from '../components/AchievementsTimeline';
 import { projects } from '../data/projects';
 
@@ -125,16 +126,31 @@ const contributions = [
 export default function NewHome() {
   return (
     <main className="self-start w-full max-w-6xl mx-auto px-2 sm:px-3 pt-4 pb-10 relative z-20">
-      <ProfileCard banner="/images/backgrounds/city-girl.jpg">
-        <section>
-          <SectionHeading>About</SectionHeading>
-          <p className="mt-4 text-sm sm:text-base leading-relaxed text-white/80 text-center sm:text-left">
-            I’m Mohabbat. I’m currently pursuing my BSc in Computer Science and
-            Engineering at Green University of Bangladesh.
-          </p>
-        </section>
+      <ProfileCard
+        banner="/images/backgrounds/city-girl.jpg"
+        bio="I’m Mohabbat. I’m currently pursuing my BSc in Computer Science and Engineering at Green University of Bangladesh."
+      >
+        <div className="flex flex-wrap justify-center gap-3 sm:justify-start">
+          {/* Served from public/ */}
+          <a
+            href="/Mohabbat_s_Resume_2026.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-white/85"
+          >
+            <Download className="h-4 w-4" aria-hidden />
+            Resume / CV
+          </a>
+          <Link
+            href="/contact"
+            className="inline-flex items-center gap-2 rounded-lg border border-white/25 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 hover:border-white/40"
+          >
+            <Mail className="h-4 w-4" aria-hidden />
+            Contact
+          </Link>
+        </div>
 
-        <section className="mt-8">
+        <section id="experience" className="mt-8 scroll-mt-24">
           <SectionHeading>Experience</SectionHeading>
           <div className="mt-5 space-y-10">
             {experience.map((e, i) => (
@@ -206,7 +222,7 @@ export default function NewHome() {
           </div>
         </section>
 
-        <section className="mt-8">
+        <section id="open-source" className="mt-8 scroll-mt-24">
           <SectionHeading>Open Source Contributions</SectionHeading>
           <div className="mt-4 divide-y divide-dotted divide-white/20">
             {contributions.map((c) => (
@@ -234,14 +250,14 @@ export default function NewHome() {
           </div>
         </section>
 
-        <section className="mt-8">
+        <section id="projects" className="mt-8 scroll-mt-24">
           <SectionHeading>Projects</SectionHeading>
           <div className="mt-4">
             <ProjectsCarousel projects={projects} />
           </div>
         </section>
 
-        <section className="mt-8">
+        <section id="skills" className="mt-8 scroll-mt-24">
           <SectionHeading>Skills</SectionHeading>
           <div className="mt-4 divide-y divide-dotted divide-white/20">
             {skillGroups.map((g) => (
@@ -269,16 +285,15 @@ export default function NewHome() {
           </div>
         </section>
 
-        <section className="mt-8">
+        <section id="achievements" className="mt-8 scroll-mt-24">
           <SectionHeading>Achievements</SectionHeading>
           <AchievementsTimeline />
         </section>
 
         {/* GitHub activity — numbers and the heatmap are fetched once at build
             time (static export), so visitors never wait on GitHub. */}
-        <section className="mt-8">
-          <SectionHeading>GitHub Activity</SectionHeading>
-          <div className="mt-5">
+        <section id="github" className="mt-12 scroll-mt-24">
+          <div>
             <GithubActivity user={GITHUB_USER} />
           </div>
         </section>

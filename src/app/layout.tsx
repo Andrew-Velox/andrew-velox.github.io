@@ -5,9 +5,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import MediaPreloader from "../components/MediaPreloader";
 import DynamicFooter from "../components/DynamicFooter";
+import SiteNavbar from "../components/SiteNavbar";
 import LoadingScreen from "../components/LoadingScreen";
 // import ChatBot from "../components/ChatBot";
-import ClickFireworks from "../components/ClickFireworks";
+// import ClickFireworks from "../components/ClickFireworks";
 // import RightClickNotice from "../components/RightClickNotice";
 import GreetingToast from "../components/GreetingToast";
 // import RotatingBackground from "../components/RotatingBackground";
@@ -47,14 +48,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="[color-scheme:light_dark]">
+    <html lang="en" className="[color-scheme:light_dark]" suppressHydrationWarning>
+      <head>
+        {/* Apply the saved theme before first paint so there is no dark→light flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem('theme')==='light')document.documentElement.classList.add('light')}catch(e){}`,
+          }}
+        />
+      </head>
       <body
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <LoadingScreen />
         <MediaPreloader />
-        <ClickFireworks />
+        {/* <ClickFireworks /> */}
         {/* <RightClickNotice /> */}
         <GreetingToast />
         {/* <Petfolio /> */}
@@ -63,8 +72,9 @@ export default function RootLayout({
         {/* <div className="fixed inset-0 z-0">
           <SpiderWeb opacity={30} thickness={15} />
         </div> */}
+        <SiteNavbar />
         <div className="relative z-10 min-h-screen">
-          <div className="min-h-screen pb-16 flex items-center justify-center">
+          <div className="min-h-screen pt-20 pb-16 flex items-center justify-center">
             {children}
           </div>
           <DynamicFooter />
