@@ -5,7 +5,8 @@ import { Moon, Sun } from 'lucide-react';
 
 // A real hanging pull-cord: a Verlet rope (gravity, damping, distance constraints) with the
 // handle at the free end. Grab the handle and pull; the cord swings and bounces back like a
-// pendulum when you let go. Pulling it far enough "clicks" and flips light/dark mode — only a
+// pendulum when you let go. The top end is fixed to the navbar and never moves; the cord itself is
+// slightly elastic, so a hard pull stretches it and it springs back. Pulling it far enough "clicks" and flips light/dark mode — only a
 // pull does that (a plain click does nothing; Enter/Space still work for keyboard users).
 // Light mode is the `light` class on <html> (see globals.css) and is remembered.
 
@@ -16,7 +17,8 @@ const GRAVITY = 0.42;
 const DAMPING = 0.985;
 const ITER = 10;
 const MAX_REACH = LEN + 34; // how far the handle can be pulled from the anchor
-const CLICK_STRETCH = 12; // the mount must be stretched this far (px) for the pull to "click"
+const CLICK_STRETCH = 14; // the cord must be stretched this far (px) past its length to "click"
+const STIFFNESS = 0.55; // < 1 makes the cord a little elastic
 const AX = 12; // anchor x (container is w-6)
 
 type P = { x: number; y: number; px: number; py: number };
@@ -75,9 +77,9 @@ export default function ThemeSwitch() {
       a.y += vy + GRAVITY;
     }
 
-    // The top is held by a springy mount, so a hard pull stretches it a little
-    p[0].x += (AX - p[0].x) * 0.5;
-    p[0].y += (0 - p[0].y) * 0.12;
+    // The top end is fixed to the navbar — it never moves
+    p[0].x = p[0].px = AX;
+    p[0].y = p[0].py = 0;
 
     // The handle follows the pointer while grabbed
     if (d) {
@@ -94,10 +96,11 @@ export default function ThemeSwitch() {
         const dx = b.x - a.x;
         const dy = b.y - a.y;
         const dist = Math.hypot(dx, dy) || 0.0001;
-        const diff = (dist - SEG) / dist;
-        const pinB = d && i + 1 === N - 1;
-        const wa = pinB ? 1 : 0.5;
-        const wb = pinB ? 0 : 0.5;
+        const diff = ((dist - SEG) / dist) * STIFFNESS;
+        const pinA = i === 0; // fixed anchor
+        const pinB = !!d && i + 1 === N - 1; // handle held by the pointer
+        const wa = pinA ? 0 : pinB ? 1 : 0.5;
+        const wb = pinB ? 0 : pinA ? 1 : 0.5;
         a.x += dx * diff * wa;
         a.y += dy * diff * wa;
         b.x -= dx * diff * wb;
@@ -106,7 +109,7 @@ export default function ThemeSwitch() {
     }
 
     // Pull far enough → "click" once per pull
-    if (d && d.armed && p[0].y > CLICK_STRETCH) {
+    if (d && d.armed && Math.hypot(p[N - 1].x - AX, p[N - 1].y) > LEN + CLICK_STRETCH) {
       d.armed = false;
       toggle();
     }

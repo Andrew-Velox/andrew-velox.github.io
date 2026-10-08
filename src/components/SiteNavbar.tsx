@@ -57,11 +57,11 @@ export default function SiteNavbar() {
     <>
       <motion.div
         aria-hidden
-        className="fixed inset-x-0 top-0 z-[56] h-[2px] origin-left bg-[#e5b84b] shadow-[0_0_10px_rgba(229,184,75,0.6)]"
+        className="theme-flip fixed inset-x-0 top-0 z-[56] h-[2px] origin-left bg-[#e5b84b] shadow-[0_0_10px_rgba(229,184,75,0.6)]"
         style={{ scaleX: progress }}
       />
 
-      <header className="pointer-events-none fixed inset-x-0 top-3 z-[55] flex justify-center sm:top-4">
+      <header className="theme-flip pointer-events-none fixed inset-x-0 top-3 z-[55] flex justify-center sm:top-4">
         {/* Same width as the profile card below (max-w-6xl + its side padding) */}
         <div className="relative w-full max-w-6xl px-2 sm:px-3">
         <motion.nav

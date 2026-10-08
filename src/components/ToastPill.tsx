@@ -21,7 +21,7 @@ export default function ToastPill({
   return (
     <div
       aria-live="polite"
-      className={`fixed top-6 inset-x-0 flex justify-center ${zIndexClass} pointer-events-none`}
+      className={`theme-flip fixed top-6 inset-x-0 flex justify-center ${zIndexClass} pointer-events-none`}
     >
       {/* popLayout lifts the exiting pill out of the flow so a keyed
           replacement can drop in underneath it at the same time */}

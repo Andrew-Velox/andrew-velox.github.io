@@ -72,20 +72,33 @@ html {
    The site is designed dark-first. Light mode is the dark design inverted
    (invert + hue-rotate keeps hues, flips lightness), so every colour, hex
    value and opacity utility follows without per-component theming.
+
+   The filter is applied to each top-level piece of UI (`.theme-flip`: page
+   content, footer, navbar, toasts, modal, tooltip) instead of to <html>.
+   Safari doesn't reliably apply a root-level filter to position:fixed
+   elements, which left things like the footer cat un-flipped (or flipped
+   twice) on iPhone. A filter on the fixed element itself works everywhere.
    Photos, video and gradient art are flipped back so they keep true colours. */
-html.light {
+html.light body {
+  background: #efefef; /* the inverse of the dark #101010 */
+}
+
+html.light .theme-flip {
+  -webkit-filter: invert(1) hue-rotate(180deg);
   filter: invert(1) hue-rotate(180deg);
 }
 
-html.light img,
-html.light video,
-html.light [style*="background-image"],
-html.light .keep-colors {
+html.light .theme-flip img,
+html.light .theme-flip video,
+html.light .theme-flip [style*="background-image"],
+html.light .theme-flip .keep-colors {
+  -webkit-filter: invert(1) hue-rotate(180deg);
   filter: invert(1) hue-rotate(180deg);
 }
 
 /* Inside a re-flipped block, children must not flip again */
-html.light .keep-colors img,
-html.light .keep-colors video {
+html.light .theme-flip .keep-colors img,
+html.light .theme-flip .keep-colors video {
+  -webkit-filter: none;
   filter: none;
 }

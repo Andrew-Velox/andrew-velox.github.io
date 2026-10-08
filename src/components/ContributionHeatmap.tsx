@@ -220,7 +220,7 @@ export default function ContributionHeatmap({
         createPortal(
         <div
           role="tooltip"
-          className="pointer-events-none fixed z-50 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-[#1c2128] px-2.5 py-1.5 text-xs text-white shadow-lg ring-1 ring-white/10"
+          className="theme-flip pointer-events-none fixed z-50 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-[#1c2128] px-2.5 py-1.5 text-xs text-white shadow-lg ring-1 ring-white/10"
           style={{ left: tip.x, top: tip.y - 8 }}
         >
           {tip.text}

@@ -61,7 +61,7 @@ const socialLinks = [
 
 export default function DynamicFooter() {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[60]">
+    <div className="theme-flip fixed bottom-0 left-0 right-0 z-[60]">
       <img
         src="/images/mascots/pixel-cat.gif"
         alt="Sitting cat"
