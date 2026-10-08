@@ -47,7 +47,7 @@ export default function ContactPage() {
   }
 
   return (
-    <main className="self-start w-full max-w-2xl mx-auto px-3 pt-20 pb-10 relative z-20">
+    <main className="self-start w-full max-w-2xl mx-auto px-3 pt-20 pb-24 relative z-20">
       <Link
         href="/"
         className="inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"

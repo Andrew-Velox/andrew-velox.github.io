@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import ProfileImage from './ProfileImage';
 
 const FALLBACK_BG = '#04040f';
+// The site's own background (body in globals.css), used when the card isn't tinted from the banner
+const PAGE_BG = '#101010';
 
 // Average the banner's pixels (favouring saturated ones so a grey photo with
 // one coloured accent still picks up the accent) and turn the result into a
@@ -58,33 +60,40 @@ function themeFromImage(src: string): Promise<string> {
 export default function ProfileCard({
   banner,
   bio,
+  themed = false,
   children,
 }: {
   banner: string;
   bio?: string;
+  /** Tint the card from the banner's colours (like Discord). Off by default: the card uses the page background. */
+  themed?: boolean;
   children?: React.ReactNode;
 }) {
-  const [bg, setBg] = useState(FALLBACK_BG);
+  const [tint, setTint] = useState(FALLBACK_BG);
 
   useEffect(() => {
+    if (!themed) return;
     let alive = true;
-    themeFromImage(banner).then((c) => alive && setBg(c));
+    themeFromImage(banner).then((c) => alive && setTint(c));
     return () => {
       alive = false;
     };
-  }, [banner]);
+  }, [banner, themed]);
+
+  const bg = themed ? tint : PAGE_BG;
 
   return (
-    // Thin glass frame around the themed card. It has no top edge: the banner runs up to the top of the screen.
-    <div className="max-xl:rounded-none max-xl:border-x-0 max-xl:px-0 rounded-b-[1.25rem] border border-t-0 px-[3px] pb-[3px] sm:px-1 sm:pb-1 xl:pb-2.5 border-white/20 bg-white/10 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.15)]">
+    // Two thin side rails only (no top, bottom or rounded corners): the banner runs to the top of the screen and the
+    // rails run on down behind the fixed footer.
+    <div className="max-xl:border-x-0 max-xl:px-0 border-x border-white/20 px-[3px] sm:px-1 bg-white/10">
     <section
-      className="max-xl:rounded-none rounded-b-[1rem] transition-colors duration-700"
+      className="transition-colors duration-700"
       style={{ backgroundColor: bg }}
     >
       {/* Banner */}
       <div
         aria-hidden
-        className="h-[9rem] sm:h-[12rem] xl:h-[15.5rem] 2xl:h-[17rem]"
+        className="h-[10.5rem] sm:h-[12rem] xl:h-[15.5rem] 2xl:h-[17rem]"
         style={{
           backgroundImage: `url('${banner}')`,
           backgroundSize: 'cover',
@@ -92,7 +101,7 @@ export default function ProfileCard({
         }}
       />
 
-      <div className="relative px-4 sm:px-6 pb-5">
+      <div className="relative px-4 sm:px-6 pb-24">
         {/* Avatar overlapping the banner's bottom edge, with a card-colored
             ring cutting into the banner like Discord */}
         <div
@@ -113,7 +122,7 @@ export default function ProfileCard({
           <div className="flex items-center justify-center sm:justify-start gap-2">
             <h1 className="text-2xl sm:text-3xl font-semibold text-white">Mohabbat</h1>
           </div>
-          <p className="mt-1 text-sm sm:text-base text-white/60">Rust developer.</p>
+          <p className="mt-1 text-sm sm:text-base text-white/60">Software Engineer.</p>
           {bio && (
             <p className="mt-4 max-w-2xl font-sans text-sm sm:text-base leading-relaxed text-white/75">{bio}</p>
           )}

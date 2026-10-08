@@ -66,28 +66,35 @@ export default function SiteNavbar() {
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 26, mass: 0.3 });
 
-  // Scroll-spy: the section crossing the upper-middle of the viewport is "active"
+  // Scroll-spy: the active section is the last one whose top has scrolled up past the navbar line.
+  // (An observer band in the middle of the screen picks the *next* section when you jump to a
+  // short one like Open Source, because that section sits at the top and the next one is mid-screen.)
   useEffect(() => {
     if (!onHome) {
       setActive(null);
       return;
     }
     const els = LINKS.map((l) => document.getElementById(l.id)).filter(Boolean) as HTMLElement[];
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) if (e.isIntersecting) setActive(e.target.id);
-      },
-      { rootMargin: '-35% 0px -60% 0px' }
-    );
-    els.forEach((el) => io.observe(el));
-    const onScroll = () => {
-      if (window.scrollY < 200) setActive(null); // back at the profile header
+    const LINE = 110; // px from the top: scroll-mt (64px) plus some slack
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      if (window.scrollY < 200) return setActive(null); // back at the profile header
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+      let current: string | null = null;
+      for (const el of els) if (el.getBoundingClientRect().top <= LINE) current = el.id;
+      setActive(atBottom ? els[els.length - 1]?.id ?? current : current);
     };
-    onScroll();
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
     return () => {
-      io.disconnect();
+      if (frame) cancelAnimationFrame(frame);
       window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
     };
   }, [onHome]);
 
@@ -172,7 +179,7 @@ export default function SiteNavbar() {
                       className="block"
                     >
                       <span className="block truncate text-sm font-semibold leading-tight text-white">Mohabbat</span>
-                      <span className="block truncate text-xs leading-tight text-white/50">Rust developer</span>
+                      <span className="block truncate text-xs leading-tight text-white/50">Software Engineer</span>
                     </motion.span>
                   ) : (
                     <motion.span
