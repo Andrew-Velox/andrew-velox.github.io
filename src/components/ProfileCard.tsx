@@ -59,11 +59,15 @@ function themeFromImage(src: string): Promise<string> {
 
 export default function ProfileCard({
   banner,
+  bannerLight,
   bio,
   themed = false,
   children,
 }: {
+  /** Banner shown in dark mode (also used for the card tint) */
   banner: string;
+  /** Banner shown in light mode; falls back to `banner` */
+  bannerLight?: string;
   bio?: string;
   /** Tint the card from the banner's colours (like Discord). Off by default: the card uses the page background. */
   themed?: boolean;
@@ -93,12 +97,13 @@ export default function ProfileCard({
       {/* Banner */}
       <div
         aria-hidden
-        className="h-[10.5rem] sm:h-[13rem] md:h-[14.5rem] xl:h-[15.5rem] 2xl:h-[17rem] transition-[height] duration-500 ease-out"
-        style={{
-          backgroundImage: `url('${banner}')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
+        className="profile-banner keep-colors h-[10.5rem] sm:h-[13rem] md:h-[14.5rem] xl:h-[15.5rem] 2xl:h-[17rem] rounded-b-xl transition-[height] duration-500 ease-out"
+        style={
+          {
+            '--banner-dark': `url('${banner}')`,
+            '--banner-light': `url('${bannerLight ?? banner}')`,
+          } as React.CSSProperties
+        }
       />
 
       <div className="relative px-4 sm:px-6 pb-24 transition-[padding] duration-500 ease-out">

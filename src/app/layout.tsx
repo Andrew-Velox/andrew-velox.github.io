@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-// import fs from "fs";
-// import path from "path";
+import fs from "fs";
+import path from "path";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import MediaPreloader from "../components/MediaPreloader";
 import DynamicFooter from "../components/DynamicFooter";
 import SiteNavbar from "../components/SiteNavbar";
+import type { Track } from "../components/MusicPlayer";
 import LoadingScreen from "../components/LoadingScreen";
 // import ChatBot from "../components/ChatBot";
 // import ClickFireworks from "../components/ClickFireworks";
@@ -42,6 +43,27 @@ export const metadata: Metadata = {
 //   return [];
 // }
 
+// Audio dropped into public/music shows up in the notch player on the next build — no code change.
+// "Artist - Title.mp3" gives artist + title; a leading "01 - " only sets the order.
+const AUDIO_EXTENSIONS = new Set([".mp3", ".m4a", ".aac", ".ogg", ".opus", ".wav", ".flac"]);
+
+function getTracks(): Track[] {
+  try {
+    return fs
+      .readdirSync(path.join(process.cwd(), "public", "music"))
+      .filter((f) => AUDIO_EXTENSIONS.has(path.extname(f).toLowerCase()))
+      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+      .map((file) => {
+        const name = path.basename(file, path.extname(file)).replace(/^\d+\s*[-._)]\s*/, "");
+        const [first, ...rest] = name.split(/\s+-\s+/);
+        const [artist, title] = rest.length ? [first, rest.join(" - ")] : [undefined, first];
+        return { src: `/music/${encodeURIComponent(file)}`, title: title.replace(/_/g, " ").trim(), artist: artist?.trim() };
+      });
+  } catch {
+    return [];
+  }
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -76,7 +98,7 @@ export default function RootLayout({
           aria-hidden
           className="screen-frame pointer-events-none fixed inset-0 z-[60] rounded-t-[20px] border-[2px] border-b-0"
         />
-        <SiteNavbar />
+        <SiteNavbar tracks={getTracks()} />
         <div className="relative z-10 min-h-screen">
           <div className="theme-flip min-h-screen pt-0 pb-0 flex items-center justify-center">
             {children}

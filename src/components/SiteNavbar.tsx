@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
 import { Activity, Briefcase, GitMerge, Layers, LayoutGrid, Sparkles, Trophy } from 'lucide-react';
 import ThemeSwitch from './ThemeSwitch';
-import MusicPanel, { WaveIcon } from './MusicPlayer';
+import MusicPanel, { WaveIcon, type Track } from './MusicPlayer';
 
 // Order matches the sections on the home page; ids are set on those <section>s.
 const LINKS = [
@@ -43,7 +43,7 @@ function Ear({ side }: { side: 'left' | 'right' }) {
   );
 }
 
-export default function SiteNavbar() {
+export default function SiteNavbar({ tracks = [] }: { tracks?: Track[] }) {
   const pathname = usePathname();
   const onHome = pathname === '/';
   const [active, setActive] = useState<string | null>(null);
@@ -272,7 +272,7 @@ export default function SiteNavbar() {
                         {page === 1 ? 'Music' : 'Mohabbat'}
                       </span>
                       <span className="block truncate text-xs leading-tight text-black/50">
-                        {page === 1 ? (playing ? 'Now playing' : 'Spotify playlist') : 'Software Engineer'}
+                        {page === 1 ? (playing ? 'Now playing' : 'Playlist') : 'Software Engineer'}
                       </span>
                     </motion.span>
                   ) : (
@@ -401,7 +401,7 @@ export default function SiteNavbar() {
 
                 <div className="w-1/2 shrink-0" inert={!open || page !== 1}>
                   <div ref={playerRef} className="px-2.5 pt-1 sm:px-3 sm:pt-1.5">
-                    <MusicPanel enabled={playerOn} onPlayingChange={setPlaying} />
+                    <MusicPanel tracks={tracks} enabled={playerOn} onPlayingChange={setPlaying} />
                   </div>
                 </div>
               </div>
