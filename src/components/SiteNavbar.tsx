@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
-import { Activity, Briefcase, GitMerge, Layers, Mail, Sparkles, Trophy } from 'lucide-react';
+import { Activity, Briefcase, GitMerge, Layers, LayoutGrid, Sparkles, Trophy } from 'lucide-react';
 import ThemeSwitch from './ThemeSwitch';
+import MusicPanel, { WaveIcon } from './MusicPlayer';
 
 // Order matches the sections on the home page; ids are set on those <section>s.
 const LINKS = [
@@ -48,6 +49,16 @@ export default function SiteNavbar() {
   const [active, setActive] = useState<string | null>(null);
   const [open, setOpen] = useState(false); // expanded notch
   const [vw, setVw] = useState(1024);
+  const [page, setPage] = useState<0 | 1>(0); // 0 = menu, 1 = music player
+  const [playing, setPlaying] = useState(false);
+  const [playerOn, setPlayerOn] = useState(false); // player is created the first time its page is shown
+  const [menuH, setMenuH] = useState(150);
+  const [playerH, setPlayerH] = useState(400);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const playerRef = useRef<HTMLDivElement>(null);
+  const swipe = useRef<{ x: number; y: number } | null>(null);
+  const swiped = useRef(false);
+  const wheelLock = useRef(0);
   const boxRef = useRef<HTMLDivElement>(null);
   const leaveTimer = useRef<number | null>(null);
 
@@ -57,6 +68,28 @@ export default function SiteNavbar() {
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
   }, []);
+
+  // Measure both pages so the notch can animate its height to whichever one is showing
+  useEffect(() => {
+    const ro = new ResizeObserver(() => {
+      if (menuRef.current) setMenuH(menuRef.current.offsetHeight);
+      if (playerRef.current) setPlayerH(playerRef.current.offsetHeight);
+    });
+    if (menuRef.current) ro.observe(menuRef.current);
+    if (playerRef.current) ro.observe(playerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (open && page === 1) setPlayerOn(true);
+  }, [open, page]);
+
+  // Always reopen on the menu page (the player keeps playing in the background)
+  useEffect(() => {
+    if (open) return;
+    const t = window.setTimeout(() => setPage(0), 350);
+    return () => window.clearTimeout(t);
+  }, [open]);
 
   // Close on route change, Escape, or a tap outside
   useEffect(() => setOpen(false), [pathname]);
@@ -113,7 +146,7 @@ export default function SiteNavbar() {
   const small = vw < 640;
   const width = open
     ? Math.min(small ? 316 : EXPANDED_W, vw - 24)
-    : Math.min(small ? 204 : COLLAPSED_W, vw - 24);
+    : Math.min(small ? 224 : COLLAPSED_W, vw - 24);
   const label = pathname === '/contact' ? 'Contact' : LINKS.find((l) => l.id === active)?.label ?? 'Mohabbat';
 
   // Mouse: expand on hover (with a short grace period). Touch/pen: expand on tap of the label.
@@ -125,6 +158,37 @@ export default function SiteNavbar() {
   const onLeave = (e: React.PointerEvent) => {
     if (e.pointerType !== 'mouse') return;
     leaveTimer.current = window.setTimeout(() => setOpen(false), 180);
+  };
+
+  // Swipe (touch, pen or mouse drag) or horizontal trackpad scroll slides between the menu and the player
+  const slide = (dir: 'next' | 'prev') => {
+    if (!open) {
+      setPage(1);
+      setOpen(true);
+    } else if (dir === 'next' && page === 0) setPage(1);
+    else if (dir === 'prev' && page === 1) setPage(0);
+  };
+  const onSwipeDown = (e: React.PointerEvent) => {
+    swiped.current = false;
+    swipe.current = { x: e.clientX, y: e.clientY };
+  };
+  const onSwipeUp = (e: React.PointerEvent) => {
+    const s0 = swipe.current;
+    swipe.current = null;
+    if (!s0) return;
+    const dx = e.clientX - s0.x;
+    const dy = e.clientY - s0.y;
+    if (Math.abs(dx) > 36 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+      swiped.current = true; // swallow the click that follows a swipe
+      slide(dx < 0 ? 'next' : 'prev');
+    }
+  };
+  const onWheel = (e: React.WheelEvent) => {
+    if (Math.abs(e.deltaX) < 24 || Math.abs(e.deltaX) < Math.abs(e.deltaY)) return;
+    const now = Date.now();
+    if (now - wheelLock.current < 600) return;
+    wheelLock.current = now;
+    slide(e.deltaX > 0 ? 'next' : 'prev');
   };
 
   return (
@@ -149,15 +213,26 @@ export default function SiteNavbar() {
           <Ear side="right" />
 
           {/* Hover handlers live on the notch body only — the pull-cord below it must not open it */}
-          <nav
+          <motion.nav
             aria-label="Main"
             onPointerEnter={onEnter}
             onPointerLeave={onLeave}
-            className={`overflow-hidden bg-white transition-[border-radius] duration-300 ${
+            onPointerDown={onSwipeDown}
+            onPointerUp={onSwipeUp}
+            onPointerCancel={() => (swipe.current = null)}
+            onWheel={onWheel}
+            onClickCapture={(e) => {
+              if (swiped.current) {
+                swiped.current = false;
+                e.preventDefault();
+                e.stopPropagation();
+              }
+            }}
+            className={`touch-pan-y select-none overflow-clip bg-white transition-[border-radius] duration-300 ${
               open ? 'rounded-b-[1.5rem]' : 'rounded-b-[1.0rem]'
             }`}
           >
-            {/* Header: logo · identity · glanceable status (scroll ring → Contact when open) */}
+            {/* Header: logo · identity · glanceable status (waveform + scroll ring → Contact / Menu when open) */}
             <div className="flex items-center gap-2.5 px-3 py-2.5">
               <Link
                 href="/"
@@ -186,15 +261,19 @@ export default function SiteNavbar() {
                 <AnimatePresence mode="wait" initial={false}>
                   {open ? (
                     <motion.span
-                      key="identity"
+                      key={page === 1 ? 'music' : 'identity'}
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -6 }}
                       transition={{ duration: 0.15 }}
                       className="block"
                     >
-                      <span className="block truncate text-sm font-semibold leading-tight text-black">Mohabbat</span>
-                      <span className="block truncate text-xs leading-tight text-black/50">Software Engineer</span>
+                      <span className="block truncate text-sm font-semibold leading-tight text-black">
+                        {page === 1 ? 'Music' : 'Mohabbat'}
+                      </span>
+                      <span className="block truncate text-xs leading-tight text-black/50">
+                        {page === 1 ? (playing ? 'Now playing' : 'Spotify playlist') : 'Software Engineer'}
+                      </span>
                     </motion.span>
                   ) : (
                     <motion.span
@@ -214,92 +293,137 @@ export default function SiteNavbar() {
               <AnimatePresence mode="wait" initial={false}>
                 {open ? (
                   <motion.div
-                    key="contact"
+                    key={page === 1 ? 'menu-btn' : 'music-btn'}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
                     transition={{ duration: 0.15 }}
                   >
-                    <Link
-                      href="/contact"
-                      onClick={() => setOpen(false)}
-                      className={`flex h-8 items-center gap-1.5 rounded-full px-3.5 text-xs font-semibold transition-colors ${
-                        pathname === '/contact' ? 'bg-black text-white' : 'bg-black text-white hover:bg-black/85'
-                      }`}
-                    >
-                      <Mail className="h-3.5 w-3.5" aria-hidden />
-                      Contact
-                    </Link>
+                    {page === 1 ? (
+                      <button
+                        type="button"
+                        onClick={() => setPage(0)}
+                        className="flex h-8 items-center gap-1.5 rounded-full bg-black px-3.5 text-xs font-semibold text-white transition-colors hover:bg-black/85"
+                      >
+                        <LayoutGrid className="h-3.5 w-3.5" aria-hidden />
+                        Menu
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setPage(1)}
+                        className="flex h-8 items-center gap-1.5 rounded-full bg-black px-3.5 text-xs font-semibold text-white transition-colors hover:bg-black/85"
+                      >
+                        <WaveIcon playing={playing} className="h-3.5 w-3.5" />
+                        Music
+                      </button>
+                    )}
                   </motion.div>
                 ) : (
-                  <motion.svg
-                    key="ring"
-                    aria-hidden
-                    viewBox="0 0 24 24"
-                    className="h-6 w-6 shrink-0 -rotate-90"
+                  <motion.div
+                    key="status"
+                    className="flex shrink-0 items-center gap-2"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15 }}
                   >
-                    <circle cx="12" cy="12" r="9" fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth="2.5" />
-                    <motion.circle
-                      cx="12"
-                      cy="12"
-                      r="9"
-                      fill="none"
-                      stroke="#0073ff"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      style={{ pathLength: progress }}
-                    />
-                  </motion.svg>
+                    {/* Like an iPhone live activity: the glyph bounces while music plays; tap to open the player */}
+                    <button
+                      type="button"
+                      aria-label={playing ? 'Music playing — open player' : 'Open music player'}
+                      onClick={() => {
+                        setPage(1);
+                        setOpen(true);
+                      }}
+                      className="flex h-6 w-6 items-center justify-center rounded-full text-black/80 transition-transform hover:scale-110 hover:text-black"
+                    >
+                      <WaveIcon playing={playing} className="h-4 w-4" />
+                    </button>
+                    <svg aria-hidden viewBox="0 0 24 24" className="h-6 w-6 shrink-0 -rotate-90">
+                      <circle cx="12" cy="12" r="9" fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth="2.5" />
+                      <motion.circle
+                        cx="12"
+                        cy="12"
+                        r="9"
+                        fill="none"
+                        stroke="#0073ff"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        style={{ pathLength: progress }}
+                      />
+                    </svg>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
-            {/* Expanded: app-icon style tiles, like an iPhone home screen */}
-            <AnimatePresence initial={false}>
-              {open && (
-                <motion.div
-                  id="notch-links"
-                  key="links"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <ul className="grid grid-cols-3 gap-1.5 px-2.5 pb-2.5 pt-1 sm:gap-2 sm:px-3 sm:pb-3 sm:pt-1.5">
-                    {LINKS.map((l, i) => {
-                      const on = active === l.id;
-                      const Icon = l.icon;
-                      return (
-                        <motion.li
-                          key={l.id}
-                          initial={{ opacity: 0, y: 10, scale: 0.94 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          transition={{ delay: 0.04 + i * 0.035, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                        >
-                          <Link
-                            href={`/#${l.id}`}
-                            onClick={() => setOpen(false)}
-                            className={`flex h-[3.4rem] flex-col items-center justify-center gap-1 rounded-xl text-[10px] sm:h-[4.25rem] sm:gap-1.5 sm:rounded-2xl sm:text-[11px] font-medium transition-colors ${
-                              on
-                                ? 'bg-black text-white'
-                                : 'bg-black/[0.06] text-black/70 hover:bg-black/[0.12] hover:text-black'
-                            }`}
-                          >
-                            <Icon className="h-4 w-4 sm:h-[18px] sm:w-[18px]" strokeWidth={1.75} aria-hidden />
-                            {l.label}
-                          </Link>
-                        </motion.li>
-                      );
-                    })}
-                  </ul>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </nav>
+            {/* Body: two pages (menu tiles · music player) that slide sideways; height follows the visible page */}
+            <motion.div
+              id="notch-links"
+              initial={false}
+              animate={{ height: open ? (page === 1 ? playerH : menuH) + 18 : 0, opacity: open ? 1 : 0 }}
+              transition={{ height: { duration: 0.3, ease: [0.22, 1, 0.36, 1] }, opacity: { duration: 0.2 } }}
+              className="relative overflow-clip"
+            >
+              {/* CSS transform (not framer): a % offset must keep tracking the notch while its width animates */}
+              <div
+                className="flex w-[200%] transition-transform duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+                style={{ transform: page === 1 ? 'translateX(-50%)' : 'translateX(0)' }}
+              >
+                <div className="w-1/2 shrink-0" inert={!open || page !== 0}>
+                  <div ref={menuRef}>
+                    {/* App-icon style tiles, like an iPhone home screen */}
+                    <ul className="grid grid-cols-3 gap-1.5 px-2.5 pt-1 sm:gap-2 sm:px-3 sm:pt-1.5">
+                      {LINKS.map((l) => {
+                        const on = active === l.id;
+                        const Icon = l.icon;
+                        return (
+                          <li key={l.id}>
+                            <Link
+                              href={`/#${l.id}`}
+                              onClick={() => setOpen(false)}
+                              className={`flex h-[3.4rem] flex-col items-center justify-center gap-1 rounded-xl text-[10px] sm:h-[4.25rem] sm:gap-1.5 sm:rounded-2xl sm:text-[11px] font-medium transition-colors ${
+                                on
+                                  ? 'bg-black text-white'
+                                  : 'bg-black/[0.06] text-black/70 hover:bg-black/[0.12] hover:text-black'
+                              }`}
+                            >
+                              <Icon className="h-4 w-4 sm:h-[18px] sm:w-[18px]" strokeWidth={1.75} aria-hidden />
+                              {l.label}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="w-1/2 shrink-0" inert={!open || page !== 1}>
+                  <div ref={playerRef} className="px-2.5 pt-1 sm:px-3 sm:pt-1.5">
+                    <MusicPanel enabled={playerOn} onPlayingChange={setPlaying} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Page dots */}
+              <div className="absolute inset-x-0 bottom-0 flex h-[18px] items-center justify-center gap-1.5" role="tablist" aria-label="Notch pages">
+                {(['Menu', 'Music'] as const).map((name, i) => (
+                  <button
+                    key={name}
+                    type="button"
+                    role="tab"
+                    aria-selected={page === i}
+                    aria-label={name}
+                    onClick={() => setPage(i as 0 | 1)}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      page === i ? 'w-4 bg-black/70' : 'w-1.5 bg-black/20 hover:bg-black/35'
+                    }`}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          </motion.nav>
         </motion.div>
       </header>
     </>

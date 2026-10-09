@@ -113,3 +113,27 @@ html.light .footer-glass {
 
 .screen-frame { border-color: #fff; box-shadow: 0 0 0 24px #fff; }
 html.light .screen-frame { border-color: #000; box-shadow: 0 0 0 24px #000; }
+
+/* Music waveform glyph: bars bounce while a song is playing */
+.wave-bar,
+.wave-bar-idle {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.wave-bar {
+  animation: wave-bounce 0.9s ease-in-out infinite;
+}
+@keyframes wave-bounce {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(var(--wave-min, 0.3));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wave-bar {
+    animation: none;
+  }
+}
