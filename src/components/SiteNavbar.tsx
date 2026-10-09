@@ -248,7 +248,7 @@ export default function SiteNavbar() {
                       cy="12"
                       r="9"
                       fill="none"
-                      stroke="#e5b84b"
+                      stroke="#0073ff"
                       strokeWidth="2.5"
                       strokeLinecap="round"
                       style={{ pathLength: progress }}

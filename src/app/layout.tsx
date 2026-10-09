@@ -74,7 +74,7 @@ export default function RootLayout({
         </div> */}
         <div
           aria-hidden
-          className="screen-frame pointer-events-none fixed inset-0 z-[60] rounded-[20px] border-[2px]"
+          className="screen-frame pointer-events-none fixed inset-0 z-[60] rounded-t-[20px] border-[2px] border-b-0"
         />
         <SiteNavbar />
         <div className="relative z-10 min-h-screen">
