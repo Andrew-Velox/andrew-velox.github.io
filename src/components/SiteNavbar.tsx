@@ -19,16 +19,28 @@ const LINKS = [
 
 const COLLAPSED_W = 232;
 const EXPANDED_W = 392;
-const EDGE = 'rgba(255,255,255,0.3)'; // outline colour around the notch
-const EAR = 16; // size of the concave "ear" corners that blend the notch into the screen edge
+const EAR = 20; // size of the concave "ear" corners that blend the notch into the screen edge
 
-// The notch's rounded-off edge, drawn as a quarter-circle cut-out
-const ear = (side: 'left' | 'right') => ({
-  width: EAR,
-  height: EAR,
-  // transparent page → 1px outline → black fill, so the outline follows the curve on the outside
-  background: `radial-gradient(circle at ${side === 'left' ? '0' : '100%'} 100%, transparent ${EAR - 1.5}px, ${EDGE} ${EAR - 1}px, ${EDGE} ${EAR}px, #000 ${EAR + 0.01}px)`,
-});
+// The notch's concave "ear": an anti-aliased SVG quarter-circle cut-out that melts the notch into the top edge
+function Ear({ side }: { side: 'left' | 'right' }) {
+  const left = side === 'left';
+  const o = 0.5; // overlap under the notch body to avoid a hairline seam
+  const d = left
+    ? `M0 0 L${EAR + o} 0 L${EAR + o} ${EAR} A${EAR} ${EAR} 0 0 0 0 0 Z`
+    : `M${EAR} 0 L${-o} 0 L${-o} ${EAR} A${EAR} ${EAR} 0 0 1 ${EAR} 0 Z`;
+  return (
+    <svg
+      aria-hidden
+      width={EAR}
+      height={EAR}
+      viewBox={`0 0 ${EAR} ${EAR}`}
+      className="absolute top-0 overflow-visible"
+      style={left ? { left: -EAR } : { right: -EAR }}
+    >
+      <path d={d} fill="#fff" />
+    </svg>
+  );
+}
 
 export default function SiteNavbar() {
   const pathname = usePathname();
@@ -114,7 +126,7 @@ export default function SiteNavbar() {
 
   return (
     <>
-      <header className="theme-flip pointer-events-none fixed inset-x-0 top-0 z-[55] flex justify-center">
+      <header className="theme-flip pointer-events-none fixed inset-x-0 top-[2px] z-[70] flex justify-center">
         {/* Theme pull-cord: hangs from the top-right corner of the screen (before the notch, so an open notch overlaps it) */}
         <ThemeSwitch />
 
@@ -130,20 +142,20 @@ export default function SiteNavbar() {
           className="pointer-events-auto relative"
         >
           {/* Concave ears that melt the notch into the top edge of the screen */}
-          <span aria-hidden className="absolute top-0" style={{ ...ear('left'), left: -EAR }} />
-          <span aria-hidden className="absolute top-0" style={{ ...ear('right'), right: -EAR }} />
+          <Ear side="left" />
+          <Ear side="right" />
 
           {/* Hover handlers live on the notch body only — the pull-cord below it must not open it */}
           <nav
             aria-label="Main"
             onPointerEnter={onEnter}
             onPointerLeave={onLeave}
-            className={`overflow-hidden bg-black shadow-[0_14px_44px_rgba(0,0,0,0.55)] transition-[border-radius] duration-300 ${
-              open ? 'rounded-b-[2rem]' : 'rounded-b-[1.4rem]'
+            className={`overflow-hidden bg-white transition-[border-radius] duration-300 ${
+              open ? 'rounded-b-[1.5rem]' : 'rounded-b-[1.0rem]'
             }`}
           >
             {/* Header: logo · identity · glanceable status (scroll ring → Contact when open) */}
-            <div className="flex items-center gap-2.5 px-3 py-2">
+            <div className="flex items-center gap-2.5 px-3 py-2.5">
               <Link
                 href="/"
                 onClick={(e) => {
@@ -153,7 +165,7 @@ export default function SiteNavbar() {
                   }
                 }}
                 aria-label="Home"
-                className={`block shrink-0 overflow-hidden rounded-full ring-1 ring-white/25 transition-all duration-300 hover:scale-105 ${
+                className={`block shrink-0 overflow-hidden rounded-full ring-1 ring-black/20 transition-all duration-300 hover:scale-105 ${
                   open ? 'h-10 w-10' : 'h-8 w-8'
                 }`}
               >
@@ -178,8 +190,8 @@ export default function SiteNavbar() {
                       transition={{ duration: 0.15 }}
                       className="block"
                     >
-                      <span className="block truncate text-sm font-semibold leading-tight text-white">Mohabbat</span>
-                      <span className="block truncate text-xs leading-tight text-white/50">Software Engineer</span>
+                      <span className="block truncate text-sm font-semibold leading-tight text-black">Mohabbat</span>
+                      <span className="block truncate text-xs leading-tight text-black/50">Software Engineer</span>
                     </motion.span>
                   ) : (
                     <motion.span
@@ -188,7 +200,7 @@ export default function SiteNavbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -6 }}
                       transition={{ duration: 0.15 }}
-                      className="block truncate text-[13px] font-medium text-white/90"
+                      className="block truncate text-[13px] font-medium text-black/90"
                     >
                       {label}
                     </motion.span>
@@ -209,7 +221,7 @@ export default function SiteNavbar() {
                       href="/contact"
                       onClick={() => setOpen(false)}
                       className={`flex h-8 items-center gap-1.5 rounded-full px-3.5 text-xs font-semibold transition-colors ${
-                        pathname === '/contact' ? 'bg-white text-black' : 'bg-white text-black hover:bg-white/85'
+                        pathname === '/contact' ? 'bg-black text-white' : 'bg-black text-white hover:bg-black/85'
                       }`}
                     >
                       <Mail className="h-3.5 w-3.5" aria-hidden />
@@ -227,7 +239,7 @@ export default function SiteNavbar() {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15 }}
                   >
-                    <circle cx="12" cy="12" r="9" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="2.5" />
+                    <circle cx="12" cy="12" r="9" fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth="2.5" />
                     <motion.circle
                       cx="12"
                       cy="12"
@@ -270,8 +282,8 @@ export default function SiteNavbar() {
                             onClick={() => setOpen(false)}
                             className={`flex h-[4.25rem] flex-col items-center justify-center gap-1.5 rounded-2xl text-[11px] font-medium transition-colors ${
                               on
-                                ? 'bg-white text-black'
-                                : 'bg-white/[0.08] text-white/75 hover:bg-white/[0.16] hover:text-white'
+                                ? 'bg-black text-white'
+                                : 'bg-black/[0.06] text-black/70 hover:bg-black/[0.12] hover:text-black'
                             }`}
                           >
                             <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
@@ -285,16 +297,6 @@ export default function SiteNavbar() {
               )}
             </AnimatePresence>
           </nav>
-
-          {/* Outline drawn OUTSIDE the black shape (a ring, not an inner border), so it follows the
-              curves cleanly. The top 16px are clipped away so it starts exactly where the ears end. */}
-          <span
-            aria-hidden
-            className={`pointer-events-none absolute inset-0 shadow-[0_0_0_1px_rgba(255,255,255,0.3)] transition-[border-radius] duration-300 ${
-              open ? 'rounded-b-[2rem]' : 'rounded-b-[1.4rem]'
-            }`}
-            style={{ clipPath: `inset(${EAR}px -2px -2px -2px)` }}
-          />
         </motion.div>
       </header>
     </>

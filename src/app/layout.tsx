@@ -72,6 +72,10 @@ export default function RootLayout({
         {/* <div className="fixed inset-0 z-0">
           <SpiderWeb opacity={30} thickness={15} />
         </div> */}
+        <div
+          aria-hidden
+          className="screen-frame pointer-events-none fixed inset-0 z-[60] rounded-[20px] border-[2px]"
+        />
         <SiteNavbar />
         <div className="relative z-10 min-h-screen">
           <div className="theme-flip min-h-screen pt-0 pb-0 flex items-center justify-center">
