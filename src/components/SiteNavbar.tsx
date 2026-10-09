@@ -110,7 +110,10 @@ export default function SiteNavbar() {
     };
   }, [onHome]);
 
-  const width = open ? Math.min(EXPANDED_W, vw - 16) : Math.min(COLLAPSED_W, vw - 16);
+  const small = vw < 640;
+  const width = open
+    ? Math.min(small ? 316 : EXPANDED_W, vw - 24)
+    : Math.min(small ? 204 : COLLAPSED_W, vw - 24);
   const label = pathname === '/contact' ? 'Contact' : LINKS.find((l) => l.id === active)?.label ?? 'Mohabbat';
 
   // Mouse: expand on hover (with a short grace period). Touch/pen: expand on tap of the label.
@@ -166,7 +169,7 @@ export default function SiteNavbar() {
                 }}
                 aria-label="Home"
                 className={`block shrink-0 overflow-hidden rounded-full ring-1 ring-black/20 transition-all duration-300 hover:scale-105 ${
-                  open ? 'h-10 w-10' : 'h-8 w-8'
+                  open ? 'h-9 w-9 sm:h-10 sm:w-10' : 'h-7 w-7 sm:h-8 sm:w-8'
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -266,7 +269,7 @@ export default function SiteNavbar() {
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <ul className="grid grid-cols-3 gap-2 px-3 pb-3 pt-1.5">
+                  <ul className="grid grid-cols-3 gap-1.5 px-2.5 pb-2.5 pt-1 sm:gap-2 sm:px-3 sm:pb-3 sm:pt-1.5">
                     {LINKS.map((l, i) => {
                       const on = active === l.id;
                       const Icon = l.icon;
@@ -280,13 +283,13 @@ export default function SiteNavbar() {
                           <Link
                             href={`/#${l.id}`}
                             onClick={() => setOpen(false)}
-                            className={`flex h-[4.25rem] flex-col items-center justify-center gap-1.5 rounded-2xl text-[11px] font-medium transition-colors ${
+                            className={`flex h-[3.4rem] flex-col items-center justify-center gap-1 rounded-xl text-[10px] sm:h-[4.25rem] sm:gap-1.5 sm:rounded-2xl sm:text-[11px] font-medium transition-colors ${
                               on
                                 ? 'bg-black text-white'
                                 : 'bg-black/[0.06] text-black/70 hover:bg-black/[0.12] hover:text-black'
                             }`}
                           >
-                            <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
+                            <Icon className="h-4 w-4 sm:h-[18px] sm:w-[18px]" strokeWidth={1.75} aria-hidden />
                             {l.label}
                           </Link>
                         </motion.li>

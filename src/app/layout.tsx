@@ -50,10 +50,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="[color-scheme:light_dark]" suppressHydrationWarning>
       <head>
-        {/* Apply the saved theme before first paint so there is no dark→light flash */}
+        {/* Apply the saved theme before first paint (saved choice, else the device's colour scheme) so there is no flash */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{if(localStorage.getItem('theme')==='light')document.documentElement.classList.add('light')}catch(e){}`,
+            __html: `try{var t=null;try{t=localStorage.getItem('theme')}catch(e){}var m=window.matchMedia('(prefers-color-scheme: light)');var d=document.documentElement;d.classList.toggle('light',t?t==='light':m.matches);m.addEventListener('change',function(e){var s=null;try{s=localStorage.getItem('theme')}catch(x){}if(!s)d.classList.toggle('light',e.matches)})}catch(e){}`,
           }}
         />
       </head>
