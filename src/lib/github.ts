@@ -2,6 +2,8 @@
 // so visitors never wait on it and the browser never calls the GitHub API.
 // If a request fails during the build, the last-known numbers below are used.
 
+import type { PinnedRepo } from '../data/repos';
+
 export interface ContributionDay {
   date: string; // YYYY-MM-DD
   level: number; // 0–4
@@ -237,4 +239,51 @@ export async function getGithubSummary(user: string): Promise<GithubSummary> {
     ranges,
     activity: activity.status === 'fulfilled' ? activity.value : FALLBACK.activity,
   };
+}
+
+// GitHub's API gives the language name but not its colour, so the common ones are mapped here.
+const LANGUAGE_COLORS: Record<string, string> = {
+  Rust: '#dea584',
+  Zig: '#ec915c',
+  JavaScript: '#f1e05a',
+  TypeScript: '#3178c6',
+  Python: '#3572a5',
+  Go: '#00add8',
+  C: '#555555',
+  'C++': '#f34b7d',
+  Java: '#b07219',
+  HTML: '#e34c26',
+  CSS: '#663399',
+  Shell: '#89e051',
+};
+
+// Refresh the hand-picked repos with live numbers (stars, forks, description, language).
+// The list itself stays curated in src/data/repos.ts; a repo whose request fails keeps its
+// hardcoded values, so the section never breaks the build.
+export async function getRepoStats(pinned: PinnedRepo[]): Promise<PinnedRepo[]> {
+  const live = await Promise.allSettled(
+    pinned.map((r) =>
+      getJson<{
+        stargazers_count: number;
+        forks_count: number;
+        description: string | null;
+        language: string | null;
+        html_url: string;
+      }>(`https://api.github.com/repos/${r.repo}`)
+    )
+  );
+  return pinned.map((r, i) => {
+    const res = live[i];
+    if (res.status !== 'fulfilled') return r;
+    const l = res.value;
+    const language = l.language ?? r.language;
+    return {
+      ...r,
+      description: l.description || r.description,
+      language,
+      languageColor: LANGUAGE_COLORS[language] ?? (language === r.language ? r.languageColor : '#8b8b8b'),
+      stars: l.stargazers_count,
+      forks: l.forks_count,
+    };
+  });
 }

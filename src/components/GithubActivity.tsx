@@ -3,6 +3,7 @@ import { getGithubSummary, type ContributionDay } from '../lib/github';
 import ContributionHeatmap from './ContributionHeatmap';
 import RecentActivity from './RecentActivity';
 import PanelHeading from './PanelHeading';
+import SelectedRepos from './SelectedRepos';
 
 const fmt = (n: number) => n.toLocaleString('en-US');
 
@@ -32,7 +33,11 @@ export default async function GithubActivity({ user }: { user: string }) {
     <div>
       {ranges.length > 0 && <ContributionHeatmap user={user} ranges={ranges} streak={streak} />}
 
-      <div className={`grid grid-cols-[minmax(0,1fr)_6.75rem] gap-3 sm:grid-cols-[minmax(0,1fr)_11rem] sm:gap-6 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-10 ${ranges.length > 0 ? 'mt-8 sm:mt-10' : ''}`}>
+      <div className={ranges.length > 0 ? 'mt-8 sm:mt-10' : ''}>
+        <SelectedRepos user={user} />
+      </div>
+
+      <div className="mt-8 grid grid-cols-[minmax(0,1fr)_6.75rem] gap-3 sm:mt-10 sm:grid-cols-[minmax(0,1fr)_11rem] sm:gap-6 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-10">
         {activity.length > 0 && <RecentActivity items={activity} />}
 
         <div className={`min-w-0 self-start ${activity.length === 0 ? 'col-span-2' : ''}`}>

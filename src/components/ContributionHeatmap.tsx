@@ -6,7 +6,7 @@ import { Check, ChevronDown } from 'lucide-react';
 import type { ContributionDay, ContributionRange } from '../lib/github';
 
 const LEVEL_COLORS = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
-const CELL = 11;
+const CELL = 12; // GitHub's own size is 10
 const GAP = 3;
 const LONG_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -164,45 +164,59 @@ export default function ContributionHeatmap({
         </div>
 
       <div className="mt-2 overflow-x-auto pb-2" onScroll={() => setTip(null)}>
-        <div className="w-max">
+        <div className="flex w-max gap-2 font-mono text-[10px] text-white/70 sm:text-xs">
+          {/* Mon / Wed / Fri labels, aligned to rows 2, 4 and 6 like GitHub */}
           <div
-            className="grid font-mono text-xs text-white/70"
-            style={{ gridTemplateColumns: `repeat(${weeks.length}, ${CELL}px)`, columnGap: GAP, height: 22 }}
+            aria-hidden
+            className="grid pr-1"
+            style={{ gridTemplateRows: `repeat(7, ${CELL}px)`, rowGap: GAP, marginTop: 22 }}
           >
-            {monthLabels.map((m, i) => (
-              <span key={i} className="overflow-visible whitespace-nowrap">
-                {m}
+            {['', 'Mon', '', 'Wed', '', 'Fri', ''].map((d, i) => (
+              <span key={i} className="whitespace-nowrap leading-none" style={{ lineHeight: `${CELL}px` }}>
+                {d}
               </span>
             ))}
           </div>
-          <div
-            className="grid"
-            style={{
-              gridAutoFlow: 'column',
-              gridTemplateRows: `repeat(7, ${CELL}px)`,
-              gridAutoColumns: `${CELL}px`,
-              gap: GAP,
-            }}
-            role="img"
-            onPointerOver={showTip}
-            onPointerLeave={() => setTip(null)}
-            onClick={showTip}
-            aria-label={`${user}'s GitHub contribution activity ${heading}`}
-          >
-            {weeks.flatMap((w, wi) =>
-              w.map((d, di) => (
-                <span
-                  key={`${range.key}-${wi}-${di}`}
-                  data-tip={d ? tooltipText(d) : undefined}
-                  className="rounded-[2px]"
-                  style={{ backgroundColor: d ? LEVEL_COLORS[d.level] : 'transparent' }}
-                />
-              ))
-            )}
+
+          <div>
+            <div
+              className="grid"
+              style={{ gridTemplateColumns: `repeat(${weeks.length}, ${CELL}px)`, columnGap: GAP, height: 22 }}
+            >
+              {monthLabels.map((m, i) => (
+                <span key={i} className="overflow-visible whitespace-nowrap">
+                  {m}
+                </span>
+              ))}
+            </div>
+            <div
+              className="grid"
+              style={{
+                gridAutoFlow: 'column',
+                gridTemplateRows: `repeat(7, ${CELL}px)`,
+                gridAutoColumns: `${CELL}px`,
+                gap: GAP,
+              }}
+              role="img"
+              onPointerOver={showTip}
+              onPointerLeave={() => setTip(null)}
+              onClick={showTip}
+              aria-label={`${user}'s GitHub contribution activity ${heading}`}
+            >
+              {weeks.flatMap((w, wi) =>
+                w.map((d, di) => (
+                  <span
+                    key={`${range.key}-${wi}-${di}`}
+                    data-tip={d ? tooltipText(d) : undefined}
+                    className="rounded-[2px]"
+                    style={{ backgroundColor: d ? LEVEL_COLORS[d.level] : 'transparent' }}
+                  />
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
-
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-xs text-white/60">
           <span>{range.total.toLocaleString('en-US')} activities in {period}</span>
