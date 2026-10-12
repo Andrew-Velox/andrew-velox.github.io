@@ -51,9 +51,9 @@ const experience = [
       { label: 'Linux', icon: <SiLinux />, color: '#FCC624' },
     ] as { label: string; icon?: React.ReactNode; color?: string }[],
     points: [
-      'Spearheaded the development of a full-stack web framework, enabling declarative JSX-pattern UI components compiled to memory-safe, efficient code.',
-      'Engineered custom IDE DevTools for real-time component inspection and port-based data fetching, reducing estimated debugging time by 40% for framework users.',
-      'Optimized the core ‘zx’ formatter by resolving 15+ critical AST parsing bugs, ensuring 100% cross-platform consistency for Windows and Linux exports.',
+      `Built the Ziex DevTools Chrome extension using Zig and Ziex across 14 merged PRs and 3,200+ lines, featuring component inspection, props viewing, search, and native-element visibility controls.`,
+      `Designed a port-based communication layer between DevTools and the application runtime, implementing hover highlighting, click-to-scroll, configurable host input, and dark mode.`,
+      `Fixed 6 zx toolchain bugs with regression tests and added 2 benchmark suites (1,280+ lines, 32 files), 2 deployment templates, and a server retry fix.`,
     ],
   },
 ];
