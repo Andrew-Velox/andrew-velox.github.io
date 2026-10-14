@@ -9,6 +9,11 @@ on:
   push:
     branches: ["main"]
 
+  # Rebuild every day so the GitHub numbers (heatmap, stats, activity, repos) are refreshed.
+  # They are fetched at build time because the site is a static export.
+  schedule:
+    - cron: "17 0 * * *"
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -73,7 +78,13 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+      - name: Drop cached GitHub API responses
+        # .next/cache is restored above; without this the build could reuse day-old fetch results.
+        run: rm -rf .next/cache/fetch-cache
       - name: Build with Next.js
+        env:
+          # Authenticated requests get a much higher GitHub API rate limit than anonymous ones.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
