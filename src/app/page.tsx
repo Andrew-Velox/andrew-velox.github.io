@@ -19,6 +19,7 @@ import GithubActivity from '../components/GithubActivity';
 import ProjectsCarousel from '../components/ProjectsCarousel';
 import { Download, Globe, Mail } from 'lucide-react';
 import AchievementsTimeline from '../components/AchievementsTimeline';
+import WeatherGlobe from '../components/WeatherGlobe';
 import { projects } from '../data/projects';
 
 const GITHUB_USER = 'Andrew-Velox';
@@ -297,6 +298,11 @@ export default function NewHome() {
           <div>
             <GithubActivity user={GITHUB_USER} />
           </div>
+        </section>
+
+        {/* Purely decorative: a cobe globe with live weather for a few cities */}
+        <section id="world" className="mt-12 scroll-mt-16 border-t border-white/20 pt-10">
+          <WeatherGlobe />
         </section>
       </ProfileCard>
     </main>
