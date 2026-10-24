@@ -86,7 +86,7 @@ export default function WeatherGlobe() {
     const lon = CITIES.map((c) => c.lon).join(',');
     fetch(
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,is_day`,
-      { signal: ctrl.signal }
+      { signal: ctrl.signal },
     )
       .then((r) => r.json())
       .then((d) => {
@@ -368,22 +368,31 @@ export default function WeatherGlobe() {
                   left: 'anchor(center)',
                   translate: '-50% 0',
                   opacity: `var(--cobe-visible-${id}, 0)`,
-                  filter: `blur(calc((1 - var(--cobe-visible-${id}, 0)) * 8px))`,
-                  transition: 'opacity 0.3s, filter 0.3s',
+                  transition: 'opacity 0.3s',
                 } as React.CSSProperties
               }
             >
-              {on && (
-                <span className="mb-0.5 rounded-full bg-black/60 px-1.5 py-0.5 font-mono text-[10px] text-white">
-                  {cw.temp}°
-                </span>
-              )}
-              <span
-                className="select-none leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transition-transform duration-300"
-                style={{ fontSize: on ? '1.9rem' : '1.4rem' }}
+              {/* The blur lives on this inner box: an inline `filter` on the outer one would replace
+                  the colour-restoring filter that `keep-colors` applies in light mode. */}
+              <div
+                className="flex flex-col items-center"
+                style={{
+                  filter: `blur(calc((1 - var(--cobe-visible-${id}, 0)) * 8px))`,
+                  transition: 'filter 0.3s',
+                }}
               >
-                {cw.icon}
-              </span>
+                {on && (
+                  <span className="mb-0.5 rounded-full bg-black/60 px-1.5 py-0.5 font-mono text-[10px] text-white">
+                    {cw.temp}°
+                  </span>
+                )}
+                <span
+                  className="select-none leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transition-transform duration-300"
+                  style={{ fontSize: on ? '1.9rem' : '1.4rem' }}
+                >
+                  {cw.icon}
+                </span>
+              </div>
             </div>
           );
         })}
