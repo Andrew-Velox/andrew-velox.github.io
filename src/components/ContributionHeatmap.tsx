@@ -89,7 +89,7 @@ export default function ContributionHeatmap({
 
   return (
     <div>
-      {/* Header: eyebrow, title + subtitle on the left, TOTAL | STREAK on the right */}
+      {/* Header: eyebrow, title + subtitle on the left,  TOTAL | STREAK on the right */}
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-5">
         <div>
           <p className="flex items-center gap-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] text-white/70">
