@@ -9,7 +9,7 @@ export const projects: Project[] = [
       category: 'tools',
       link: 'https://aur.archlinux.org/packages/animfetch-bin',
       github: 'https://github.com/Andrew-Velox/animfetch',
-      image: '/images/projects/animfetch.png',
+      image: '/images/projects/animfetch.webp',
   },
   {
       id: 2,
@@ -19,7 +19,7 @@ export const projects: Project[] = [
       category: 'extension',
       link: 'https://chromewebstore.google.com/detail/efnedneccooengjfmahlnmicgkalnopj?utm_source=item-share-cb',
       github: 'https://github.com/ziex-dev/ziex/tree/main/ide/devtool',
-      image: '/images/projects/ziex_devtool.png',
+      image: '/images/projects/ziex_devtool.webp',
   },
   {
         id: 1,
@@ -29,7 +29,7 @@ export const projects: Project[] = [
         category: 'web',
         link: undefined,
         github: "https://github.com/Andrew-Velox/Mega-Project",
-        image: '/images/projects/my_rag.png',
+        image: '/images/projects/my_rag.webp',
     },
     {
         id: 2,
@@ -39,7 +39,7 @@ export const projects: Project[] = [
         category: 'web',
         link: 'https://meow-chat-7qic.onrender.com/',
         github: 'https://github.com/Andrew-Velox/Meow-Chat',
-        image: '/images/projects/discord_chat.png',
+        image: '/images/projects/discord_chat.webp',
     },
     {
         id: 3,
@@ -49,7 +49,7 @@ export const projects: Project[] = [
         category: 'web',
         link: 'https://mew-shop-eight.vercel.app/',
         github: 'https://github.com/Andrew-Velox/mew_shop',
-        image: '/images/projects/shop.png',
+        image: '/images/projects/shop.webp',
     },
     {
         id: 4,
@@ -59,7 +59,7 @@ export const projects: Project[] = [
         category: 'extension',
         link: 'https://chromewebstore.google.com/detail/cf-fetcher/pehfoogjijedipaehbibmjcajbcbimef',
         github: 'https://github.com/Andrew-Velox/Codeforces-Submission-Fetcher-Extension',
-        image: '/images/projects/cf_fetcher_ext.png',
+        image: '/images/projects/cf_fetcher_ext.webp',
     },
     // {
     //     id: 5,
@@ -79,6 +79,6 @@ export const projects: Project[] = [
         category: 'web',
         link: 'https://gucc.green.edu.bd/',
         github: 'https://github.com/GreenUniversityComputerClub',
-        image: '/images/projects/club_web_contribution.png',
+        image: '/images/projects/club_web_contribution.webp',
     },
 ];

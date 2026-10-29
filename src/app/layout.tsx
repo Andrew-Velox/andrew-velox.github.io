@@ -10,7 +10,7 @@ import type { Track } from "../components/MusicPlayer";
 import LoadingScreen from "../components/LoadingScreen";
 // import ChatBot from "../components/ChatBot";
 // import ClickFireworks from "../components/ClickFireworks";
-// import RightClickNotice from "../components/RightClickNotice";
+import RightClickNotice from "../components/RightClickNotice";
 import GreetingToast from "../components/GreetingToast";
 // import RotatingBackground from "../components/RotatingBackground";
 // import ParticlesBackground from "../components/ParticlesBackground";
@@ -18,7 +18,7 @@ import GreetingToast from "../components/GreetingToast";
 // import ParticlesBackground from "../components/ParticlesBackground";
  import Petfolio from "../components/Petfolio";
  // import SpiderWeb from "../components/SpiderWeb";
- 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -86,7 +86,7 @@ export default function RootLayout({
         <LoadingScreen />
         <MediaPreloader />
         {/* <ClickFireworks /> */}
-        {/* <RightClickNotice /> */}
+        <RightClickNotice />
         <GreetingToast />
         {/* <Petfolio /> */}
         {/* <BgGif src="/bg_animaton/ani.gif" /> */}

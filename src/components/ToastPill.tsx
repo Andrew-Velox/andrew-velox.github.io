@@ -29,7 +29,7 @@ export default function ToastPill({
         {visible && (
           <motion.div
             key={contentKey}
-            className="flex items-center gap-3 rounded-full bg-black/45 backdrop-blur-md px-5 py-3.5 shadow-lg whitespace-nowrap"
+            className="toast-pill flex items-center gap-3 rounded-full bg-black/45 backdrop-blur-md px-5 py-3.5 shadow-lg whitespace-nowrap"
             initial={{ y: -90, opacity: 0, scale: 1 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{

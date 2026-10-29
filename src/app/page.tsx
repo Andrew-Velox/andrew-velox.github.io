@@ -128,8 +128,8 @@ export default function NewHome() {
   return (
     <main className="self-start w-full max-w-6xl max-xl:max-w-none mx-auto px-0 xl:px-3 pt-0 pb-0 relative z-20 transition-[padding] duration-500 ease-out">
       <ProfileCard
-        banner="/images/backgrounds/wing-shadow.webp"
-        bannerLight="/images/backgrounds/pixel-cat.gif"
+        banner="/images/backgrounds/fish.webp"
+        // bannerLight="/images/backgrounds/saku.webp" // a separate light-mode banner; for now both themes use `banner`
         bio="I’m Mohabbat. I’m currently pursuing my BSc in Computer Science and Engineering at Green University of Bangladesh."
       >
         <div className="flex flex-wrap justify-center gap-3 sm:justify-start">
@@ -301,9 +301,9 @@ export default function NewHome() {
         </section>
 
         {/* Purely decorative: a cobe globe with live weather for a few cities */}
-        <section id="world" className="mt-12 scroll-mt-16 border-t border-white/20 pt-10">
+        {/* <section id="world" className="mt-12 scroll-mt-16 border-t border-white/20 pt-10">
           <WeatherGlobe />
-        </section>
+        </section> */}
       </ProfileCard>
     </main>
   );

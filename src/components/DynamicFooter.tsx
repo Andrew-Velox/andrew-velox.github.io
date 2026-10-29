@@ -1,6 +1,7 @@
 'use client';
 
 import { FooterLink } from './FooterLink';
+import SakuraTree from './SakuraTree';
 
 // Social links data
 const GitHubIcon = () => (
@@ -63,11 +64,28 @@ export default function DynamicFooter() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[60]">
       <img
-        src="/images/mascots/pixel-cat.gif"
+        src="/images/mascots/pixel-cat.webp"
         alt="Sitting cat"
-        className="absolute left-4 sm:left-8 bottom-full z-10 h-30 sm:h-32 w-auto select-none pointer-events-none drop-shadow-sm"
+        className="absolute left-4 sm:left-8 bottom-full z-20 h-20 sm:h-32 -mb-3.5 sm:-mb-5 w-auto select-none pointer-events-none drop-shadow-sm"
         loading="lazy"
-        style={{ marginBottom: '-20px' }}
+      />
+      {/* The right-hand twin of the cat: a small blossom tree standing on the footer's top edge. It is purely
+          decorative, so it lets clicks through. The tree always grows in the middle of its box, and the grass
+          covers the box's whole width. So the box is made as wide as the screen but twice as far across: it starts
+          at the left edge and ends off-screen, which puts its middle (the tree) 144px from the right edge.
+          width = 200% - 2 * 144px (on big screens the tree is bigger, so it stands 180px from the edge: 200% - 2 * 180px; the sleeping cat moves with it). h-40 is the tree height on medium screens and lg:h-48 on big ones; change them to make the tree taller. */}
+      <SakuraTree
+        interactive={false}
+        className="hidden sm:block absolute left-0 bottom-full z-10 h-40 lg:h-48 w-[calc(200%_-_288px)] lg:w-[calc(200%_-_360px)] pointer-events-none overflow-hidden"
+        style={{ marginBottom: '-4px' }} /* the cat uses -20px; a bigger number lifts the tree higher */
+      />
+      {/* A sleeping cat curled up at the foot of the tree (same screen sizes as the tree). The picture is square with
+          the cat in its lower left, so it is placed to put the cat under the trunk. Move it with right-*, size with w-*. */}
+      <img
+        src="/images/mascots/sleepy-cat.webp"
+        alt=""
+        aria-hidden="true"
+        className="hidden sm:block absolute right-[61px] lg:right-[97px] bottom-full z-20 w-32 -mb-3.5 select-none pointer-events-none"
       />
       <footer className="footer-glass text-white relative w-full flex flex-row items-center justify-between gap-2 sm:gap-4 h-14 sm:h-16 overflow-hidden border-t backdrop-blur-md px-3 sm:px-8 text-sm border-white/20 bg-white/5">
         <div className="text-[11px] sm:text-sm truncate opacity-80 shrink-0">
