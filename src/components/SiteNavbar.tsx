@@ -14,7 +14,7 @@ const LINKS = [
   { id: 'open-source', label: 'Open Source', icon: GitMerge },
   { id: 'projects', label: 'Projects', icon: Layers },
   { id: 'skills', label: 'Skills', icon: Sparkles },
-  { id: 'achievements', label: 'Achievements', icon: Trophy },
+  { id: 'activities', label: 'Activities', icon: Trophy },
   { id: 'github', label: 'GitHub', icon: Activity },
 ];
 

@@ -21,6 +21,7 @@ import { Download, Globe, Mail } from 'lucide-react';
 import AchievementsTimeline from '../components/AchievementsTimeline';
 import WeatherGlobe from '../components/WeatherGlobe';
 import { projects } from '../data/projects';
+import ActivitiesTimeline from '../components/AchievementsTimeline';
 
 const GITHUB_USER = 'Andrew-Velox';
 
@@ -287,9 +288,9 @@ export default function NewHome() {
           </div>
         </section>
 
-        <section id="achievements" className="mt-8 scroll-mt-16">
-          <SectionHeading>Achievements</SectionHeading>
-          <AchievementsTimeline />
+        <section id="activities" className="mt-8 scroll-mt-16">
+          <SectionHeading>Activities</SectionHeading>
+          <ActivitiesTimeline />
         </section>
 
         {/* GitHub activity — numbers and the heatmap are fetched once at build

@@ -1,4 +1,4 @@
-export interface AchievementItem {
+export interface ActivityItem {
 	title: string;
 	link?: string;
 	rank?: string;
@@ -7,7 +7,7 @@ export interface AchievementItem {
 	note?: string;
 }
 
-export const achievementsData = [
+export const activitiesData = [
 	{
 		section: 'Regional Programming Contests',
 		items: [

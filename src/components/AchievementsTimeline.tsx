@@ -1,16 +1,16 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { achievementsData } from '../data/achievements';
+import { activitiesData } from '../data/activities';
 
 type Item = { title: string; link?: string; rank?: string; date?: string; place?: string; note?: string };
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-export default function AchievementsTimeline() {
+export default function ActivitiesTimeline() {
   return (
     <div className="mt-4 space-y-8">
-      {achievementsData
+      {activitiesData
         // Skip placeholder-only groups (no rank/date on any item)
         .filter((g) => g.items.some((it) => 'rank' in it || 'date' in it))
         .map((group) => (
