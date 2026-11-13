@@ -217,3 +217,23 @@ html.light .loader-bar { background: rgba(0, 0, 0, 0.65); }
 .loader-slide { animation: loader-slide 1.2s ease-in-out infinite; }
 @keyframes loader-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 @keyframes loader-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+
+/* Ink-bleed theme transition (see src/lib/inkTransition.ts): the new theme is revealed through the --ink-mask image. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) { z-index: 1; }
+::view-transition-new(root) { z-index: 2; }
+html.ink-running::view-transition-new(root) {
+  /* Flip-book: a pre-rendered sheet of ink frames, stepped by the injected @keyframes ink-sheet.
+     The transition ends when this animation does, on a fully covered last frame. */
+  mask-image: var(--ink-sheet);
+  mask-size: var(--ink-size);
+  mask-repeat: no-repeat;
+  -webkit-mask-image: var(--ink-sheet);
+  -webkit-mask-size: var(--ink-size);
+  -webkit-mask-repeat: no-repeat;
+  animation: ink-sheet var(--ink-dur, 2.4s) linear both;
+}

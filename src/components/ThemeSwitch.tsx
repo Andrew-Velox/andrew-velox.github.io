@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
+import { inkToggle, warmInk } from '../lib/inkTransition';
 
 // A real hanging pull-cord: a Verlet rope (gravity, damping, distance constraints) with the
 // handle at the free end. Grab the handle and pull; the cord swings and bounces back like a
@@ -35,12 +36,15 @@ export default function ThemeSwitch() {
   const calm = useRef(0);
 
   const toggle = () => {
-    const next = !document.documentElement.classList.contains('light');
-    document.documentElement.classList.toggle('light', next);
-    setLight(next);
-    try {
-      localStorage.setItem('theme', next ? 'light' : 'dark');
-    } catch {}
+    const swap = () => {
+      const next = !document.documentElement.classList.contains('light');
+      document.documentElement.classList.toggle('light', next);
+      setLight(next);
+      try {
+        localStorage.setItem('theme', next ? 'light' : 'dark');
+      } catch {}
+    };
+    inkToggle(swap);
   };
 
   const draw = () => {
@@ -131,6 +135,11 @@ export default function ThemeSwitch() {
   useEffect(() => {
     pts.current = Array.from({ length: N }, (_, i) => ({ x: AX, y: i * SEG, px: AX, py: i * SEG }));
     setLight(document.documentElement.classList.contains('light'));
+    // Pre-render the ink from where the pull-cord handle hangs at rest.
+    warmInk(() => {
+      const b = boxRef.current?.getBoundingClientRect();
+      return b ? { x: b.left + AX, y: b.top + LEN + 15 } : { x: window.innerWidth - 30, y: 70 };
+    });
     draw();
     // A small nudge after load so it visibly swings and invites a pull
     const t = window.setTimeout(() => {
